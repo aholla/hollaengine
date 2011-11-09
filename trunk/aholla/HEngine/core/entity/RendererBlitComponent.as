@@ -65,7 +65,7 @@ package aholla.HEngine.core.entity
 			{
 				_spritemap.onUpdate();
 				_graphic.bitmapData = _spritemap.data;
-				_rect = _spritemap.rect
+				_rect = _spritemap.cellRect;
 			}
 			
 			dest.x = owner.transform.x;
