@@ -52,5 +52,8 @@ package aholla.HEngine.core.entity
 		function set layerIndex(value:Number):void;
 		
 		function get bounds():Rectangle
+		
+		function set isDirty(value:Boolean):void;
+		function get isDirty():Boolean;
 	}	
 }

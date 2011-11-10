@@ -13,6 +13,8 @@ package aholla.HEngine.core.entity
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.geom.ColorTransform;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
@@ -20,16 +22,18 @@ package aholla.HEngine.core.entity
 	{			
 		private var source							:BitmapData;
 		private var dest							:Point;
+		private var smoothing						:Boolean;
 		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
 -------------------------------------------------*/
 	
-		public function RendererBlitComponent() 
+		public function RendererBlitComponent(smoothing:Boolean = false) 
 		{
 			super();
 			dest = new Point();
 			_graphic = new Bitmap();
+			this.smoothing = smoothing;
 		}
 		
 /*-------------------------------------------------
@@ -71,8 +75,32 @@ package aholla.HEngine.core.entity
 			dest.x = owner.transform.x;
 			dest.y = owner.transform.y;
 			
-			// TODO: RendererBlitComponent - check positions to see if it needs to be rendered or not			
-			canvasData.copyPixels(_graphic.bitmapData, _rect, dest, null, null, true);
+			if (!owner.transform.isDirty)
+			{
+				canvasData.copyPixels(_graphic.bitmapData, _rect, dest, null, null, true);
+			}
+			else
+			{
+				var matrix:Matrix = new Matrix();
+				var colourTransform:ColorTransform = new ColorTransform();
+				var clipRect:Rectangle = new Rectangle(0, 0, _rect.width, _rect.height);
+				
+				
+				// destination
+				matrix.tx = -_rect.x + dest.x;
+				matrix.ty = -_rect.y + dest.y;
+				clipRect.x =  dest.x;
+				clipRect.y =  dest.y;
+				
+				// scale
+				//matrix.a = owner.transform.scaleX;
+				//matrix.d = owner.transform.scaleY;
+				//clipRect.width 	= _rect.width * owner.transform.scaleX;
+				//clipRect.height = _rect.width * owner.transform.scaleY;			
+				
+				
+				canvasData.draw(_graphic.bitmapData, matrix, colourTransform, null, clipRect, smoothing);
+			}
 		}
 		
 /*-------------------------------------------------

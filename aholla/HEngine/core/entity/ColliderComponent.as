@@ -67,6 +67,7 @@ package aholla.HEngine.core.entity
 			
 			owner.transform.width 	= _bounds.width;
 			owner.transform.height 	= _bounds.height;
+			owner.transform.isDirty = false;
 		}
 		
 		public function render($graphic:Sprite, $colour:uint = 0x0000FF):void
