@@ -30,7 +30,8 @@ package aholla.HEngine.core.entity
 		private var _scaleY							:Number = 1;
 		private var _layerIndex						:Number = 0;		
 		private var _velocity						:Point = new Point();
-		private var _acceleration					:Point = new Point();	
+		private var _acceleration					:Point = new Point();
+		private var _isDirty						:Boolean;
 		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -69,6 +70,19 @@ package aholla.HEngine.core.entity
 * PRIVATE FUNCTIONS
 -------------------------------------------------*/		
 		
+		private function checkIfDirty():Boolean
+		{
+			if (_rotation != 0)	
+				return true;	
+			else if (_scale != 1)	
+				return true;
+			else if (_scaleX != 1)	
+				return true;
+			else if (_scaleY != 1)	
+				return true;
+			else
+				return false;
+		}
 		
 /*-------------------------------------------------
 * EVENT HANDLING
@@ -85,10 +99,7 @@ package aholla.HEngine.core.entity
 			if (_x != value)
 			{
 				_x = value;
-				if (owner.collider)
-				{
-					owner.collider.hasMoved = true
-				}
+				if (owner.collider)	owner.collider.hasMoved = true;
 			}
 		}
 		
@@ -99,10 +110,7 @@ package aholla.HEngine.core.entity
 			{
 				_y = value; 
 				_zIndex = (layerIndex + 1) * _y;
-				if (owner.collider)
-				{
-					owner.collider.hasMoved = true;
-				}
+				if (owner.collider)	owner.collider.hasMoved = true;
 			}
 		}
 		
@@ -114,13 +122,25 @@ package aholla.HEngine.core.entity
 		public function set zIndex(value:Number):void 			{	_zIndex = value;		}		
 		
 		public function get width():Number 						{ return _width; }		
-		public function set width(value:Number):void 			{	_width = value;		}
+		public function set width(value:Number):void 			
+		{	
+			_width = value;
+			_isDirty = true;
+		}
 		
 		public function get height():Number 					{	return _height; }		
-		public function set height(value:Number):void 			{	_height = value;}
+		public function set height(value:Number):void 			
+		{	
+			_height = value;
+			_isDirty = true;
+		}
 		
 		public function get rotation():Number 					{	return _rotation; }		
-		public function set rotation(value:Number):void 		{	_rotation = value;	}
+		public function set rotation(value:Number):void 		
+		{	
+			_rotation = value;
+			_isDirty = checkIfDirty();
+		}
 		
 		public function get scale():Number 						
 		{	
@@ -132,10 +152,8 @@ package aholla.HEngine.core.entity
 			_scale = _scaleX = _scaleY = value; 
 			_width *= value; 
 			_height *= value; 
-			if (owner.collider)
-			{
-				owner.collider.shape.scale = value;
-			}
+			if (owner.collider)	owner.collider.shape.scale = value;
+			_isDirty = checkIfDirty();
 		}	
 		
 		public function get scaleX():Number 						{	return _scaleX; 	}		
@@ -143,20 +161,16 @@ package aholla.HEngine.core.entity
 		{	
 			_scaleX = value; 
 			_width *= value;
-			if (owner.collider)
-			{
-				owner.collider.shape.scaleX = value;
-			}
+			if (owner.collider)	owner.collider.shape.scaleX = value;
+			_isDirty = checkIfDirty();
 		}
 		
 		public function get scaleY():Number 						{	return _scaleY; 	}		
 		public function set scaleY(value:Number):void 			
 		{	
 			_scaleY = value;  _height *= value; 
-			if (owner.collider)
-			{
-				owner.collider.shape.scaleY = value;
-			}
+			if (owner.collider)	owner.collider.shape.scaleY = value;
+			_isDirty = checkIfDirty();
 		}
 		
 		public function get velocity():Point 					{ 	return _velocity; }	
@@ -189,6 +203,9 @@ package aholla.HEngine.core.entity
 			}
 			return _bounds;
 		}
+		
+		public function get isDirty():Boolean 			{	return _isDirty;	}
+		public function set isDirty(value:Boolean):void {	_isDirty = value;	}
 		
 		override public function toString():String 
 		{
