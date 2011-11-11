@@ -32,6 +32,7 @@ package aholla.HEngine.core.entity
 		private var _velocity						:Point = new Point();
 		private var _acceleration					:Point = new Point();
 		private var _isDirty						:Boolean;
+		private var _hasMoved						:Boolean;
 		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -99,7 +100,7 @@ package aholla.HEngine.core.entity
 			if (_x != value)
 			{
 				_x = value;
-				if (owner.collider)	owner.collider.hasMoved = true;
+				_hasMoved = true;
 			}
 		}
 		
@@ -110,7 +111,7 @@ package aholla.HEngine.core.entity
 			{
 				_y = value; 
 				_zIndex = (layerIndex + 1) * _y;
-				if (owner.collider)	owner.collider.hasMoved = true;
+				_hasMoved = true;
 			}
 		}
 		
@@ -118,7 +119,6 @@ package aholla.HEngine.core.entity
 		public function set z(value:Number):void 				{	_z = value;		}
 		
 		public function get zIndex():Number 					{ 	_zIndex = (layerIndex + 1) * _y;	return _zIndex; }		
-		//public function get zIndex():Number 					{ 	return _zIndex; }		
 		public function set zIndex(value:Number):void 			{	_zIndex = value;		}		
 		
 		public function get width():Number 						{ return _width; }		
@@ -188,10 +188,12 @@ package aholla.HEngine.core.entity
 			{
 				if (owner.collider)
 				{
-					_bounds.x 		= _x + (owner.collider.offsetX * scaleX);
-					_bounds.y 		= _y + (owner.collider.offsetY * scaleY);
+					//_bounds.x 		= _x + (owner.collider.offsetX * scaleX);
+					//_bounds.y 		= _y + (owner.collider.offsetY * scaleY);
+					_bounds.x 		= _x + owner.collider.bounds.x;
+					_bounds.y 		= _y + owner.collider.bounds.y;
 					_bounds.width 	= _width * scaleX;
-					_bounds.height 	= _height * scaleY;
+					_bounds.height 	= _height * scaleY;					
 				}
 				else
 				{
@@ -203,6 +205,10 @@ package aholla.HEngine.core.entity
 			}
 			return _bounds;
 		}
+		public function set bounds($rect:Rectangle):void	{	_bounds = $rect; }
+		
+		public function get hasMoved():Boolean 			{	return _hasMoved;	}
+		public function set hasMoved(value:Boolean):void {	_hasMoved = value;	}
 		
 		public function get isDirty():Boolean 			{	return _isDirty;	}
 		public function set isDirty(value:Boolean):void {	_isDirty = value;	}

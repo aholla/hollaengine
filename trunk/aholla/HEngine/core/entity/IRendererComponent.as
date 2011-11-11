@@ -9,6 +9,7 @@ package aholla.HEngine.core.entity
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
+	import flash.display.Sprite;
 	
 	public interface IRendererComponent extends IComponent
 	{
@@ -22,8 +23,10 @@ package aholla.HEngine.core.entity
 		function stop():void;
 		
 		function render(canvasData:BitmapData):void;
-		
+		function debugRender(canvasDebugData:BitmapData):void;
 		function play($animation:String):void;
+		
+		
 		
 		function get alpha():Number;
 		function set alpha($value:Number):void;

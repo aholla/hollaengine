@@ -11,13 +11,17 @@ package aholla.HEngine.managers
 	import de.polygonal.ds.SLLNode;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.Sprite;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 	
 	public class RenderManager 
 	{
 		private var canvas							:Bitmap;
+		private var canvasDebug						:Bitmap;
 		private var canvasData						:BitmapData;
+		private var canvasDebugData					:BitmapData;
 		private var canvasRect						:Rectangle;
 		private var componentDict					:Dictionary;
 		private var componentList					:SLL;
@@ -35,10 +39,13 @@ package aholla.HEngine.managers
 			canvasData 	= new BitmapData(canvasRect.width, canvasRect.height, false, 0xFF00FF);
 			canvas 		= new Bitmap(canvasData);
 			canvas.name = "canvas";
-			HE.world.addChild(canvas);			
+			HE.world.addChildAt(canvas, 0);			
 			
 			componentDict = new Dictionary(true);
-			componentList = new SLL();			
+			componentList = new SLL();	
+			
+			if (HE.isDebug)
+				initDebug();
 		}
 		
 /*-------------------------------------------------
@@ -54,6 +61,7 @@ package aholla.HEngine.managers
 		public function removeRenderComponent($renderComponent:IRendererComponent):void
 		{
 			(componentDict[$renderComponent] as SLLNode).free();
+			(componentDict[$renderComponent] as SLLNode).unlink();
 			delete componentDict[$renderComponent];
 		}
 		
@@ -63,17 +71,39 @@ package aholla.HEngine.managers
 				componentList.sort(sortDepth, true);
 			
 			canvasData.lock();
-			canvasData.fillRect(canvasRect, 0x000000);
-			
+			canvasData.fillRect(canvasRect, 0x000000);			
 			var head:SLLNode = componentList.head;
 			while (head)
 			{
 				(head.val as IRendererComponent).render(canvasData);
 				head = head.next;
-			}
-			
+			}			
 			canvasData.unlock();
+			
+			// If debug, do anotehr loop and render the debug layer.
+			if (HE.isDebug)
+			{
+				if (!canvasDebugData)
+					initDebug();
+					
+				canvasDebugData.lock();
+				canvasDebugData.fillRect(canvasRect, 0x000000);				
+				head = componentList.head;
+				while (head)
+				{
+					(head.val as IRendererComponent).debugRender(canvasDebugData);
+					head = head.next;
+				}
+				canvasDebugData.unlock();
+				canvasData.copyPixels(canvasDebugData, canvasRect, new Point(), null, null, true);
+			}
 		}	
+		
+		private function initDebug():void 
+		{
+			canvasDebugData = new BitmapData(canvasRect.width, canvasRect.height, true, 0xFF00FF);			
+			canvasDebug = new Bitmap(canvasDebugData);
+		}
 		
 /*-------------------------------------------------
 * PRIVATE FUNCTIONS

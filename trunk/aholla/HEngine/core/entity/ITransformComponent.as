@@ -51,9 +51,14 @@ package aholla.HEngine.core.entity
 		function get layerIndex():Number;	
 		function set layerIndex(value:Number):void;
 		
+		function set bounds(value:Rectangle):void
 		function get bounds():Rectangle
+		
+		function set hasMoved(value:Boolean):void;
+		function get hasMoved():Boolean;
 		
 		function set isDirty(value:Boolean):void;
 		function get isDirty():Boolean;
+		
 	}	
 }

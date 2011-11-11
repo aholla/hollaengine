@@ -20,7 +20,7 @@ package aholla.HEngine.core.entity
 	
 	public class RendererBlitComponent extends RendererComponent implements IRendererComponent
 	{			
-		private var source							:BitmapData;
+		//private var source							:BitmapData;
 		private var dest							:Point;
 		private var smoothing						:Boolean;
 		
@@ -32,7 +32,7 @@ package aholla.HEngine.core.entity
 		{
 			super();
 			dest = new Point();
-			_graphic = new Bitmap();
+			//_graphic = new Bitmap();
 			this.smoothing = smoothing;
 		}
 		
@@ -75,6 +75,8 @@ package aholla.HEngine.core.entity
 			dest.x = owner.transform.x;
 			dest.y = owner.transform.y;
 			
+			//trace("X", owner.name, canvasData, _graphic, _graphic.bitmapData);
+			
 			if (!owner.transform.isDirty)
 			{
 				canvasData.copyPixels(_graphic.bitmapData, _rect, dest, null, null, true);
@@ -86,17 +88,21 @@ package aholla.HEngine.core.entity
 				var clipRect:Rectangle = new Rectangle(0, 0, _rect.width, _rect.height);
 				
 				
+				var scaleX:int = owner.transform.scaleX;
+				var scaleY:int = owner.transform.scaleY;
+				
 				// destination
-				matrix.tx = -_rect.x + dest.x;
-				matrix.ty = -_rect.y + dest.y;
+				//matrix.tx = -_rect.x + dest.x;
+				matrix.tx = dest.x - (_rect.x * scaleX);
+				matrix.ty = dest.y - (_rect.y * scaleY);
 				clipRect.x =  dest.x;
 				clipRect.y =  dest.y;
 				
 				// scale
-				//matrix.a = owner.transform.scaleX;
-				//matrix.d = owner.transform.scaleY;
-				//clipRect.width 	= _rect.width * owner.transform.scaleX;
-				//clipRect.height = _rect.width * owner.transform.scaleY;			
+				matrix.a = scaleX;
+				matrix.d = scaleY;
+				clipRect.width 	= _rect.width * scaleX;
+				clipRect.height = _rect.width * scaleY;			
 				
 				
 				canvasData.draw(_graphic.bitmapData, matrix, colourTransform, null, clipRect, smoothing);

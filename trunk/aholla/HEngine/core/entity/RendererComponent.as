@@ -11,6 +11,8 @@ package aholla.HEngine.core.entity
 	import com.greensock.motionPaths.RectanglePath2D;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.Sprite;
+	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
 	public class RendererComponent extends Component implements IRendererComponent
@@ -35,6 +37,9 @@ package aholla.HEngine.core.entity
 		public function RendererComponent() 
 		{
 			camera = HE.camera;
+			_graphic = new Bitmap();
+			_graphic.bitmapData = new BitmapData(10, 10, true, 0x00000000);
+			_rect = _graphic.bitmapData.rect;
 		}
 		
 /*-------------------------------------------------
@@ -46,7 +51,7 @@ package aholla.HEngine.core.entity
 			super.onAdded($owner, $name);
 			HE.processManager.addRenderer(this);
 		}
-	
+		
 		public function drawBox($width:int, $height:int, $colour:uint = 0xFF0000, $alpha:Number = 1):void
 		{
 			
@@ -64,6 +69,25 @@ package aholla.HEngine.core.entity
 		
 		public function render(canvasData:BitmapData):void 
 		{
+		}
+		
+		private var debugSprite:Sprite = new Sprite();
+		public function debugRender(canvasData:BitmapData):void 
+		{
+			if (owner.collider)
+			{
+				//canvasData.draw(
+				
+				debugSprite.graphics.clear();
+				owner.collider.render(debugSprite);
+				//debugSprite.x = owner.transform.x;
+				//debugSprite.y = owner.transform.y;
+				var matrix:Matrix = new Matrix();
+				matrix.translate(owner.transform.x, owner.transform.y);
+				canvasData.draw(debugSprite, matrix);
+				//canvas.addChild(debugSprite)
+				
+			}
 		}
 		
 		public function play($animation:String):void
@@ -99,7 +123,8 @@ package aholla.HEngine.core.entity
 		
 		public function set graphic($graphic:Bitmap):void 	
 		{	
-			_graphic = $graphic;			
+			trace("set", _graphic, _graphic.bitmapData)
+			_graphic = $graphic;		
 			_rect = new Rectangle(0,0, _graphic.width, _graphic.height);
 		}
 		public function get graphic():Bitmap 				{	return _graphic; }

@@ -79,6 +79,7 @@ package aholla.HEngine.managers
 			if (node)
 			{
 				node.free();
+				node.unlink();
 				delete _updatedComponentDict[$component];
 			}
 		}
@@ -104,6 +105,7 @@ package aholla.HEngine.managers
 			if (node)
 			{
 				node.free();
+				node.unlink();
 				delete _updatedComponentDict[$updatedComponent];
 			}
 		}		
@@ -229,12 +231,12 @@ package aholla.HEngine.managers
 			camera.destroy();
 			camera = null;
 			
-			_componentList.clear(true);
 			_componentList.free();
+			_componentList.clear(true);
 			_componentDict = new Dictionary();
 			
-			_updatedComponentList.clear(true);
 			_updatedComponentList.free();
+			_updatedComponentList.clear(true);
 			_updatedComponentDict = new Dictionary();
 		}
 		
@@ -261,7 +263,7 @@ package aholla.HEngine.managers
 					(node.val as IUpdatedComponent).onUpdate();
 					node = node.next;
 				}				
-				//_collisionManager.onUpdate();				
+				_collisionManager.onUpdate();				
 				_renderManager.onUpdate();
 				camera.onUpdate();
 			}			
