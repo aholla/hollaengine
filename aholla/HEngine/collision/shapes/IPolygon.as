@@ -8,11 +8,12 @@
 
 package aholla.HEngine.collision.shapes
 {
+	import flash.geom.Point;
 	
 	public interface IPolygon extends IShape
 	{		
-		function get vertices():Array ;		// returns the vertices with transformations applied		
-		function get rawVertices():Array; 	// vertices with no transformations 
+		function get vertices():Vector.<Point>;		// returns the vertices with transformations applied		
+		function get rawVertices():Vector.<Point>; 	// vertices with no transformations 
 
 	}
 }

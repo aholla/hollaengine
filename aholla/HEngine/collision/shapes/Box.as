@@ -19,10 +19,9 @@ package aholla.HEngine.collision.shapes
 	public class Box implements IPolygon
 	{		
 		private var _width				:Number = 10;
-		private var _height:Number = 10;		
-		private var _polygon:Polygon;
-		private var _centreReg:Boolean = true;
-		
+		private var _height				:Number = 10;		
+		private var _polygon			:Polygon;
+		private var _centreReg			:Boolean = true;		
 		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -246,7 +245,8 @@ package aholla.HEngine.collision.shapes
 		 * Returns the vertices without any transformations applied
 		 * Note that this is the 'actual' array stored, 
 		 */
-		public function get rawVertices():Array 
+		//public function get rawVertices():Array 
+		public function get rawVertices():Vector.<Point>
 		{ 
 			return _polygon.rawVertices; 
 		}
@@ -256,7 +256,7 @@ package aholla.HEngine.collision.shapes
 		 * Returns the vertices with all of the transforms applied (scale, rotaiton, etc)
 		 * Note that this is a concated array - in order to protect the current vertices.
 		 */
-		public function get vertices():Array 
+		public function get vertices():Vector.<Point> 
 		{
 			return _polygon.vertices;
 		}	
@@ -268,18 +268,5 @@ package aholla.HEngine.collision.shapes
 		
 		public function get tx():Number {	return _polygon.tx;}		
 		public function get ty():Number {	return _polygon.ty;	}
-		/*
-		
-		
-		public function get scale():Number 
-		{
-			return _polygon.scale;
-		}
-		
-		public function set scale($value:Number):void 
-		{
-			_polygon.scale = $value
-		}
-		*/
 	}
 }

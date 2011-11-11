@@ -29,8 +29,8 @@ package aholla.HEngine.core.entity
 		function get offsetX():Number;
 		function get offsetY():Number;
 			
-		function get hasMoved():Boolean;		
-		function set hasMoved($value:Boolean):void;	
+		//function get hasMoved():Boolean;		
+		//function set hasMoved($value:Boolean):void;	
 		
 		/**
 		 * The quadtree the entity is in.

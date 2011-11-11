@@ -17,7 +17,6 @@ package aholla.HEngine.core.entity
 		private var _isCollider						:Boolean;
 		private var _colliderGroup					:String;
 		private var _quadtreeNode					:QuadtreeNode;
-		private var _hasMoved						:Boolean;
 		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -46,8 +45,7 @@ package aholla.HEngine.core.entity
 		{
 			HE.processManager.removeCollision(this.owner);
 			_shape.destroy();
-			_shape = null;			
-			//_quadtreeNode.destroy();
+			_shape = null;
 			_quadtreeNode = null;	
 			super.destroy();
 		}
@@ -55,18 +53,17 @@ package aholla.HEngine.core.entity
 		public function init($shape:IShape, $isCollider:Boolean = true, $offsetX:Number = 0, $offsetY:Number = 0, $colliderGroup:String = null, $scaleX:Number = 0, $scaleY:Number = 0):void 
 		{
 			_isCollider 	= $isCollider;
-			_colliderGroup	= $colliderGroup;
-			
+			_colliderGroup	= $colliderGroup;			
 			_shape 			= $shape;
 			_shape.scaleX	= $scaleX;
 			_shape.scaleY	= $scaleY;
 			_shape.scale 	= ($scaleX > $scaleY) ? $scaleX: $scaleY;;
-			_shape.translate($offsetX, $offsetY);
-			
+			_shape.translate($offsetX, $offsetY);			
 			_bounds 		= _shape.bounds;
 			
-			owner.transform.width 	= _bounds.width;
-			owner.transform.height 	= _bounds.height;
+			owner.transform.width = _bounds.width;
+			owner.transform.height = _bounds.height;
+			//owner.transform.bounds = _bounds;
 			owner.transform.isDirty = false;
 		}
 		
@@ -88,10 +85,13 @@ package aholla.HEngine.core.entity
 		{
 			_shape.scale 	= owner.transform.scale;
 			_shape.scaleX 	= owner.transform.scaleX;
-			_shape.scaleY 	= owner.transform.scaleY;			
-			_bounds 		= _shape.bounds;			
-			owner.transform.width 	= _bounds.width;
-			owner.transform.height 	= _bounds.height;			
+			_shape.scaleY 	= owner.transform.scaleY;				
+			_bounds 		= _shape.bounds;
+			
+			owner.transform.width = _bounds.width;
+			owner.transform.height = _bounds.height;
+			//owner.transform.bounds = _bounds;	
+			owner.transform.isDirty = false;
 		}
 		
 /*-------------------------------------------------
@@ -137,14 +137,7 @@ package aholla.HEngine.core.entity
 		public function set quadtreeNode($value:QuadtreeNode):void 
 		{
 			_quadtreeNode = $value;
-		}
-		
-		public function get hasMoved():Boolean 	{return _hasMoved;	}		
-		public function set hasMoved(value:Boolean):void 
-		{
-			_hasMoved = value;
-		}
-		
+		}		
 		
 	}
 

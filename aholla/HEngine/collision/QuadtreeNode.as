@@ -37,11 +37,11 @@ package aholla.HEngine.collision
 			centerX = _bounds.width * 0.5;
 			centerY = _bounds.height * 0.5;
 			
-			//if (HE.isDebug)
-			//{
-				//HE.world.debugLayer.graphics.lineStyle(0.5, 0x99B5FF, 0.1);
-				//HE.world.debugLayer.graphics.drawRect(_bounds.x, _bounds.y, _bounds.width, _bounds.height);
-			//}
+			if (HE.isDebug)
+			{
+				HE.world.debugLayer.graphics.lineStyle(0.5, 0x99B5FF, 0.1);
+				HE.world.debugLayer.graphics.drawRect(_bounds.x, _bounds.y, _bounds.width, _bounds.height);
+			}
 		}
 		
 /*-------------------------------------------------
@@ -112,7 +112,7 @@ package aholla.HEngine.collision
 			
 			// this quad contains items that are not entirely contained by
 			// it's four sub-quads. Iterate through the items in this quad 
-			// to see if they intersect.			
+			// to see if they intersect.
 			var currContentItem:SLLNode = _contents.head;
 			while (currContentItem)
 			{
@@ -219,11 +219,11 @@ package aholla.HEngine.collision
 			// and removed it from teh conects of the node.
 			if ($entity.collider.quadtreeNode)
 			{
-				//var itr:SLLIterator = $entity.collider.quadtreeNode.contents.nodeOf($entity);
 				var node:SLLNode = $entity.collider.quadtreeNode.contents.nodeOf($entity);
 				if (node)
 				{
 					node.free();
+					node.unlink();
 					$entity.collider.quadtreeNode = null;
 				}				
 			}

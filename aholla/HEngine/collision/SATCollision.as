@@ -144,8 +144,8 @@ package aholla.HEngine.collision
 		static private function calculateCollisionInfoSeparation(obj:CollisionInfo, obj2:CollisionInfo = null):CollisionInfo 
 		{
 			obj.separation = new Point(obj.vector.x * obj.distance, obj.vector.y * obj.distance);
-			obj.separation.x *= 1.00001; // @Adam - a little bit of padding to stop objects getting stuck on corners.
-			obj.separation.y *= 1.00001;
+			obj.separation.x *= 1.000001; // @Adam - a little bit of padding to stop objects getting stuck on corners.
+			obj.separation.y *= 1.000001;
 			if (obj2) obj.shapeAContained = (obj.shapeAContained && obj2.shapeAContained);	// hack to check for containment
 			if (obj2) obj.shapeBContained = (obj.shapeBContained && obj2.shapeBContained);	
 			return obj;
@@ -222,8 +222,8 @@ package aholla.HEngine.collision
 			var i		:int;
 			var j		:int;
 			var t		:Number;
-			var p1		:Array;	// array of vertices
-			var p2		:Array;
+			var p1		:Vector.<Point>;
+			var p2		:Vector.<Point>;
 			var ra		:Point;
 			
 			var shortestDist:Number = Number.MAX_VALUE;
@@ -356,8 +356,9 @@ package aholla.HEngine.collision
 			var i	:int;
 			var j	:int;
 			var t	:Number;
-			var p1	:Array;	// array of vertices
-			var p2	:Array;
+			var p1	:Vector.<Point>;	// array of vertices
+			var p2	:Vector.<Point>;
+			
 			
 			var currentDist:Number;
 			var dist:Number = Number.MAX_VALUE;
@@ -542,7 +543,7 @@ package aholla.HEngine.collision
 		 * @param	pointIndex
 		 * @return
 		 */
-		static private function getAxisNormal(vertexArray:Array, pointIndex:uint):Point 
+		static private function getAxisNormal(vertexArray:Vector.<Point>, pointIndex:uint):Point 
 		{
 			// grab the points
 			var pt1:Point = vertexArray[pointIndex];

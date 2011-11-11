@@ -261,8 +261,8 @@ package aholla.HEngine.core.entity
 					for (j = 0; j < rows; j++) 
 					{
 						destPos.x = i * cellWidth;
-						destPos.y = j * cellHeight;						
-						clipRect.x = i * cellWidth;						
+						destPos.y = j * cellHeight;
+						clipRect.x = i * cellWidth;
 						clipRect.y = ((rows - j) - 1) * cellHeight;
 						dataFlipped.copyPixels(tempBmd, clipRect, destPos, null, null, true);						
 					}

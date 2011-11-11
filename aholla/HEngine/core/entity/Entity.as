@@ -39,9 +39,6 @@ package aholla.HEngine.core.entity
 			
 			_transform 	= new TransformComponent();
 			addComponent(transform, "transform");
-			
-			//_renderer 	= new RendererMovieClipComponent(); // This will be replaced with a more generic "RendererComponent" when otehr render option are available.;			
-			//addComponent(_renderer, "renderer");
 		}		
 		
 /*-------------------------------------------------
@@ -151,6 +148,9 @@ package aholla.HEngine.core.entity
 		 */
 		public function initCollider($shape:IShape, $isCollider:Boolean = true, $offsetX:Number = 0, $offsetY:Number = 0, $collisionGroup:String = null):void
 		{
+			if (HE.isDebug && !_renderer)
+				initRenderer();
+			
 			if (!$collisionGroup && _groupName)
 			{
 				$collisionGroup = _groupName;
@@ -167,6 +167,15 @@ package aholla.HEngine.core.entity
 * PRIVATE FUNCTIONS
 -------------------------------------------------*/
 		
+		private function initRenderer($renderer:IRendererComponent = null):void
+		{
+			trace("initRenderer", name)
+			if ($renderer)
+				_renderer = $renderer;
+			else
+				_renderer = new RendererBlitComponent();
+			addComponent(_renderer, "renderer");
+		}
 		
 /*-------------------------------------------------
 * EVENT HANDLING
@@ -184,8 +193,7 @@ package aholla.HEngine.core.entity
 		public function get componentsDict():Dictionary			{ 	return _componentsDict; }		
 		public function get messageCollision():ISignal 			{ 	return _messageCollision; }		
 		public function get isActive():Boolean 					{ 	return _isActive; }
-		public function get transform():ITransformComponent 	{	return _transform;	}	
-		
+		public function get transform():ITransformComponent 	{	return _transform;	}			
 		public function get collider():IColliderComponent 		{	return _collider;	}
 		
 		public function set isActive($value:Boolean):void		{ 	_isActive = $value; }
@@ -196,30 +204,23 @@ package aholla.HEngine.core.entity
 		
 		public function get renderer():IRendererComponent 		
 		{	
-			if (!_renderer)
-			{
-				//_renderer 	= new RendererMovieClipComponent(); // This will be replaced with a more generic "RendererComponent" when otehr render option are available.;
-				_renderer = new RendererBlitComponent();
-				addComponent(_renderer, "renderer");
-			}
+			if (!_renderer)	initRenderer();
 			return _renderer;
 		}
 		
 		public function set renderer($renderer:IRendererComponent):void
-		{			
-			//componentsDict["renderer"] = null;
-			//delete componentsDict["renderer"];
-			//_renderer = $renderer;
-			//addComponent(_renderer, "renderer");
-			
+		{
 			if (_renderer)
 			{
 				componentsDict["renderer"] = null;
 				delete componentsDict["renderer"];
 			}
-			_renderer = $renderer;
-			addComponent(_renderer, "renderer");
-
+			initRenderer();
+		}
+		
+		public function toString():String
+		{
+			return "Entity:" +name;
 		}
 		
 	}
