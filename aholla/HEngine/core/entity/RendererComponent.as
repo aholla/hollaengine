@@ -17,18 +17,19 @@ package aholla.HEngine.core.entity
 	
 	public class RendererComponent extends Component implements IRendererComponent
 	{			
-		protected var _spritemap					:Spritemap;
 		protected var _graphic						:Bitmap;
 		protected var _rect							:Rectangle;		
 		protected var _alpha						:Number;
-		protected var _offsetX						:Number = 0;
-		protected var _offsetY						:Number = 0;
-		protected var camera						:Camera; 		
+		protected var _offsetX						:Number;
+		protected var _offsetY						:Number;
+		protected var camera						:Camera; 
+		private var debugSprite						:Sprite;
+		
 		protected var leftEdge						:int;
 		protected var rightEdge						:int;
 		protected var topEdge						:int;
 		protected var bottomEdge					:int;
-		protected var debugAlpha					:Number = 0.8;
+		protected var debugAlpha					:Number;
 		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -38,8 +39,11 @@ package aholla.HEngine.core.entity
 		{
 			camera = HE.camera;
 			_graphic = new Bitmap();
-			_graphic.bitmapData = new BitmapData(10, 10, true, 0x00000000);
+			_graphic.bitmapData = new BitmapData(10, 10, true, 0x00000000);			
 			_rect = _graphic.bitmapData.rect;
+			_offsetX = _offsetY = 0;
+			debugAlpha = 0.8;
+			debugSprite =  new Sprite();
 		}
 		
 /*-------------------------------------------------
@@ -67,44 +71,31 @@ package aholla.HEngine.core.entity
 			
 		}		
 		
-		public function render(canvasData:BitmapData):void 
+		public function render(canvasData:BitmapData = null):void 
 		{
 		}
 		
-		private var debugSprite:Sprite = new Sprite();
+		
 		public function debugRender(canvasData:BitmapData):void 
 		{
 			if (owner.collider)
 			{
-				//canvasData.draw(
-				
 				debugSprite.graphics.clear();
 				owner.collider.render(debugSprite);
-				//debugSprite.x = owner.transform.x;
-				//debugSprite.y = owner.transform.y;
 				var matrix:Matrix = new Matrix();
 				matrix.translate(owner.transform.x, owner.transform.y);
-				canvasData.draw(debugSprite, matrix);
-				//canvas.addChild(debugSprite)
-				
+				canvasData.draw(debugSprite, matrix);				
 			}
 		}
 		
 		public function play($animation:String):void
 		{
-			if (_spritemap)
-			{
-				_spritemap.play($animation);
-			}
 		}
 		
 		public function stop():void 
 		{
-			if (_spritemap)
-			{
-				_spritemap.stop();
-			}
 		}
+		
 		
 /*-------------------------------------------------
 * PRIVATE FUNCTIONS
@@ -123,18 +114,10 @@ package aholla.HEngine.core.entity
 		
 		public function set graphic($graphic:Bitmap):void 	
 		{	
-			trace("set", _graphic, _graphic.bitmapData)
 			_graphic = $graphic;		
 			_rect = new Rectangle(0,0, _graphic.width, _graphic.height);
 		}
-		public function get graphic():Bitmap 				{	return _graphic; }
-		
-		public function set spritemap($spritemap:Spritemap):void 	
-		{	
-			_spritemap = $spritemap;
-			_rect = new Rectangle(0,0, $spritemap.data.width, $spritemap.data.height);
-		}
-		public function get spritemap():Spritemap 					{	return _spritemap;}
+		public function get graphic():Bitmap 				{	return _graphic; }		
 		
 		public function get alpha():Number 						{	return _alpha;}		
 		public function set alpha($value:Number):void 			{	_alpha = $value;}

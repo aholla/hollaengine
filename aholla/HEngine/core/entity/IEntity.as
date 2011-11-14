@@ -78,12 +78,22 @@ package aholla.HEngine.core.entity
 		function destroy():void;
 		
 		/**
+		 * Initializes the Renderer. If blitted is true the rendering mode will be blitting, else it will be displayLit. May change this method in future.
+		 * @param	isBlitted:Boolean - Set to true to use blitting and spritesheets. Set to false to use the display list.
+		 * @param	spritemap:Spritemap - The spritemap class that contains the blitting info.
+		 * @param	isCentered:Boolean - If teh entities origin is centered, else it will be top left aligned.
+		 */
+		function initRenderer(isBlitted:Boolean = true, spritemap:Spritemap = null, isCentered:Boolean = true):void;
+		
+		/**
 		 * Initializes the collider so the component is able for collision detection.
 		 * @param	$shape:Ishape - The shape used for collision.
 		 * @param	$isCollider:Boolean - if the shape is an "active" collider, it checks against other items.
 		 * @param	$collisionGroup:String - a group identifier to stop collisions with similar items
 		 */
 		function initCollider($shape:IShape, $isCollider:Boolean = true, $offsetX:Number = 0, $offsetY:Number = 0, $collisionGroup:String = null):void		
+		
+		
 		
 		
 		
@@ -159,7 +169,7 @@ package aholla.HEngine.core.entity
 		/**
 		 * Change the renderer component. Used when using the Tiled Renderer.
 		 */
-		function set renderer($renderer:IRendererComponent):void
+		//function set renderer($renderer:IRendererComponent):void
 		
 		/**
 		 * The colliderComponent for the Entity. If set, this is where the "collision" information (shape, bounds) is stored.

@@ -28,8 +28,8 @@ package aholla.HEngine.collision.shapes
 		private var _ty							:Number = 0;
 		private var _scale						:Number = 1;	
 		private var _transfromDirty				:Boolean = true; // tracks if the current transform is up to date		
-		private var _rawVertices				:Array = [];		// array of all of the vertices
-		private var _transformedVertices		:Array = [];		// array of transformed vertices		
+		private var _rawVertices				:Vector.<Point> = new Vector.<Point>;
+		private var _transformedVertices		:Vector.<Point> = new Vector.<Point>;
 		private var _bounds						:Rectangle;
 		
 		
@@ -38,18 +38,9 @@ package aholla.HEngine.collision.shapes
 		 */
 		public function PolygonImpl ()
 		{
-		}
+		}	
 		
-		
-		/**
-		 * A clean up routine that destroys all external references to prepare the class for garbage collection
-		 */
-		public function destroy () : void
-		{
-			_rawVertices = [];
-			_transformedVertices = [];
-			_transform = null;
-		}
+
 		
 		
 		/**
@@ -59,17 +50,19 @@ package aholla.HEngine.collision.shapes
 		public function render(graphics:Graphics, $colour:uint):void 
 		{
 			_bounds = null;
+			
 			// bounds
-			graphics.lineStyle(0.1, 0x0000FF, 0.3);
-			graphics.drawRect(_x + bounds.x, _y + bounds.y, bounds.width, bounds.height);
+			graphics.lineStyle(0.1, 0x0000FF, 0.5);
+			//graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
+			graphics.drawRect(bounds.x - _tx, bounds.y - _ty, bounds.width, bounds.height);
 			
 			// shape
-			graphics.lineStyle(0.1, $colour, 1);
+			graphics.lineStyle(1.0, $colour, 0.8);
 			graphics.beginFill($colour, 0.1);
 			
-			// loop through the vertices, drawing from one to another
-			var basePt:Point = new Point(_x, _y);
-			var len:int = vertices.length
+			// loop through the vertices, drawing from one to another			
+			var basePt:Point = new Point(_tx, _ty);			
+			var len:int = vertices.length;
 			if (len == 0) return;		// bail if there is only 1 vertex
 			var pt:Point = basePt.add(vertices[0]);				
 			var vertex:Point;
@@ -81,7 +74,17 @@ package aholla.HEngine.collision.shapes
 				pt = basePt.add(vertex);
 				graphics.lineTo(pt.x, pt.y);
 			}
-			graphics.endFill();	
+			graphics.endFill();
+		}
+		
+		/**
+		 * A clean up routine that destroys all external references to prepare the class for garbage collection
+		 */
+		public function destroy () : void
+		{
+			_rawVertices 			= new Vector.<Point>;
+			_transformedVertices 	= new Vector.<Point>;	
+			_transform = null;
 		}
 		
 		
@@ -170,7 +173,7 @@ package aholla.HEngine.collision.shapes
 		}
 		public function set x(value:Number):void 
 		{
-			_x = value;
+			_x = value + _tx;
 		}
 		
 		/**
@@ -182,7 +185,7 @@ package aholla.HEngine.collision.shapes
 		}
 		public function set y(value:Number):void 
 		{
-			_y = value;
+			_y = value + _ty;
 		}
 		
 		/**
@@ -227,14 +230,14 @@ package aholla.HEngine.collision.shapes
 		 * Returns the vertices without any transformations applied
 		 * Note that this is the 'actual' array stored, 
 		 */
-		public function get rawVertices():Array { return _rawVertices; }
+		public function get rawVertices():Vector.<Point> { return _rawVertices; }
 		
 		
 		/**
 		 * Returns the vertices with all of the transforms applied (scale, rotaiton, etc)
 		 * Note that this is a concated array - in order to protect the current vertices.
 		 */
-		public function get vertices():Array 
+		public function get vertices():Vector.<Point> 
 		{
 			// see if yo have to rebuild the transformed vertices?
 			if (_transfromDirty == true) 
@@ -276,8 +279,7 @@ package aholla.HEngine.collision.shapes
 				var pX		:int;
 				var pY		:int;
 				
-				for each(var pt:Point in _rawVertices) 
-				//for each(var pt:Point in vertices) 
+				for each(var pt:Point in vertices) 
 				{
 					pX = _transform.transformPoint(pt).x;
 					pY = _transform.transformPoint(pt).y;
@@ -294,15 +296,8 @@ package aholla.HEngine.collision.shapes
 			}
 		}
 		
-		public function get tx():Number
-		{
-			return _tx;
-		}
-		
-		public function get ty():Number
-		{
-			return _ty;
-		}
+		public function get tx():Number	{	return _tx;		}		
+		public function get ty():Number	{	return _ty;		}
 		
 		public function set tx($value:Number):void
 		{

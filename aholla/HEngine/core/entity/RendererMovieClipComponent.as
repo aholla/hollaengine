@@ -6,6 +6,7 @@
 package aholla.HEngine.core.entity 
 {
 	import aholla.HEngine.HE;
+	import flash.display.BitmapData;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.geom.Point;
@@ -36,13 +37,13 @@ package aholla.HEngine.core.entity
 		{
 			super.onAdded($owner, $name);			
 			HE.world.addEntityRender(_display);
-			onUpdate();
+			render();
 		}
 		
 		override public function start():void 
 		{
 			super.start();
-			onUpdate();
+			render();
 			if (HE.isDebug && owner.collider)
 			{					
 				var _graphic:Sprite = new Sprite;
@@ -57,7 +58,7 @@ package aholla.HEngine.core.entity
 		
 		override public function destroy():void 
 		{
-								
+			
 		}		
 
 		
@@ -90,9 +91,9 @@ package aholla.HEngine.core.entity
 		}	
 		
 		
-		override public function onUpdate():void
+		override public function render(canvasData:BitmapData = null):void
 		{		
-			super.onUpdate();
+			super.render(canvasData);
 			if (camera.isMoving)
 			{
 				_display.x = int(owner.transform.x - camera.x) + _offsetX;

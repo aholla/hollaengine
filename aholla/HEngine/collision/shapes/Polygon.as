@@ -94,20 +94,20 @@ package aholla.HEngine.collision.shapes
 		 * Renders the outline of this object to the given graphics object
 		 * @param	graphics:Display object for rendering and a colour
 		 */
-		public function render(graphics:Graphics, $colour:uint):void 
+		public function render(graphics:Graphics, $colour:uint = 0x00FFFF):void 
 		{
-			_bounds = null;
+			//_bounds = null;
 			
 			// bounds
-			graphics.lineStyle(0.7, 0xFF00FF, 0.3);
-			//graphics.lineStyle(0.7, 0xFF00FF, 2);
+			graphics.lineStyle(0.1, 0x0000FF, 0.5);
 			graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
 			
 			// shape
-			graphics.lineStyle(0.1, $colour, 1);
+			graphics.lineStyle(1.0, $colour, 0.8);
 			graphics.beginFill($colour, 0.1);
 			
 			// loop through the vertices, drawing from one to another			
+			//var basePt:Point = new Point(_tx, _ty);			
 			var basePt:Point = new Point(_tx, _ty);			
 			var len:int = vertices.length;
 			if (len == 0) return;		// bail if there is only 1 vertex
@@ -227,12 +227,13 @@ package aholla.HEngine.collision.shapes
 		 */
 		private function updateTransformation():void 
 		{
-			//trace("updateTransformation", _tx, _ty)
-			
 			_bounds = null;
 			_transform.identity();
+			//
+			//trace("MATRIX a:", _transform.a)
 			_transform.translate(_tx, _ty);
-			_transform.scale(_scaleX, _scaleY);			
+			_transform.scale(_scaleX, _scaleY);	
+			//trace("MATRIX b:", _transform.a)
 			_transform.rotate(_rotation * Math.PI / 180);
 			// mark the points as dirty
 			_transfromDirty = true;
@@ -254,8 +255,8 @@ package aholla.HEngine.collision.shapes
 		public function get x():Number 	{ return _x; }
 		public function set x(value:Number):void 
 		{
-			_x = value;
-			_bounds.x = _x;
+			_x = value + _tx;
+			//_bounds.x = _x;
 		}		
 		
 		/**
@@ -264,8 +265,8 @@ package aholla.HEngine.collision.shapes
 		public function get y():Number 	{return _y;	}
 		public function set y(value:Number):void 
 		{
-			_y = value;
-			_bounds.y = _y;
+			_y = value + _ty;
+			//_bounds.y = _y;
 		}
 		
 		/**
@@ -275,7 +276,7 @@ package aholla.HEngine.collision.shapes
 		public function set rotation(value:Number):void 
 		{
 			_rotation = value;
-			updateTransformation();
+			//updateTransformation();
 		}
 		
 		/**
@@ -285,7 +286,7 @@ package aholla.HEngine.collision.shapes
 		public function set scaleX(value:Number):void
 		{
 			_scaleX = value;
-			updateTransformation();
+			//updateTransformation();
 		}
 		
 		/**
@@ -295,7 +296,7 @@ package aholla.HEngine.collision.shapes
 		public function set scaleY(value:Number):void 
 		{
 			_scaleY = value;
-			updateTransformation();
+			//updateTransformation();
 		}		
 		
 		public function get scale():Number{	return _scale;}		
@@ -322,7 +323,6 @@ package aholla.HEngine.collision.shapes
 			// see if yo have to rebuild the transformed vertices?
 			if (_transfromDirty == true) 
 			{
-				//_transformedVertices = [];
 				_transformedVertices = new Vector.<Point>;
 				for each(var pt:Point in _rawVertices) 
 				{
@@ -364,7 +364,7 @@ package aholla.HEngine.collision.shapes
 				}
 				var _width	:int = highX - lowX;
 				var _height	:int = highY - lowY;
-				_bounds = new Rectangle(lowX, lowY, _width, _height);				
+				_bounds = new Rectangle(lowX, lowY, _width, _height);	
 				return _bounds;
 			}
 		}		
