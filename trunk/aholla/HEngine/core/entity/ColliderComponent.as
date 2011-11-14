@@ -55,11 +55,14 @@ package aholla.HEngine.core.entity
 			_isCollider 	= $isCollider;
 			_colliderGroup	= $colliderGroup;			
 			_shape 			= $shape;
-			_shape.scaleX	= $scaleX;
-			_shape.scaleY	= $scaleY;
-			_shape.scale 	= ($scaleX > $scaleY) ? $scaleX: $scaleY;;
-			_shape.translate($offsetX, $offsetY);			
+			//_shape.scaleX	= $scaleX;
+			//_shape.scaleY	= $scaleY;
+			//_shape.scale 	= ($scaleX > $scaleY) ? $scaleX: $scaleY;
+			//_shape.translate($offsetX, $offsetY);	
+			
 			_bounds 		= _shape.bounds;
+			
+			trace("shape bounds", _shape.bounds)
 			
 			owner.transform.width = _bounds.width;
 			owner.transform.height = _bounds.height;
@@ -67,14 +70,13 @@ package aholla.HEngine.core.entity
 			owner.transform.isDirty = false;
 		}
 		
-		public function render($graphic:Sprite, $colour:uint = 0x0000FF):void
-		{
-			setSize();			
+		public function render($graphic:Sprite, $colour:uint = 0x00FFFF):void
+		{			
 			_shape.render($graphic.graphics, $colour);			
-			$graphic.x -= owner.renderer.offsetX / owner.transform.scaleX;
-			$graphic.y -= owner.renderer.offsetY / owner.transform.scaleY;			
-			$graphic.scaleX = 1 / owner.transform.scaleX;			
-			$graphic.scaleY = 1 / owner.transform.scaleY;			
+			//$graphic.x -= owner.renderer.offsetX / owner.transform.scaleX;
+			//$graphic.y -= owner.renderer.offsetY / owner.transform.scaleY;			
+			//$graphic.scaleX = 1 / owner.transform.scaleX;			
+			//$graphic.scaleY = 1 / owner.transform.scaleY;			
 		}		
 		
 /*-------------------------------------------------
@@ -83,10 +85,12 @@ package aholla.HEngine.core.entity
 		
 		private function setSize():void
 		{
-			_shape.scale 	= owner.transform.scale;
-			_shape.scaleX 	= owner.transform.scaleX;
-			_shape.scaleY 	= owner.transform.scaleY;				
+			//_shape.scale 	= owner.transform.scale;
+			//_shape.scaleX 	= owner.transform.scaleX;
+			//_shape.scaleY 	= owner.transform.scaleY;				
 			_bounds 		= _shape.bounds;
+			
+			trace("shape bounds", _shape.bounds)
 			
 			owner.transform.width = _bounds.width;
 			owner.transform.height = _bounds.height;

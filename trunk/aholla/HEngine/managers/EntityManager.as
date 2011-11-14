@@ -81,7 +81,7 @@ package aholla.HEngine.managers
 			}
 			else
 			{
-				Logger.error("HE.EntityManager - getEntity: Entity not found." + $name);
+				Logger.error(this, "HE.EntityManager - getEntity: Entity not found." + $name);
 				return null;
 			}
 		}

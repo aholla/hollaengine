@@ -22,7 +22,7 @@ package aholla.HEngine.core.entity
 		 */
 		function stop():void;
 		
-		function render(canvasData:BitmapData):void;
+		function render(canvasData:BitmapData = null):void;
 		function debugRender(canvasDebugData:BitmapData):void;
 		function play($animation:String):void;
 		
@@ -46,8 +46,8 @@ package aholla.HEngine.core.entity
 		/**
 		 * Spritemap
 		 */
-		function get spritemap():Spritemap;
-		function set spritemap($spriteMap:Spritemap):void;
+		//function get spritemap():Spritemap;
+		//function set spritemap($spriteMap:Spritemap):void;
 		
 		/**
 		 * Graphic of renderer.

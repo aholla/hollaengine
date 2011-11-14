@@ -88,8 +88,6 @@ package aholla.HEngine.managers
 			iLen = collisionVec.length;		
 			if (!HE.isPaused)
 			{
-				
-				
 				// first update quadtree
 				var node:SLLNode = collisionList.head;
 				while (node)
@@ -100,15 +98,15 @@ package aholla.HEngine.managers
 						quadtree.moved(entityA);
 						entityA.transform.hasMoved = false;
 					}
-					//trace(">>>>>>>", node)
 					node = node.next;
 				}
 				
 				node  = collisionList.head;
-				//trace("----", quadtree.subTreeContents())
 				while (node)
 				{
 					entityA = (node.val as IEntity);	
+					
+					trace(entityA.transform.bounds)
 					
 					if (!entityA.collider.isCollider || !entityA.isActive) 
 					{
@@ -116,15 +114,13 @@ package aholla.HEngine.managers
 						continue;	
 					}
 					
-					var entityList:SLL = quadtree.query(entityA.transform.bounds);
-					//trace(entityList);
-					
+					var entityList:SLL = quadtree.query(entityA.transform.bounds);					
 					if (entityList.size() > 1)
 					{
 						var entityItem:SLLNode = entityList.head;
 						while (entityItem)
 						{
-							entityB = entityItem.val as Entity;
+							entityB = entityItem.val as Entity;							
 							
 							if (entityB)
 							{
@@ -149,82 +145,8 @@ package aholla.HEngine.managers
 					}					
 					node = node.next;
 				}
-				/*
-				// TODO - need to break the transform Component out from teh rest as this loop could be long for little reward.
-				i = collisionVec.length;
-				while(i--)
-				{
-					if (collisionVec[i] is ColliderComponent)		
-					{
-						var _comp:ColliderComponent = collisionVec[i] as ColliderComponent;
-						if (_comp.hasMoved)
-						{
-							quadtree.moved(_comp.owner);
-							_comp.hasMoved = false;
-						}
-					}
-				}
-				*/
 			}
-				
-				
-				//for (var i:int = 0; i < iLen; i++) 
-				//{
-					//entityA = collisionVec[i];
-					//
-					//if (entityA)
-					//{						
-						//if (!entityA.collider.isCollider || !entityA.isActive) continue;	
-						//
-						//var entityList:SLL = quadtree.query(entityA.transform.bounds);
-						//if (entityList.size() > 1)
-						//{
-							//trace(entityList.size)
-							//
-							//var entityItem:SLLNode = entityList.head;
-							//while (entityItem)
-							//{
-								//entityB = entityItem.val as Entity;
-								//
-								//if (entityB)
-								//{
-									//if (entityA == entityB || !entityB || !entityB.isActive || !entityB.collider.isActive || !entityA)	
-									//{
-										//entityItem = entityItem.next;
-										//continue;
-									//}
-									//
-									//if (entityA.collider.colliderGroup == entityB.collider.colliderGroup)
-									//{
-										//entityItem = entityItem.next;
-										//continue;
-									//}
-									//else
-									//{
-										//testCollision(entityA, entityB);
-									//}
-								//}
-								//entityItem = entityItem.next;
-							//}
-						//}
-					//}
-				//}			
-				//entityA = null;
-				//entityB = null;	 
-			//}
-			
-			// remove nulls
-			/*
-			iLen = collisionVec.length;	
-			while (iLen--)
-			{
-				if (!collisionVec[iLen])
-				{
-					trace("CollisionManager - Found Null");
-					collisionVec.splice(iLen, 1);
-				}
-			}	
-			*/
+
 		}
 		
 		public function destroy():void 
@@ -256,6 +178,11 @@ package aholla.HEngine.managers
 		
 		private function testCollision($entityA:IEntity, $entityB:IEntity):void
 		{	
+			$entityA.collider.shape.x = $entityA.transform.x;
+			$entityA.collider.shape.y = $entityA.transform.y;
+			$entityB.collider.shape.x = $entityB.transform.x;
+			$entityB.collider.shape.y = $entityB.transform.y;
+			
 			var collisionInfo:CollisionInfo = SATCollision.test($entityA, $entityB);			
 			if (collisionInfo) 
 			{	

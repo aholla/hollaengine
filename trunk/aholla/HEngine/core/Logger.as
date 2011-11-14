@@ -75,15 +75,16 @@ package aholla.HEngine.core
 		}
 		
 		// PINK
-		public static function error($string:String, ... rest):void
+		public static function error($class:Object, $string:String, ... rest):void
 		{
 			var _str:String = new String($string);
 			for(var i:uint = 0; i < rest.length; i++)
 			{
 				_str += ", " + String(rest[i]);
 			}
-			trace("4:" + _str);
-			Logging.root.error.apply(null, ["Error:", _str]);			
+			trace("4:" + $class, _str);
+			//Logging.root.error.apply(null, ["Error:", _str]);			
+			Logging.root.error.apply($class, ["Error:", _str]);			
 			//Logging.root.fatal.apply(null, [_str]);			
 		}
 		

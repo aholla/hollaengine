@@ -97,7 +97,7 @@ package aholla.HEngine.collision.shapes
 		 * Draws this shape into the given graphics object
 		 * @param	graphics
 		 */
-		public function render(graphics:Graphics, $colour:uint):void 
+		public function render(graphics:Graphics, $colour:uint = 0x00FFFF):void 
 		{
 			_polygon.render(graphics, $colour);
 		}		

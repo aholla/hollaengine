@@ -109,7 +109,7 @@ package aholla.HEngine
 			}
 			else
 			{
-				Logger.error("HE.allocateEntity: entity manager does not exist. Make sure you have initialised the engine. HE.init()");
+				Logger.error(HE, "HE.allocateEntity: entity manager does not exist. Make sure you have initialised the engine. HE.init()");
 				return null;
 			}
 		}

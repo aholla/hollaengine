@@ -1,6 +1,8 @@
 /**
  * ...
  * @author Adam
+ * 
+ * Todo: Fix teh translation bugs when initializing a collider with an offset.
  */
 
 package aholla.HEngine.core.entity
@@ -146,10 +148,39 @@ package aholla.HEngine.core.entity
 		/**
 		 * @inheritDoc
 		 */
+		public function initRenderer(isBlitted:Boolean = true, spritemap:Spritemap = null, isCentered:Boolean = true):void
+		{			
+			if (_renderer)
+			{				
+				componentsDict["renderer"].destroy();
+				componentsDict["renderer"] = null;
+				delete componentsDict["renderer"];
+			}
+			
+			if (isBlitted)
+			{
+				if (!spritemap) Logger.error(this, "The spritemap proveded to 'initRenderer()' is null.");
+				_renderer = new RendererBlitComponent();
+				(_renderer as RendererBlitComponent).initSpritemap(spritemap, isCentered);
+			}
+			else
+			{
+				_renderer = new RendererMovieClipComponent();
+			}
+				
+			addComponent(_renderer, "renderer");
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function initCollider($shape:IShape, $isCollider:Boolean = true, $offsetX:Number = 0, $offsetY:Number = 0, $collisionGroup:String = null):void
 		{
 			if (HE.isDebug && !_renderer)
-				initRenderer();
+			{
+				_renderer = new RendererBlitComponent();
+				addComponent(_renderer, "renderer");
+			}
 			
 			if (!$collisionGroup && _groupName)
 			{
@@ -167,15 +198,6 @@ package aholla.HEngine.core.entity
 * PRIVATE FUNCTIONS
 -------------------------------------------------*/
 		
-		private function initRenderer($renderer:IRendererComponent = null):void
-		{
-			trace("initRenderer", name)
-			if ($renderer)
-				_renderer = $renderer;
-			else
-				_renderer = new RendererBlitComponent();
-			addComponent(_renderer, "renderer");
-		}
 		
 /*-------------------------------------------------
 * EVENT HANDLING
@@ -204,23 +226,14 @@ package aholla.HEngine.core.entity
 		
 		public function get renderer():IRendererComponent 		
 		{	
-			if (!_renderer)	initRenderer();
+			if (!_renderer) Logger.error(this, "renderer is null and needs to be created first.");
 			return _renderer;
 		}
 		
-		public function set renderer($renderer:IRendererComponent):void
-		{
-			if (_renderer)
-			{
-				componentsDict["renderer"] = null;
-				delete componentsDict["renderer"];
-			}
-			initRenderer();
-		}
 		
 		public function toString():String
 		{
-			return "Entity:" +name;
+			return "Entity:" +name +".";
 		}
 		
 	}

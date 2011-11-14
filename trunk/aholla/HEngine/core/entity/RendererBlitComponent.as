@@ -19,8 +19,8 @@ package aholla.HEngine.core.entity
 	import flash.geom.Rectangle;
 	
 	public class RendererBlitComponent extends RendererComponent implements IRendererComponent
-	{			
-		//private var source							:BitmapData;
+	{		
+		private var _spritemap						:Spritemap;
 		private var dest							:Point;
 		private var smoothing						:Boolean;
 		
@@ -32,7 +32,6 @@ package aholla.HEngine.core.entity
 		{
 			super();
 			dest = new Point();
-			//_graphic = new Bitmap();
 			this.smoothing = smoothing;
 		}
 		
@@ -54,28 +53,25 @@ package aholla.HEngine.core.entity
 		{
 			
 		}
-		
-		override public function stop():void 
+				
+		override public function render(canvasData:BitmapData = null):void 
 		{
 			if (_spritemap)
-			{
-				_spritemap.stop();
-			}
-		}
-		
-		override public function render(canvasData:BitmapData):void 
-		{
-			if (_spritemap)
-			{
 				_spritemap.onUpdate();
-				_graphic.bitmapData = _spritemap.data;
-				_rect = _spritemap.cellRect;
+			
+			if (camera.isMoving)
+			{
+				dest.x = int(owner.transform.x - camera.x) + _offsetX;
+				dest.y = int(owner.transform.y - camera.y) + _offsetY;
+			}
+			else
+			{
+				dest.x = int(owner.transform.x + _offsetX);
+				dest.y = int(owner.transform.y + _offsetY);
 			}
 			
-			dest.x = owner.transform.x;
-			dest.y = owner.transform.y;
-			
-			//trace("X", owner.name, canvasData, _graphic, _graphic.bitmapData);
+			//dest.x = owner.transform.x - 32;
+			//dest.y = owner.transform.y -32;			
 			
 			if (!owner.transform.isDirty)
 			{
@@ -106,6 +102,31 @@ package aholla.HEngine.core.entity
 				
 				
 				canvasData.draw(_graphic.bitmapData, matrix, colourTransform, null, clipRect, smoothing);
+			}
+		}
+		
+		override public function play($animation:String):void
+		{
+			if (_spritemap)
+				_spritemap.play($animation);
+		}
+		
+		override public function stop():void 
+		{
+			if (_spritemap)
+				_spritemap.stop();
+		}
+		
+		public function initSpritemap(spritemap:Spritemap, isCentered:Boolean):void 
+		{
+			_spritemap 			= spritemap;
+			_rect 				= _spritemap.cellRect;
+			_graphic.bitmapData = _spritemap.data;
+			
+			if (isCentered)
+			{
+				_offsetX -= int(_spritemap.cellRect.width * 0.5);				
+				_offsetY -= int(_spritemap.cellRect.height * 0.5);
 			}
 		}
 		
