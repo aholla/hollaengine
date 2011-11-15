@@ -71,9 +71,6 @@ package aholla.HEngine.managers
 		public function removeCollision($entity:IEntity):void
 		{
 			quadtree.remove($entity);
-			//var i:int = collisionVec.indexOf($entity);			
-			//if(i > -1 && i < collisionVec.length)
-				//collisionVec[i] = null;
 			var node:SLLNode = (collisionDict[$entity] as SLLNode);
 			if (node)
 			{
@@ -105,8 +102,6 @@ package aholla.HEngine.managers
 				while (node)
 				{
 					entityA = (node.val as IEntity);	
-					
-					trace(entityA.transform.bounds)
 					
 					if (!entityA.collider.isCollider || !entityA.isActive) 
 					{
@@ -146,7 +141,6 @@ package aholla.HEngine.managers
 					node = node.next;
 				}
 			}
-
 		}
 		
 		public function destroy():void 

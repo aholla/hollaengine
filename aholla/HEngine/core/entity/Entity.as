@@ -20,7 +20,7 @@ package aholla.HEngine.core.entity
 	public class Entity implements IEntity
 	{
 		private var _transform						:ITransformComponent;
-		private var _collider						:IColliderComponent;		
+		private var _collider						:ColliderComponent;	// IColliderComponent - changes for faster access to "collider.bounds";
 		private var _renderer						:IRendererComponent;
 		private var _id								:int;
 		private var _guid							:String;
@@ -216,7 +216,7 @@ package aholla.HEngine.core.entity
 		public function get messageCollision():ISignal 			{ 	return _messageCollision; }		
 		public function get isActive():Boolean 					{ 	return _isActive; }
 		public function get transform():ITransformComponent 	{	return _transform;	}			
-		public function get collider():IColliderComponent 		{	return _collider;	}
+		public function get collider():ColliderComponent 		{	return _collider;	}
 		
 		public function set isActive($value:Boolean):void		{ 	_isActive = $value; }
 		public function set id($id:int):void					{ 	_id = $id; }
