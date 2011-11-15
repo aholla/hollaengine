@@ -13,7 +13,6 @@ package aholla.HEngine.core.entity
 	public class ColliderComponent extends Component implements IColliderComponent
 	{
 		private var _shape							:IShape;
-		private var _bounds							:Rectangle;		
 		private var _isCollider						:Boolean;
 		private var _colliderGroup					:String;
 		private var _quadtreeNode					:QuadtreeNode;
@@ -50,34 +49,19 @@ package aholla.HEngine.core.entity
 			super.destroy();
 		}
 		
-		public function init($shape:IShape, $isCollider:Boolean = true, $offsetX:Number = 0, $offsetY:Number = 0, $colliderGroup:String = null, $scaleX:Number = 0, $scaleY:Number = 0):void 
+		public function init($shape:IShape, $isCollider:Boolean = true, $offsetX:Number = 0, $offsetY:Number = 0, $colliderGroup:String = null, $scaleX:Number = 1, $scaleY:Number = 1):void 
 		{
 			_isCollider 	= $isCollider;
 			_colliderGroup	= $colliderGroup;			
-			_shape 			= $shape;
-			//_shape.scaleX	= $scaleX;
-			//_shape.scaleY	= $scaleY;
-			//_shape.scale 	= ($scaleX > $scaleY) ? $scaleX: $scaleY;
-			//_shape.translate($offsetX, $offsetY);	
-			
-			_bounds 		= _shape.bounds;
-			
-			trace("shape bounds", _shape.bounds)
-			
-			owner.transform.width = _bounds.width;
-			owner.transform.height = _bounds.height;
-			//owner.transform.bounds = _bounds;
-			owner.transform.isDirty = false;
+			_shape 			= $shape;			
+			_shape.translate($offsetX, $offsetY);		
 		}
 		
 		public function render($graphic:Sprite, $colour:uint = 0x00FFFF):void
 		{			
-			_shape.render($graphic.graphics, $colour);			
-			//$graphic.x -= owner.renderer.offsetX / owner.transform.scaleX;
-			//$graphic.y -= owner.renderer.offsetY / owner.transform.scaleY;			
-			//$graphic.scaleX = 1 / owner.transform.scaleX;			
-			//$graphic.scaleY = 1 / owner.transform.scaleY;			
+			_shape.render($graphic.graphics, $colour);		
 		}		
+		
 		
 /*-------------------------------------------------
 * PRIVATE FUNCTIONS
@@ -85,17 +69,12 @@ package aholla.HEngine.core.entity
 		
 		private function setSize():void
 		{
-			//_shape.scale 	= owner.transform.scale;
-			//_shape.scaleX 	= owner.transform.scaleX;
-			//_shape.scaleY 	= owner.transform.scaleY;				
-			_bounds 		= _shape.bounds;
+			_shape.scale 	= owner.transform.scale;			
+			_shape.scaleX 	= owner.transform.scaleX;
+			_shape.scaleY 	= owner.transform.scaleY;
 			
-			trace("shape bounds", _shape.bounds)
-			
-			owner.transform.width = _bounds.width;
-			owner.transform.height = _bounds.height;
-			//owner.transform.bounds = _bounds;	
-			owner.transform.isDirty = false;
+			owner.transform.width 	= _shape.bounds.width;
+			owner.transform.height 	= _shape.bounds.height;	
 		}
 		
 /*-------------------------------------------------
@@ -107,12 +86,11 @@ package aholla.HEngine.core.entity
 * GETTERS / SETTERS
 -------------------------------------------------*/
 
-		public function get bounds():Rectangle					{	return _bounds; }
+		public function get bounds():Rectangle					{	return _shape.bounds; }
 		public function get shape():IShape						{	return _shape; }		
 		public function set shape($shape:IShape):void 
 		{
 			_shape 	= $shape;
-			_bounds = _shape.bounds;
 		}
 		
 		public function get colliderGroup():String 				{ 	return _colliderGroup;}		
@@ -141,7 +119,7 @@ package aholla.HEngine.core.entity
 		public function set quadtreeNode($value:QuadtreeNode):void 
 		{
 			_quadtreeNode = $value;
-		}		
+		}	
 		
 	}
 

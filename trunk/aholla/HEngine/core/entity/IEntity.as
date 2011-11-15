@@ -174,7 +174,7 @@ package aholla.HEngine.core.entity
 		/**
 		 * The colliderComponent for the Entity. If set, this is where the "collision" information (shape, bounds) is stored.
 		 */
-		function get collider():IColliderComponent;
+		function get collider():ColliderComponent;//IColliderComponent;
 	}	
 	
 }

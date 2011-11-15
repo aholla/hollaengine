@@ -98,6 +98,8 @@ package aholla.HEngine.collision.shapes
 		{
 			//_bounds = null;
 			
+			trace(bounds.width)
+			
 			// bounds
 			graphics.lineStyle(0.1, 0x0000FF, 0.5);
 			graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
@@ -106,9 +108,9 @@ package aholla.HEngine.collision.shapes
 			graphics.lineStyle(1.0, $colour, 0.8);
 			graphics.beginFill($colour, 0.1);
 			
-			// loop through the vertices, drawing from one to another			
-			//var basePt:Point = new Point(_tx, _ty);			
-			var basePt:Point = new Point(_tx, _ty);			
+			// loop through the vertices, drawing from one to another	
+			var basePt:Point = new Point(0, 0);	
+			
 			var len:int = vertices.length;
 			if (len == 0) return;		// bail if there is only 1 vertex
 			var pt:Point = basePt.add(vertices[0]);				
@@ -228,13 +230,17 @@ package aholla.HEngine.collision.shapes
 		private function updateTransformation():void 
 		{
 			_bounds = null;
-			_transform.identity();
-			//
-			//trace("MATRIX a:", _transform.a)
+			
+			//trace("a updateTransformation", _scaleX, _transform.a);
+			
+			_transform.identity();			
 			_transform.translate(_tx, _ty);
 			_transform.scale(_scaleX, _scaleY);	
-			//trace("MATRIX b:", _transform.a)
 			_transform.rotate(_rotation * Math.PI / 180);
+			
+			
+			//trace("b updateTransformation", _scaleX, _transform.a);
+			
 			// mark the points as dirty
 			_transfromDirty = true;
 		}
@@ -276,7 +282,7 @@ package aholla.HEngine.collision.shapes
 		public function set rotation(value:Number):void 
 		{
 			_rotation = value;
-			//updateTransformation();
+			updateTransformation();
 		}
 		
 		/**
@@ -286,7 +292,7 @@ package aholla.HEngine.collision.shapes
 		public function set scaleX(value:Number):void
 		{
 			_scaleX = value;
-			//updateTransformation();
+			updateTransformation();
 		}
 		
 		/**
@@ -296,7 +302,7 @@ package aholla.HEngine.collision.shapes
 		public function set scaleY(value:Number):void 
 		{
 			_scaleY = value;
-			//updateTransformation();
+			updateTransformation();
 		}		
 		
 		public function get scale():Number{	return _scale;}		
@@ -352,7 +358,7 @@ package aholla.HEngine.collision.shapes
 				var pX		:int;
 				var pY		:int;
 				
-				for each(var pt:Point in vertices) 
+				for each(var pt:Point in _rawVertices) 
 				{
 					pX = _transform.transformPoint(pt).x;
 					pY = _transform.transformPoint(pt).y;
@@ -362,8 +368,8 @@ package aholla.HEngine.collision.shapes
 					if (pY < lowY)	lowY = pY;
 					if (pY > highY) highY = pY;
 				}
-				var _width	:int = highX - lowX;
-				var _height	:int = highY - lowY;
+				var _width	:int = (highX - lowX);
+				var _height	:int = (highY - lowY);
 				_bounds = new Rectangle(lowX, lowY, _width, _height);	
 				return _bounds;
 			}

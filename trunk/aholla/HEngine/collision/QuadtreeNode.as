@@ -1,6 +1,5 @@
 /**
  * Based upon the C# quadtree found here: http://www.codeproject.com/KB/recipes/QuadTree.aspx
- * Uses Polygonal Single Linked list for faster adding and removing of items into quads and merging of lists.
  * @author Adam H.
  * 
  */
@@ -37,11 +36,11 @@ package aholla.HEngine.collision
 			centerX = _bounds.width * 0.5;
 			centerY = _bounds.height * 0.5;
 			
-			//if (HE.isDebug)
-			//{
-				//HE.world.debugLayer.graphics.lineStyle(0.5, 0x99B5FF, 0.1);
-				//HE.world.debugLayer.graphics.drawRect(_bounds.x, _bounds.y, _bounds.width, _bounds.height);
-			//}
+			if (HE.isDebug)
+			{
+				HE.world.debugLayer.graphics.lineStyle(0.5, 0x99B5FF, 0.1);
+				HE.world.debugLayer.graphics.drawRect(_bounds.x, _bounds.y, _bounds.width, _bounds.height);
+			}
 		}
 		
 /*-------------------------------------------------

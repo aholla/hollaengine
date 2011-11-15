@@ -40,8 +40,6 @@ package aholla.HEngine.core.entity
 		function get scaleY():Number;
 		function set scaleY(value:Number):void;
 		
-		//function get oldPos():Point;
-		
 		function get velocity():Point;
 		function set velocity(value:Point):void;
 		

@@ -17,20 +17,20 @@ package aholla.HEngine.core.entity
 	
 	public class TransformComponent extends Component implements ITransformComponent
 	{
-		private var _width							:Number = 0;
-		private var _height							:Number = 0;
-		private var _x								:Number = 0;
-		private var _y								:Number = 0;
-		private var _z								:Number = 0;
+		private var _x								:Number;
+		private var _y								:Number;
+		private var _z								:Number;
+		private var _width							:Number;
+		private var _height							:Number;		
+		private var _zIndex							:Number;	
+		private var _rotation						:Number;
+		private var _scale							:Number;
+		private var _scaleX							:Number;
+		private var _scaleY							:Number;
+		private var _layerIndex						:Number;
 		private var _bounds							:Rectangle;
-		private var _zIndex							:Number = 0;	
-		private var _rotation						:Number = 0;
-		private var _scale							:Number = 1;
-		private var _scaleX							:Number = 1;
-		private var _scaleY							:Number = 1;
-		private var _layerIndex						:Number = 0;		
-		private var _velocity						:Point = new Point();
-		private var _acceleration					:Point = new Point();
+		private var _velocity						:Point;
+		private var _acceleration					:Point;
 		private var _isDirty						:Boolean;
 		private var _hasMoved						:Boolean;
 		
@@ -40,7 +40,20 @@ package aholla.HEngine.core.entity
 	
 		public function TransformComponent()
 		{
-			_bounds = new Rectangle();
+			_x 				= 0;
+			_y 				= 0;
+			_z 				= 0;
+			_width 			= 0;
+			_height 		= 0;
+			_zIndex 		= 0;
+			_rotation 		= 0;
+			_scale 			= 1;
+			_scaleX 		= 1;
+			_scaleY 		= 1;
+			_layerIndex 	= 0;
+			_bounds 		= new Rectangle();
+			_velocity 		= new Point();
+			_acceleration 	= new Point();
 		}
 		
 // ----------------------------------------------------
@@ -54,11 +67,7 @@ package aholla.HEngine.core.entity
 		
 		override public function start():void 
 		{
-			if (owner.collider)
-			{
-				owner.collider.shape.scaleX = _scaleX;
-				owner.collider.shape.scaleY = _scaleY;
-			}
+			_isDirty = checkIfDirty();
 			super.start();
 		}
 		
@@ -125,14 +134,14 @@ package aholla.HEngine.core.entity
 		public function set width(value:Number):void 			
 		{	
 			_width = value;
-			_isDirty = true;
+			_bounds.width = _width;
 		}
 		
 		public function get height():Number 					{	return _height; }		
 		public function set height(value:Number):void 			
 		{	
 			_height = value;
-			_isDirty = true;
+			_bounds.height = _height;
 		}
 		
 		public function get rotation():Number 					{	return _rotation; }		
@@ -152,6 +161,7 @@ package aholla.HEngine.core.entity
 			_scale = _scaleX = _scaleY = value; 
 			_width *= value; 
 			_height *= value; 
+			_bounds.height = _height;
 			if (owner.collider)	owner.collider.shape.scale = value;
 			_isDirty = checkIfDirty();
 		}	
@@ -161,6 +171,7 @@ package aholla.HEngine.core.entity
 		{	
 			_scaleX = value; 
 			_width *= value;
+			_bounds.height = _width;
 			if (owner.collider)	owner.collider.shape.scaleX = value;
 			_isDirty = checkIfDirty();
 		}
@@ -184,40 +195,26 @@ package aholla.HEngine.core.entity
 		
 		public function get bounds():Rectangle
 		{
-			if (owner)
+			if (owner.collider)
 			{
-				if (owner.collider)
-				{
-					//_bounds.x 		= _x + (owner.collider.offsetX * scaleX);
-					//_bounds.y 		= _y + (owner.collider.offsetY * scaleY);
-					_bounds.x 		= _x + owner.collider.bounds.x;
-					_bounds.y 		= _y + owner.collider.bounds.y;
-					_bounds.width 	= _width * scaleX;
-					_bounds.height 	= _height * scaleY;					
-				}
-				else
-				{
-					_bounds.x 		= _x;
-					_bounds.y 		= _y;
-					_bounds.width 	= _width * scaleX;
-					_bounds.height 	= _height * scaleY;
-				}
+				_bounds.x 		= _x + owner.collider.bounds.x;
+				_bounds.y 		= _y + owner.collider.bounds.y;				
 			}
 			return _bounds;
 		}
-		public function set bounds($rect:Rectangle):void	{	_bounds = $rect; }
+		public function set bounds($rect:Rectangle):void	{	_bounds = $rect;	}
 		
-		public function get hasMoved():Boolean 			{	return _hasMoved;	}
-		public function set hasMoved(value:Boolean):void {	_hasMoved = value;	}
+		public function get hasMoved():Boolean 				{	return _hasMoved;	}
+		public function set hasMoved(value:Boolean):void 	{	_hasMoved = value;	}
 		
-		public function get isDirty():Boolean 			{	return _isDirty;	}
-		public function set isDirty(value:Boolean):void {	_isDirty = value;	}
+		public function get isDirty():Boolean 				{	return _isDirty;	}
+		public function set isDirty(value:Boolean):void 	{	_isDirty = value;	}
 		
 		override public function toString():String 
 		{
 			return "[Component name=" + name + " isActive=" + isActive + " owner= " + owner+ " x=" + x + " y=" + y + " z=" + z + " zIndex=" + zIndex + " width=" + width + " height=" + height + 
-						" rotation=" + rotation + " scale=" + scale + " velocity=" + velocity + 
-						" acceleration=" + acceleration + "]";
+						" rotation=" + rotation + " scale=" + scale + " velocity=" + velocity + " acceleration=" + acceleration + "]";
+						
 		}
 		
 		

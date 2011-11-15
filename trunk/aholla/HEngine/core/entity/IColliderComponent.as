@@ -12,10 +12,8 @@ package aholla.HEngine.core.entity
 	 */
 	public interface IColliderComponent extends IComponent
 	{
-		function init($shape:IShape, $isCollider:Boolean = true,  $offsetX:Number = 0, $offsetY:Number = 0, $collisionGroup:String = null, $scaleX:Number = 0, $scaleY:Number = 0):void;
+		function init($shape:IShape, $isCollider:Boolean = true,  $offsetX:Number = 0, $offsetY:Number = 0, $collisionGroup:String = null, $scaleX:Number = 1, $scaleY:Number = 1):void;
 		function render($graphic:Sprite, $colour:uint = 0x0000FF):void;
-		
-		function get bounds():Rectangle
 		
 		function get shape():IShape
 		function set shape($shape:IShape):void
@@ -28,9 +26,6 @@ package aholla.HEngine.core.entity
 		
 		function get offsetX():Number;
 		function get offsetY():Number;
-			
-		//function get hasMoved():Boolean;		
-		//function set hasMoved($value:Boolean):void;	
 		
 		/**
 		 * The quadtree the entity is in.

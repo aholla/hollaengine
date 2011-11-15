@@ -53,7 +53,7 @@ package aholla.HEngine.core.entity
 		{
 			
 		}
-				
+		
 		override public function render(canvasData:BitmapData = null):void 
 		{
 			if (_spritemap)
@@ -69,9 +69,6 @@ package aholla.HEngine.core.entity
 				dest.x = int(owner.transform.x + _offsetX);
 				dest.y = int(owner.transform.y + _offsetY);
 			}
-			
-			//dest.x = owner.transform.x - 32;
-			//dest.y = owner.transform.y -32;			
 			
 			if (!owner.transform.isDirty)
 			{
@@ -98,8 +95,7 @@ package aholla.HEngine.core.entity
 				matrix.a = scaleX;
 				matrix.d = scaleY;
 				clipRect.width 	= _rect.width * scaleX;
-				clipRect.height = _rect.width * scaleY;			
-				
+				clipRect.height = _rect.width * scaleY;				
 				
 				canvasData.draw(_graphic.bitmapData, matrix, colourTransform, null, clipRect, smoothing);
 			}
