@@ -227,9 +227,9 @@ package aholla.HEngine.collision.shapes
 		{
 			_bounds = null;
 			_transform.identity();			
-			_transform.translate(_tx, _ty);
 			_transform.scale(_scaleX, _scaleY);	
 			_transform.rotate(_rotation * Math.PI / 180);			
+			_transform.translate(_tx, _ty);
 			// mark the points as dirty
 			_transfromDirty = true;
 		}
@@ -252,8 +252,8 @@ package aholla.HEngine.collision.shapes
 			return _x; 
 		}
 		public function set x(value:Number):void 
-		{
-			_x = value + _tx;
+		{ 
+			_x = value;
 		}		
 		
 		/**
@@ -265,7 +265,7 @@ package aholla.HEngine.collision.shapes
 		}
 		public function set y(value:Number):void 
 		{
-			_y = value + _ty;
+			_y = value;
 		}
 		
 		/**
@@ -365,8 +365,9 @@ package aholla.HEngine.collision.shapes
 					if (pY > highY) highY = pY;
 				}
 				var _width	:int = (highX - lowX);
-				var _height	:int = (highY - lowY);
-				_bounds = new Rectangle(lowX, lowY, _width, _height);	
+				var _height	:int = (highY - lowY);				
+				
+				_bounds = new Rectangle(lowX, lowY, _width, _height);
 				return _bounds;
 			}
 		}		

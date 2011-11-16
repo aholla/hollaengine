@@ -69,6 +69,7 @@ package aholla.HEngine.core.entity
 		
 		private function setSize():void
 		{
+			_shape.rotation = owner.transform.rotation;
 			_shape.scale 	= owner.transform.scale;			
 			_shape.scaleX 	= owner.transform.scaleX;
 			_shape.scaleY 	= owner.transform.scaleY;

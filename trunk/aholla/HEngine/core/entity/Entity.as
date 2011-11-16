@@ -148,7 +148,7 @@ package aholla.HEngine.core.entity
 		/**
 		 * @inheritDoc
 		 */
-		public function createRenderer(isBlitted:Boolean = true, spritemap:Spritemap = null, isCentered:Boolean = true):void
+		public function createRenderer(isBlitted:Boolean = true, spritemap:Spritemap = null, isCentered:Boolean = true, $offsetX:Number = 0, $offsetY:Number = 0):void
 		{			
 			if (_renderer)
 			{				
@@ -160,7 +160,7 @@ package aholla.HEngine.core.entity
 			if (isBlitted)
 			{
 				if (!spritemap) Logger.error(this, "The spritemap proveded to 'initRenderer()' is null.");
-				_renderer = new RendererBlitComponent();
+				_renderer = new RendererBlitComponent($offsetX, $offsetY, false);
 				(_renderer as RendererBlitComponent).initSpritemap(spritemap, isCentered);
 			}
 			else

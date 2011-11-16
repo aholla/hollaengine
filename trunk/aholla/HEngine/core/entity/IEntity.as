@@ -83,7 +83,7 @@ package aholla.HEngine.core.entity
 		 * @param	spritemap:Spritemap - The spritemap class that contains the blitting info.
 		 * @param	isCentered:Boolean - If teh entities origin is centered, else it will be top left aligned.
 		 */
-		function createRenderer(isBlitted:Boolean = true, spritemap:Spritemap = null, isCentered:Boolean = true):void;
+		function createRenderer(isBlitted:Boolean = true, spritemap:Spritemap = null, isCentered:Boolean = true, offsetX:Number = 0, offsetY:Number = 0):void;
 		
 		/**
 		 * Initializes the collider so the component is able for collision detection.

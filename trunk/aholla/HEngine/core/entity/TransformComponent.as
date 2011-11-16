@@ -148,6 +148,7 @@ package aholla.HEngine.core.entity
 		public function set rotation(value:Number):void 		
 		{	
 			_rotation = value;
+			if (owner.collider)	owner.collider.shape.rotation = value;
 			_isDirty = checkIfDirty();
 		}
 		
