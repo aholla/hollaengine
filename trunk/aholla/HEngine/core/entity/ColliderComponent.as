@@ -49,7 +49,7 @@ package aholla.HEngine.core.entity
 			super.destroy();
 		}
 		
-		public function init($shape:IShape, $isCollider:Boolean = true, $offsetX:Number = 0, $offsetY:Number = 0, $colliderGroup:String = null, $scaleX:Number = 1, $scaleY:Number = 1):void 
+		public function create($shape:IShape, $isCollider:Boolean = true, $offsetX:Number = 0, $offsetY:Number = 0, $colliderGroup:String = null):void 
 		{
 			_isCollider 	= $isCollider;
 			_colliderGroup	= $colliderGroup;			

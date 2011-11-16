@@ -13,16 +13,16 @@ package aholla.HEngine.collision.shapes
 
 	public class Circle implements IShape
 	{		
-		private var _x								:Number = 0;
-		private var _y								:Number = 0;	
-		private var _tx								:Number = 0;
-		private var _ty								:Number = 0;
-		private var _scale							:Number = 1;		
-		private var _scaleX							:Number = 1;		
-		private var _scaleY							:Number = 1;		
-		private var _rawScale						:Number = 1;		
-		private var _radius							:Number = 0;
-		private var _rotation						:Number = 0;
+		private var _x								:Number;
+		private var _y								:Number;
+		private var _tx								:Number;
+		private var _ty								:Number;
+		private var _scale							:Number;
+		private var _scaleX							:Number;
+		private var _scaleY							:Number;
+		private var _rawScale						:Number;
+		private var _radius							:Number;
+		private var _rotation						:Number;
 		private var _bounds							:Rectangle;
 		
 /*-------------------------------------------------
@@ -31,6 +31,16 @@ package aholla.HEngine.collision.shapes
 			
 		public function Circle ($radius:Number = 0)
 		{
+			_x			= 0;
+			_y			= 0;	
+			_tx			= 0;
+			_ty			= 0;
+			_scale		= 1;		
+			_scaleX		= 1;		
+			_scaleY		= 1;		
+			_rawScale	= 1;		
+			_radius		= 0;
+			_rotation	= 0;
 			setRadius($radius * _scale);
 		}
 		
@@ -58,14 +68,12 @@ package aholla.HEngine.collision.shapes
 		 */
 		public function render(g:Graphics, $colour:uint = 0x00FFFF):void 
 		{
-			_bounds = null;
-			
 			// bounds
-			g.lineStyle(0.1, 0x0000FF, 0.3);			
-			g.drawRect(bounds.x + _tx, bounds.y + _ty, bounds.width, bounds.height);			
+			g.lineStyle(0.1, 0x0080FF, 0.5);					
+			g.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);			
 			
 			// shape
-			g.lineStyle(0.1, $colour, 1);
+			g.lineStyle(0.5, $colour, 0.8);
 			g.beginFill($colour, 0.1);
 			g.drawCircle(_tx, _ty, transformedRadius);
 			g.endFill();
@@ -196,9 +204,7 @@ package aholla.HEngine.collision.shapes
 			else
 			{
 				var _scaledRadius:Number = radius * _scale;
-				//_tx -= _scaledRadius;
-				//_ty -= _scaledRadius;
-				_bounds = new Rectangle(- _scaledRadius, - _scaledRadius, _scaledRadius * 2, _scaledRadius * 2);;
+				_bounds = new Rectangle(-_scaledRadius + _tx, -_scaledRadius + _ty, _scaledRadius * 2, _scaledRadius * 2);;
 				return _bounds;
 			}
 		}		
@@ -208,14 +214,14 @@ package aholla.HEngine.collision.shapes
 		 */
 		public function get tx():Number		{	return _tx;	}		
 		public function get ty():Number		{	return _ty;	}		
-		public function set tx($value:Number):void
-		{
-			_tx = $value;
-		}		
-		public function set ty($value:Number):void
-		{
-			_ty = $value;
-		}
+		//public function set tx($value:Number):void
+		//{
+			//_tx = $value;
+		//}		
+		//public function set ty($value:Number):void
+		//{
+			//_ty = $value;
+		//}
 		
 	}
 }

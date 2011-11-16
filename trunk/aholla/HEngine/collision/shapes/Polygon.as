@@ -96,16 +96,12 @@ package aholla.HEngine.collision.shapes
 		 */
 		public function render(graphics:Graphics, $colour:uint = 0x00FFFF):void 
 		{
-			//_bounds = null;
-			
-			trace(bounds.width)
-			
 			// bounds
-			graphics.lineStyle(0.1, 0x0000FF, 0.5);
+			graphics.lineStyle(0.1, 0x0080FF, 0.5);
 			graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
 			
 			// shape
-			graphics.lineStyle(1.0, $colour, 0.8);
+			graphics.lineStyle(0.5, $colour, 0.8);
 			graphics.beginFill($colour, 0.1);
 			
 			// loop through the vertices, drawing from one to another	
@@ -230,17 +226,10 @@ package aholla.HEngine.collision.shapes
 		private function updateTransformation():void 
 		{
 			_bounds = null;
-			
-			//trace("a updateTransformation", _scaleX, _transform.a);
-			
 			_transform.identity();			
 			_transform.translate(_tx, _ty);
 			_transform.scale(_scaleX, _scaleY);	
-			_transform.rotate(_rotation * Math.PI / 180);
-			
-			
-			//trace("b updateTransformation", _scaleX, _transform.a);
-			
+			_transform.rotate(_rotation * Math.PI / 180);			
 			// mark the points as dirty
 			_transfromDirty = true;
 		}
@@ -258,27 +247,34 @@ package aholla.HEngine.collision.shapes
 		/**
 		 * Returns the x position
 		 */
-		public function get x():Number 	{ return _x; }
+		public function get x():Number 	
+		{			
+			return _x; 
+		}
 		public function set x(value:Number):void 
 		{
 			_x = value + _tx;
-			//_bounds.x = _x;
 		}		
 		
 		/**
 		 * Returns the y position
 		 */
-		public function get y():Number 	{return _y;	}
+		public function get y():Number 	
+		{ 
+			return _y;	
+		}
 		public function set y(value:Number):void 
 		{
 			_y = value + _ty;
-			//_bounds.y = _y;
 		}
 		
 		/**
 		 * Sets/gets the rotation of this polygon
 		 */
-		public function get rotation():Number { return _rotation; }
+		public function get rotation():Number 
+		{ 
+			return _rotation; 
+		}
 		public function set rotation(value:Number):void 
 		{
 			_rotation = value;

@@ -148,7 +148,7 @@ package aholla.HEngine.core.entity
 		/**
 		 * @inheritDoc
 		 */
-		public function initRenderer(isBlitted:Boolean = true, spritemap:Spritemap = null, isCentered:Boolean = true):void
+		public function createRenderer(isBlitted:Boolean = true, spritemap:Spritemap = null, isCentered:Boolean = true):void
 		{			
 			if (_renderer)
 			{				
@@ -174,7 +174,7 @@ package aholla.HEngine.core.entity
 		/**
 		 * @inheritDoc
 		 */
-		public function initCollider($shape:IShape, $isCollider:Boolean = true, $offsetX:Number = 0, $offsetY:Number = 0, $collisionGroup:String = null):void
+		public function createCollider($shape:IShape, $isCollider:Boolean = true, $offsetX:Number = 0, $offsetY:Number = 0, $collisionGroup:String = null):void
 		{
 			if (HE.isDebug && !_renderer)
 			{
@@ -190,7 +190,7 @@ package aholla.HEngine.core.entity
 			_collider = new ColliderComponent();
 			addComponent(_collider, "collider");
 			
-			_collider.init($shape, $isCollider, $offsetX, $offsetY, $collisionGroup, transform.scaleX, transform.scaleY);			
+			_collider.create($shape, $isCollider, $offsetX, $offsetY, $collisionGroup);			
 			HE.processManager.addCollision(this);
 		}
 		

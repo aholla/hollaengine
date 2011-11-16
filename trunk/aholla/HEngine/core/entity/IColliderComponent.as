@@ -12,7 +12,7 @@ package aholla.HEngine.core.entity
 	 */
 	public interface IColliderComponent extends IComponent
 	{
-		function init($shape:IShape, $isCollider:Boolean = true,  $offsetX:Number = 0, $offsetY:Number = 0, $collisionGroup:String = null, $scaleX:Number = 1, $scaleY:Number = 1):void;
+		function create($shape:IShape, $isCollider:Boolean = true,  $offsetX:Number = 0, $offsetY:Number = 0, $collisionGroup:String = null):void;
 		function render($graphic:Sprite, $colour:uint = 0x0000FF):void;
 		
 		function get shape():IShape

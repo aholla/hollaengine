@@ -83,7 +83,7 @@ package aholla.HEngine.core.entity
 		 * @param	spritemap:Spritemap - The spritemap class that contains the blitting info.
 		 * @param	isCentered:Boolean - If teh entities origin is centered, else it will be top left aligned.
 		 */
-		function initRenderer(isBlitted:Boolean = true, spritemap:Spritemap = null, isCentered:Boolean = true):void;
+		function createRenderer(isBlitted:Boolean = true, spritemap:Spritemap = null, isCentered:Boolean = true):void;
 		
 		/**
 		 * Initializes the collider so the component is able for collision detection.
@@ -91,7 +91,7 @@ package aholla.HEngine.core.entity
 		 * @param	$isCollider:Boolean - if the shape is an "active" collider, it checks against other items.
 		 * @param	$collisionGroup:String - a group identifier to stop collisions with similar items
 		 */
-		function initCollider($shape:IShape, $isCollider:Boolean = true, $offsetX:Number = 0, $offsetY:Number = 0, $collisionGroup:String = null):void		
+		function createCollider($shape:IShape, $isCollider:Boolean = true, $offsetX:Number = 0, $offsetY:Number = 0, $collisionGroup:String = null):void		
 		
 		
 		
