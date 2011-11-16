@@ -13,15 +13,16 @@ package aholla.HEngine.core
 	
 	public class Camera
 	{
-		private var _isMoving						:Boolean = false;
 		private var _target							:ITransformComponent;		
-		private var _x								:int = 0;
-		private var _y								:int = 0;
-		private var _dx								:int = 0;
-		private var _dy								:int = 0;
+		private var _isMoving						:Boolean;
+		private var _x								:int;
+		private var _y								:int;
+		private var _dx								:int;
+		private var _dy								:int;
+		private var _easing							:Number;
 		private var _bounds							:Rectangle;
-		private var cameraOffset					:Point = new Point();
-		private var _easing							:Number = 0.2;
+		private var cameraOffset					:Point;
+		private var _position						:Point;
 		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -29,6 +30,13 @@ package aholla.HEngine.core
 	
 		public function Camera() 
 		{
+			_x = 0;
+			_y = 0;
+			_dx = 0;
+			_dy = 0;
+			_easing = 0.2;
+			cameraOffset = new Point();
+			_position 	 = new Point();
 			cameraOffset.x = HE.SCREEN_WIDTH * 0.5;
 			cameraOffset.y = HE.SCREEN_HEIGHT * 0.5;			
 			updateBounds();
@@ -88,6 +96,13 @@ package aholla.HEngine.core
 			HE.processManager.forceUpdate();
 		}
 		
+		public function setTarget(entityTransformComponent:ITransformComponent, $easing:Number = 0.2):void
+		{
+			_target = entityTransformComponent;	
+			_easing = $easing;
+			_isMoving = true;
+		}
+		
 		public function start():void 
 		{
 		}
@@ -135,7 +150,7 @@ package aholla.HEngine.core
 		 * Set the Camera target to an Entities "transform". It will then track the target.
 		 * @param value:ITransformComponent - the Transform component of teh entity e.g. HE.camera.target = entityA.transform;
 		 */
-		public function set target(value:ITransformComponent):void 	{_target = value;	_isMoving = true;	}
+		//public function set target(value:ITransformComponent):void 	{_target = value;	_isMoving = true;	}
 		
 		public function get isMoving():Boolean 		{ return _isMoving; }			
 		public function get x():Number 				{ return _x; }			
@@ -147,6 +162,20 @@ package aholla.HEngine.core
 		public function set offsetY($value:Number):void		{ cameraOffset.y += $value; }		
 		
 		public function set easing($value:Number):void	{ _easing = $value; }
+		
+		public function get position():Point			
+		{
+			if (_position)
+			{
+				_position.x = _x;
+				_position.y = _y;
+				return _position;
+			}
+			else
+			{
+				return null;
+			}
+		}
 		
 	}
 }

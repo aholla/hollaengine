@@ -94,8 +94,10 @@ package aholla.HEngine.managers
 					(head.val as IRendererComponent).debugRender(canvasDebugData);
 					head = head.next;
 				}
+				
+				var debugPos:Point = new Point(- HE.camera.x, -HE.camera.y)
+				canvasData.copyPixels(canvasDebugData, canvasRect, debugPos, null, null, true);
 				canvasDebugData.unlock();
-				canvasData.copyPixels(canvasDebugData, canvasRect, new Point(), null, null, true);
 			}
 		}	
 		

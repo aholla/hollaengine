@@ -49,19 +49,17 @@ package aholla.HEngine.collision.shapes
 		 */
 		public function render(graphics:Graphics, $colour:uint):void 
 		{
-			_bounds = null;
-			
 			// bounds
-			graphics.lineStyle(0.1, 0x0000FF, 0.5);
-			//graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
-			graphics.drawRect(bounds.x - _tx, bounds.y - _ty, bounds.width, bounds.height);
+			graphics.lineStyle(0.1, 0x0080FF, 0.5);
+			graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
 			
 			// shape
-			graphics.lineStyle(1.0, $colour, 0.8);
+			graphics.lineStyle(0.5, $colour, 0.8);
 			graphics.beginFill($colour, 0.1);
 			
-			// loop through the vertices, drawing from one to another			
-			var basePt:Point = new Point(_tx, _ty);			
+			// loop through the vertices, drawing from one to another	
+			var basePt:Point = new Point(0, 0);	
+			
 			var len:int = vertices.length;
 			if (len == 0) return;		// bail if there is only 1 vertex
 			var pt:Point = basePt.add(vertices[0]);				
@@ -74,7 +72,7 @@ package aholla.HEngine.collision.shapes
 				pt = basePt.add(vertex);
 				graphics.lineTo(pt.x, pt.y);
 			}
-			graphics.endFill();
+			graphics.endFill()
 		}
 		
 		/**
@@ -155,6 +153,17 @@ package aholla.HEngine.collision.shapes
 			_transfromDirty = true;
 		}	
 		
+		/**
+		 * Translates the polygons position.
+		 * @param	$tx:Number
+		 * @param	$ty:Number
+		 */
+		public function translate($tx:Number, $ty:Number):void
+		{
+			_tx = $tx;
+			_ty = $ty;			
+			updateTransformation();			
+		}
 		
 		
 		// EVENT HANDLERS
@@ -250,19 +259,7 @@ package aholla.HEngine.collision.shapes
 			}
 			_transfromDirty = false;
 			return _transformedVertices.concat();
-		}
-		
-		
-		/**
-		 * ALL THE STUFF BELLOW HAS BEEN ADDED FOR THE HENGINE.
-		 */
-		
-		public function translate($tx:Number, $ty:Number):void
-		{
-			_tx = $tx;
-			_ty = $ty;			
-			updateTransformation();			
-		}
+		}				
 		
 		public function get bounds():Rectangle
 		{
@@ -279,7 +276,7 @@ package aholla.HEngine.collision.shapes
 				var pX		:int;
 				var pY		:int;
 				
-				for each(var pt:Point in vertices) 
+				for each(var pt:Point in _rawVertices) 
 				{
 					pX = _transform.transformPoint(pt).x;
 					pY = _transform.transformPoint(pt).y;
@@ -299,17 +296,17 @@ package aholla.HEngine.collision.shapes
 		public function get tx():Number	{	return _tx;		}		
 		public function get ty():Number	{	return _ty;		}
 		
-		public function set tx($value:Number):void
-		{
-			_tx = $value;
-			updateTransformation();
-		}
-		
-		public function set ty($value:Number):void
-		{
-			_ty = $value;
-			updateTransformation();
-		}		
+		//public function set tx($value:Number):void
+		//{
+			//_tx = $value;
+			//updateTransformation();
+		//}
+		//
+		//public function set ty($value:Number):void
+		//{
+			//_ty = $value;
+			//updateTransformation();
+		//}		
 		
 	}
 }
