@@ -28,9 +28,11 @@ package aholla.HEngine.core.entity
 * PUBLIC CONSTRUCTOR
 -------------------------------------------------*/
 	
-		public function RendererBlitComponent(smoothing:Boolean = false) 
+		public function RendererBlitComponent($offsetX:int = 0, $offsetY:int = 0, smoothing:Boolean = false) 
 		{
 			super();
+			_offsetX = $offsetX;
+			_offsetY = $offsetY;
 			dest = new Point();
 			this.smoothing = smoothing;
 		}
@@ -84,10 +86,8 @@ package aholla.HEngine.core.entity
 				var scaleX:int = owner.transform.scaleX;
 				var scaleY:int = owner.transform.scaleY;
 				
-				// destination
-				//matrix.tx = -_rect.x + dest.x;
-				matrix.tx = dest.x - (_rect.x * scaleX);
-				matrix.ty = dest.y - (_rect.y * scaleY);
+				
+				
 				clipRect.x =  dest.x;
 				clipRect.y =  dest.y;
 				
@@ -95,7 +95,18 @@ package aholla.HEngine.core.entity
 				matrix.a = scaleX;
 				matrix.d = scaleY;
 				clipRect.width 	= _rect.width * scaleX;
-				clipRect.height = _rect.width * scaleY;				
+				clipRect.height = _rect.width * scaleY;	
+				
+				// destination
+				//matrix.tx = -_rect.x + dest.x;
+				//matrix.tx = dest.x - (_rect.x * scaleX) //- 32;
+				matrix.tx = (dest.x - _rect.x) * scaleX//- 32;
+				matrix.ty = dest.y - (_rect.y * scaleY) //- 32;
+				
+				trace(matrix.tx, clipRect.x)
+				
+				matrix.tx = (dest.x - _rect.x) * scaleX;
+				clipRect.x = dest.x * scaleX;
 				
 				canvasData.draw(_graphic.bitmapData, matrix, colourTransform, null, clipRect, smoothing);
 			}
