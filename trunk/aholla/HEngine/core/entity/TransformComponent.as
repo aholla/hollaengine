@@ -81,8 +81,8 @@ package aholla.HEngine.core.entity
 -------------------------------------------------*/		
 		
 		private function checkIfDirty():Boolean
-		{
-			if (_rotation != 0)	
+		{	
+			if (_rotation != 0)
 				return true;	
 			else if (_scale != 1)	
 				return true;
@@ -133,23 +133,21 @@ package aholla.HEngine.core.entity
 		public function get width():Number 						{ return _width; }		
 		public function set width(value:Number):void 			
 		{	
-			_width = value;
-			_bounds.width = _width;
+			_width = _bounds.width = value;
 		}
 		
 		public function get height():Number 					{	return _height; }		
 		public function set height(value:Number):void 			
 		{	
-			_height = value;
-			_bounds.height = _height;
+			_height = _bounds.height = value;
 		}
 		
 		public function get rotation():Number 					{	return _rotation; }		
 		public function set rotation(value:Number):void 		
 		{	
 			_rotation = value;
-			if (owner.collider)	owner.collider.shape.rotation = value;
 			_isDirty = checkIfDirty();
+			if (owner.collider)	owner.collider.shape.rotation = value;
 		}
 		
 		public function get scale():Number 						
@@ -159,30 +157,31 @@ package aholla.HEngine.core.entity
 		}		
 		public function set scale(value:Number):void 			
 		{	
-			_scale = _scaleX = _scaleY = value; 
-			_width *= value; 
-			_height *= value; 
-			_bounds.height = _height;
-			if (owner.collider)	owner.collider.shape.scale = value;
+			_scale = _scaleX = _scaleY = value;
+			_bounds.width 	= _width * scaleX;
+			_bounds.height 	= _height * scaleY;
 			_isDirty = checkIfDirty();
+			if (owner.collider)	owner.collider.shape.scale = value;
 		}	
 		
 		public function get scaleX():Number 						{	return _scaleX; 	}		
 		public function set scaleX(value:Number):void 			
 		{	
 			_scaleX = value; 
-			_width *= value;
-			_bounds.height = _width;
-			if (owner.collider)	owner.collider.shape.scaleX = value;
+			_bounds.width 	= _width * scaleX;
+			_bounds.height 	= _height * scaleY;
 			_isDirty = checkIfDirty();
+			if (owner.collider)	owner.collider.shape.scaleX = value;
 		}
 		
 		public function get scaleY():Number 						{	return _scaleY; 	}		
 		public function set scaleY(value:Number):void 			
 		{	
-			_scaleY = value;  _height *= value; 
-			if (owner.collider)	owner.collider.shape.scaleY = value;
+			_scaleY = value;
+			_bounds.width 	= _width * scaleX;
+			_bounds.height 	= _height * scaleY;
 			_isDirty = checkIfDirty();
+			if (owner.collider)	owner.collider.shape.scaleY = value;
 		}
 		
 		public function get velocity():Point 					{ 	return _velocity; }	
@@ -200,7 +199,7 @@ package aholla.HEngine.core.entity
 			{
 				_bounds.x 		= _x + owner.collider.bounds.x;
 				_bounds.y 		= _y + owner.collider.bounds.y;				
-			}
+			}			
 			return _bounds;
 		}
 		public function set bounds($rect:Rectangle):void	{	_bounds = $rect;	}

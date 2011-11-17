@@ -9,6 +9,7 @@ package aholla.HEngine.core.entity
 	import aholla.HEngine.core.entity.IEntity;
 	import aholla.HEngine.core.Logger;
 	import aholla.HEngine.HE;
+	import aholla.HEngine.HEUtils;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
@@ -58,57 +59,45 @@ package aholla.HEngine.core.entity
 		
 		override public function render(canvasData:BitmapData = null):void 
 		{
+			//_rect is set the the spritesheet rect when it is set.
+			
+			var scaleX:Number = owner.transform.scaleX;
+			var scaleY:Number = owner.transform.scaleY;			
+			
 			if (_spritemap)
 				_spritemap.onUpdate();
 			
 			if (camera.isMoving)
 			{
-				dest.x = int(owner.transform.x - camera.x) + _offsetX;
-				dest.y = int(owner.transform.y - camera.y) + _offsetY;
+				dest.x = int(owner.transform.x - camera.x) + (_offsetX * scaleX);
+				dest.y = int(owner.transform.y - camera.y) + (_offsetY * scaleY);
 			}
 			else
-			{
-				dest.x = int(owner.transform.x + _offsetX);
-				dest.y = int(owner.transform.y + _offsetY);
+			{				
+				dest.x = int(owner.transform.x + (_offsetX * scaleX));
+				dest.y = int(owner.transform.y + (_offsetY * scaleY));
 			}
+			
 			
 			if (!owner.transform.isDirty)
 			{
+				//trace("Copy");
 				canvasData.copyPixels(_graphic.bitmapData, _rect, dest, null, null, true);
 			}
 			else
 			{
-				var matrix:Matrix = new Matrix();
-				var colourTransform:ColorTransform = new ColorTransform();
-				var clipRect:Rectangle = new Rectangle(0, 0, _rect.width, _rect.height);
+				//trace("DRAW");
+				buffer.lock();
+				buffer.fillRect(buffer.rect, 0);
+				buffer.copyPixels(_graphic.bitmapData, _rect, new Point, null, null, true);
+				buffer.unlock();				
 				
-				
-				var scaleX:int = owner.transform.scaleX;
-				var scaleY:int = owner.transform.scaleY;
-				
-				
-				
-				clipRect.x =  dest.x;
-				clipRect.y =  dest.y;
-				
-				// scale
-				matrix.a = scaleX;
-				matrix.d = scaleY;
-				clipRect.width 	= _rect.width * scaleX;
-				clipRect.height = _rect.width * scaleY;	
-				
-				// destination
-				//matrix.tx = -_rect.x + dest.x;
-				//matrix.tx = dest.x - (_rect.x * scaleX) //- 32;
-				matrix.tx = (dest.x - _rect.x) * scaleX//- 32;
-				matrix.ty = dest.y - (_rect.y * scaleY) //- 32;
-				
-				trace(matrix.tx, clipRect.x)
-				
-				matrix.tx = (dest.x - _rect.x) * scaleX;
-				clipRect.x = dest.x * scaleX;
-				
-				canvasData.draw(_graphic.bitmapData, matrix, colourTransform, null, clipRect, smoothing);
+				var matrix:Matrix = new Matrix();				
+				matrix.translate(- _rect.width * 0.5, - _rect.height * 0.5);
+				matrix.rotate(owner.transform.rotation * HEUtils.TO_RADIANS);
+				matrix.scale(scaleX, scaleY);
+				matrix.translate(dest.x + ((_rect.width * 0.5) *scaleX), dest.y + ((_rect.width * 0.5)*scaleY));
+				canvasData.draw(buffer, matrix, null, null, null, false);
 			}
 		}
 		
@@ -124,17 +113,33 @@ package aholla.HEngine.core.entity
 				_spritemap.stop();
 		}
 		
+		private var buffer		:BitmapData;
+		//private var bufferRect	:BitmapData;
+		
 		public function initSpritemap(spritemap:Spritemap, isCentered:Boolean):void 
 		{
 			_spritemap 			= spritemap;
 			_rect 				= _spritemap.cellRect;
 			_graphic.bitmapData = _spritemap.data;
 			
+			buffer = new BitmapData(_rect.width, _rect.height, true, 0x00000000);
+			//bufferRect = buffer.rect;
+			
 			if (isCentered)
 			{
 				_offsetX -= int(_spritemap.cellRect.width * 0.5);				
 				_offsetY -= int(_spritemap.cellRect.height * 0.5);
 			}
+		}
+		
+		public function flash(colour:uint = 0xFFFFFF, duration:Number = 1, alpha:Number = 1, delay:Number = 0):void
+		{
+			
+		}
+		
+		public function tint(colour:uint = 0xFFFFFF, alpha:Number = 1):void
+		{
+			
 		}
 		
 /*-------------------------------------------------

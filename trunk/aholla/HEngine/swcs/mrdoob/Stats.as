@@ -30,7 +30,7 @@
  * 	07.12.13		1.0		Mr.doob			+ First version
  **/
 
-package aholla.HEngine.thirdparty.mrdoob
+package aholla.HEngine.swcs.mrdoob
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
