@@ -41,7 +41,7 @@ package aholla.HEngine.core.entity
 			_graphic = new Bitmap();
 			_graphic.bitmapData = new BitmapData(10, 10, true, 0x00000000);			
 			_rect = _graphic.bitmapData.rect;
-			_offsetX = _offsetY = 0;
+			_offsetX = _offsetY = 1;
 			debugAlpha = 0.8;
 			debugSprite =  new Sprite();
 		}

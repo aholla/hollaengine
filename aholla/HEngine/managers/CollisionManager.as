@@ -26,12 +26,7 @@ package aholla.HEngine.managers
 		public var quadtree							:QuadtreeNode; // currently public for the process manage to inform it if an entity moves.
 		
 		private var entityA							:IEntity;
-		private var entityB							:IEntity;		
-		private var collisionVec					:Vector.<IEntity>;
-		private var neighboursVec					:Vector.<IEntity>;
-		private var nLen							:int;
-		private var iLen							:int;	
-		
+		private var entityB							:IEntity;
 		private var collisionList					:SLL;
 		private var collisionDict					:Dictionary;
 		
@@ -41,12 +36,9 @@ package aholla.HEngine.managers
 		
 		public function CollisionManager() 
 		{	
-			collisionVec 	= new Vector.<IEntity>();
-			neighboursVec 	= new Vector.<IEntity>();
-			quadtree = new QuadtreeNode(new Rectangle(0, 0, HE.WORLD_WIDTH, HE.WORLD_HEIGHT));	
-			
-			collisionList = new SLL();
-			collisionDict = new Dictionary(true);
+			quadtree 		= new QuadtreeNode(new Rectangle(0, 0, HE.WORLD_WIDTH, HE.WORLD_HEIGHT));			
+			collisionList 	= new SLL();
+			collisionDict 	= new Dictionary(true);
 		}
 		
 /*-------------------------------------------------
@@ -60,11 +52,8 @@ package aholla.HEngine.managers
 		 */
 		public function addCollision($entity:IEntity):void
 		{
-			//collisionVec[collisionVec.length] = $entity;			
 			collisionList.append($entity);
 			collisionDict[$entity] = $entity
-			
-			trace("addCollision", $entity)
 			quadtree.insert($entity);
 		} 
 		
@@ -81,8 +70,7 @@ package aholla.HEngine.managers
 		}
 		
 		public function onUpdate():void
-		{		
-			iLen = collisionVec.length;		
+		{			
 			if (!HE.isPaused)
 			{
 				// first update quadtree
@@ -143,14 +131,8 @@ package aholla.HEngine.managers
 			}
 		}
 		
-		public function destroy():void 
+		public function destroy():void
 		{
-			collisionVec.length = 0;
-			neighboursVec.length = 0;
-			
-			collisionVec = null;
-			neighboursVec = null;
-			
 			quadtree.destroy();
 			quadtree = null;
 			

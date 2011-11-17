@@ -304,7 +304,9 @@ package aholla.HEngine.collision.shapes
 		public function get scale():Number{	return _scale;}		
 		public function set scale(value:Number):void
 		{
+			//trace("SET SCALE", )
 			_scale = value;
+			_scaleX = _scaleY = _scale;
 			updateTransformation();
 		}
 		

@@ -48,9 +48,7 @@ package aholla.HEngine.core.entity
 			entity = $entity;
 			if (!$spritesheet)	trace(this, "Error, spritesheet supplied is null");
 			
-			spritesheet = $spritesheet;
-			
-			
+			spritesheet = $spritesheet;			
 			
 			cellWidth	= $cellWidth;
 			cellHeight	= $cellHeight;
@@ -67,10 +65,7 @@ package aholla.HEngine.core.entity
 			animationFramerate = 30;
 			
 			data = new BitmapData(spritesheet.bitmapData.width, spritesheet.bitmapData.height, true, 0x00000000)
-			//data.draw(spritesheet.bitmapData, new Matrix(1, 0, 0, 1, -cellWidth * 0.5, -cellHeight * 0.5) );
-			
-			dataOrigional = data = $spritesheet.bitmapData;
-			//dataOrigional = data;
+			dataOrigional = data = $spritesheet.bitmapData;	
 			
 			animationsDict = new Dictionary(true);	
 			
