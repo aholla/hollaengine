@@ -62,14 +62,14 @@ package aholla.HEngine.core.entity
 		}		
 
 		
-		override public function drawBox($width:int, $height:int, $colour:uint = 0xFF0000, $alpha:Number = 1):void
+		override public function drawBox($width:int, $height:int, $center:Boolean = true, $colour:uint = 0xFF0000, $alpha:Number = 1):void
 		{
 			_display.graphics.beginFill($colour, $alpha);
 			_display.graphics.drawRect(0, 0, $width, $height);
 			_display.graphics.endFill();			
 		}
 		
-		override public function drawCircle($radius:int, $colour:uint = 0xFF0000, $alpha:Number = 1):void
+		override public function drawCircle($radius:int, $center:Boolean = true, $colour:uint = 0xFF0000, $alpha:Number = 1):void
 		{
 			_display.graphics.beginFill($colour, $alpha);
 			_display.graphics.drawCircle(0, 0, $radius);
@@ -113,12 +113,12 @@ package aholla.HEngine.core.entity
 			if (!HE.isDebug)
 			{
 				// Give a larger bounds to each display just to be safe.
-				leftEdge 	= _display.x - (_display.width);
-				rightEdge 	= _display.x + (_display.width);
-				topEdge 	= _display.y - (_display.height);
-				bottomEdge 	= _display.y + (_display.height);
+				_bounds.x 		= _display.x - (_display.width);
+				_bounds.width 	= _display.x + (_display.width);
+				_bounds.y 		= _display.y - (_display.height);
+				_bounds.height 	= _display.y + (_display.height);
 				
-				if (leftEdge > HE.SCREEN_WIDTH || rightEdge < 0 || topEdge  > HE.SCREEN_HEIGHT || bottomEdge < 0)
+				if (_bounds.x > HE.SCREEN_WIDTH || _bounds.width < 0 || _bounds.y  > HE.SCREEN_HEIGHT || _bounds.height < 0)
 					_display.visible = false;
 				else
 					_display.visible = true;

@@ -13,12 +13,17 @@ package aholla.HEngine.core.entity
 	import aholla.HEngine.core.entity.ITransformComponent;
 	import aholla.HEngine.core.Logger;
 	import aholla.HEngine.HE;
+	import flash.display.Bitmap;
 	import flash.utils.Dictionary;
 	import org.osflash.signals.ISignal;
 	import org.osflash.signals.Signal;
 	
 	public class Entity implements IEntity
 	{
+		private static const TRANSFORM				:String = "transform";
+		private static const RENDERER				:String = "renderer";
+		private static const COLLIDER				:String = "collider";
+		
 		private var _transform						:ITransformComponent;
 		private var _collider						:ColliderComponent;	// IColliderComponent - changes for faster access to "collider.bounds";
 		private var _renderer						:IRendererComponent;
@@ -40,7 +45,7 @@ package aholla.HEngine.core.entity
 			_componentsDict = new Dictionary(true);						
 			
 			_transform 	= new TransformComponent();
-			addComponent(transform, "transform");
+			addComponent(transform, TRANSFORM);
 		}		
 		
 /*-------------------------------------------------
@@ -64,23 +69,28 @@ package aholla.HEngine.core.entity
 		 */
 		public function addComponent($component:IComponent, $componetName:String):void
 		{			
-			if (componentsDict[$componetName])
+			if (_componentsDict[$componetName])
 			{
 				Logger.warn("Entity.addComponent(): Component already exists");
 			}
 			else
 			{			
 				$component.onAdded(this, $componetName);
-				componentsDict[$componetName] = $component;	
+				_componentsDict[$componetName] = $component;	
 			}
 		}
 		
 		/**
 		 * @inheritDoc
 		 */
-		public function removeComponent($componetName:String):void
+		public function removeComponent(componentName:String):void
 		{
-			destroy();
+			if (_componentsDict[componentName])
+			{
+				_componentsDict[componentName].destroy();
+				_componentsDict[componentName] = null;
+				delete _componentsDict[componentName];
+			}
 		}
 		
 		/**
@@ -88,14 +98,14 @@ package aholla.HEngine.core.entity
 		 */
 		public function getComponent($componentName:String):IComponent
 		{
-			if (!componentsDict[$componentName])
+			if (!_componentsDict[$componentName])
 			{
 				Logger.warn("Entity - getComponent: '" + $componentName + "' Component does not exist on '" + name + "'.");
 				return null;
 			}
 			else
 			{
-				return componentsDict[$componentName];
+				return _componentsDict[$componentName];
 			}
 		}
 		
@@ -104,7 +114,7 @@ package aholla.HEngine.core.entity
 		 */
 		public function getComponents():Dictionary
 		{
-			if(componentsDict)
+			if(_componentsDict)
 				return componentsDict;
 			else
 			{
@@ -118,10 +128,10 @@ package aholla.HEngine.core.entity
 		 */
 		public function destroy():void
 		{		
-			for (var _compName:String in componentsDict) 
+			for (var _compName:String in _componentsDict) 
 			{
-				componentsDict[_compName].destroy();
-				delete componentsDict[_compName];
+				_componentsDict[_compName].destroy();
+				delete _componentsDict[_compName];
 			}
 			
 			_componentsDict = null;
@@ -148,27 +158,44 @@ package aholla.HEngine.core.entity
 		/**
 		 * @inheritDoc
 		 */
-		public function createRenderer(isBlitted:Boolean = true, spritemap:Spritemap = null, isCentered:Boolean = true, $offsetX:Number = 0, $offsetY:Number = 0):void
+		public function createRendererAnimated(isBlitted:Boolean = true, spritemap:Spritemap = null, isCentered:Boolean = true, smoothing:Boolean = false, offsetX:Number = 0, offsetY:Number = 0):void
 		{			
-			if (_renderer)
-			{				
-				componentsDict["renderer"].destroy();
-				componentsDict["renderer"] = null;
-				delete componentsDict["renderer"];
-			}
+			checkForExistingRenderer();
 			
 			if (isBlitted)
 			{
-				if (!spritemap) Logger.error(this, "The spritemap proveded to 'initRenderer()' is null.");
-				_renderer = new RendererBlitComponent($offsetX, $offsetY, false);
-				(_renderer as RendererBlitComponent).initSpritemap(spritemap, isCentered);
+				_renderer = new RendererBlitComponent(isCentered, offsetX, offsetY, smoothing);
+				if (spritemap)
+					(_renderer as RendererBlitComponent).initSpritemap(spritemap);
 			}
 			else
 			{
-				_renderer = new RendererMovieClipComponent();
+				//_renderer = new RendererMovieClipComponent();
 			}
+			
+			addComponent(_renderer, RENDERER);
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function createRendererStatic(isBlitted:Boolean = true, image:Bitmap = null, isCentered:Boolean = true, smoothing:Boolean = false, offsetX:Number = 0, offsetY:Number = 0):void
+		{
+			checkForExistingRenderer();
+			
+			if (isBlitted)
+			{
+				_renderer = new RendererBlitComponent(isCentered, offsetX, offsetY, smoothing);
+			}
+			else
+			{
+				//_renderer = new RendererMovieClipComponent();
+			}
+			
+			if(image)
+				_renderer.graphic = image;
 				
-			addComponent(_renderer, "renderer");
+			addComponent(_renderer, RENDERER);
 		}
 		
 		/**
@@ -179,7 +206,7 @@ package aholla.HEngine.core.entity
 			if (HE.isDebug && !_renderer)
 			{
 				_renderer = new RendererBlitComponent();
-				addComponent(_renderer, "renderer");
+				addComponent(_renderer, RENDERER);
 			}
 			
 			if (!$collisionGroup && _groupName)
@@ -188,7 +215,7 @@ package aholla.HEngine.core.entity
 			}
 			
 			_collider = new ColliderComponent();
-			addComponent(_collider, "collider");
+			addComponent(_collider, COLLIDER);
 			
 			_collider.create($shape, $isCollider, $offsetX, $offsetY, $collisionGroup);			
 			HE.processManager.addCollision(this);
@@ -198,6 +225,13 @@ package aholla.HEngine.core.entity
 * PRIVATE FUNCTIONS
 -------------------------------------------------*/
 		
+		private function checkForExistingRenderer():void
+		{
+			if (_renderer)
+			{	
+				removeComponent(RENDERER);
+			}
+		}
 		
 /*-------------------------------------------------
 * EVENT HANDLING

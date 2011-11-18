@@ -14,6 +14,7 @@ package aholla.HEngine.core.entity
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.filters.ColorMatrixFilter;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
@@ -23,43 +24,32 @@ package aholla.HEngine.core.entity
 	{		
 		private var _spritemap						:Spritemap;
 		private var dest							:Point;
-		private var smoothing						:Boolean;
-		
+		private var _smoothing						:Boolean;
+		private var _buffer							:BitmapData;		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
 -------------------------------------------------*/
 	
-		public function RendererBlitComponent($offsetX:int = 0, $offsetY:int = 0, smoothing:Boolean = false) 
+		public function RendererBlitComponent(isCentered:Boolean = true, offsetX:int = 0, offsetY:int = 0, smoothing:Boolean = false) 
 		{
 			super();
-			_offsetX = $offsetX;
-			_offsetY = $offsetY;
-			dest = new Point();
-			this.smoothing = smoothing;
+			
+			_isCentered = isCentered;
+			_offsetX 	= offsetX;
+			_offsetY 	= offsetY;
+			_smoothing 	= smoothing;
+			
+			dest = new Point();	
+			colourTransform = new ColorTransform();
 		}
 		
 /*-------------------------------------------------
 * PUBLIC FUNCTIONS
--------------------------------------------------*/
+* -------------------------------------------------*/		
 	
-		override public function drawBox($width:int, $height:int, $colour:uint = 0xFF0000, $alpha:Number = 1):void
-		{
-			
-		}
-		
-		override public function drawCircle($radius:int, $colour:uint = 0xFF0000, $alpha:Number = 1):void
-		{			
-			
-		}
-		
-		override public function drawPolygon($verticies:Array, $tx:Number = 0, $ty:Number = 0, $colour:uint = 0xFF0000, $alpha:Number = 1, $lineAlpha:Number = 0):void 
-		{
-			
-		}
-		
 		override public function render(canvasData:BitmapData = null):void 
 		{
-			//_rect is set the the spritesheet rect when it is set.
+			//_bounds is set the the spritesheet rect when it is set.
 			
 			var scaleX:Number = owner.transform.scaleX;
 			var scaleY:Number = owner.transform.scaleY;			
@@ -79,25 +69,29 @@ package aholla.HEngine.core.entity
 			}
 			
 			
+			
 			if (!owner.transform.isDirty)
 			{
 				//trace("Copy");
-				canvasData.copyPixels(_graphic.bitmapData, _rect, dest, null, null, true);
+				canvasData.copyPixels(_graphic.bitmapData, _bounds, dest, null, null, true);
 			}
 			else
 			{
 				//trace("DRAW");
-				buffer.lock();
-				buffer.fillRect(buffer.rect, 0);
-				buffer.copyPixels(_graphic.bitmapData, _rect, new Point, null, null, true);
-				buffer.unlock();				
+				if (!_buffer)
+					_buffer = new BitmapData(_bounds.width, _bounds.height, true, 0x00000000);
+				
+				_buffer.lock();
+				_buffer.fillRect(_buffer.rect, 0);
+				_buffer.copyPixels(_graphic.bitmapData, _bounds, new Point, null, null, true);
+				_buffer.unlock();				
 				
 				var matrix:Matrix = new Matrix();				
-				matrix.translate(- _rect.width * 0.5, - _rect.height * 0.5);
+				matrix.translate(- _bounds.width * 0.5, - _bounds.height * 0.5);
 				matrix.rotate(owner.transform.rotation * HEUtils.TO_RADIANS);
 				matrix.scale(scaleX, scaleY);
-				matrix.translate(dest.x + ((_rect.width * 0.5) *scaleX), dest.y + ((_rect.width * 0.5)*scaleY));
-				canvasData.draw(buffer, matrix, null, null, null, false);
+				matrix.translate(dest.x + ((_bounds.width * 0.5) *scaleX), dest.y + ((_bounds.width * 0.5)*scaleY));
+				canvasData.draw(_buffer, matrix, colourTransform, null, null, _smoothing);
 			}
 		}
 		
@@ -111,36 +105,39 @@ package aholla.HEngine.core.entity
 		{
 			if (_spritemap)
 				_spritemap.stop();
+		}		
+		
+		
+		
+		override public function flashColour(colour:uint = 0xFFFFFF, duration:Number = 1, alpha:Number = 1, delay:Number = 0):void
+		{		
+			owner.transform.isDirty = true;
+			colourTransform.color = colour;	
+			colourTransform.alphaMultiplier = 0.5;
 		}
 		
-		private var buffer		:BitmapData;
-		//private var bufferRect	:BitmapData;
+		override public function tint(colour:uint = 0xFFFFFF, alpha:Number = 1):void
+		{
+			owner.transform.isDirty = true;
+			colourTransform.color = colour;
+			colourTransform.alphaMultiplier = 0.5;
+		}		
 		
-		public function initSpritemap(spritemap:Spritemap, isCentered:Boolean):void 
+		public function initSpritemap(spritemap:Spritemap):void 
 		{
 			_spritemap 			= spritemap;
-			_rect 				= _spritemap.cellRect;
+			_bounds 				= _spritemap.cellRect;
 			_graphic.bitmapData = _spritemap.data;
 			
-			buffer = new BitmapData(_rect.width, _rect.height, true, 0x00000000);
-			//bufferRect = buffer.rect;
+			_buffer = new BitmapData(_bounds.width, _bounds.height, true, 0x00000000);
 			
-			if (isCentered)
+			if (_isCentered)
 			{
 				_offsetX -= int(_spritemap.cellRect.width * 0.5);				
 				_offsetY -= int(_spritemap.cellRect.height * 0.5);
 			}
 		}
 		
-		public function flash(colour:uint = 0xFFFFFF, duration:Number = 1, alpha:Number = 1, delay:Number = 0):void
-		{
-			
-		}
-		
-		public function tint(colour:uint = 0xFFFFFF, alpha:Number = 1):void
-		{
-			
-		}
 		
 /*-------------------------------------------------
 * PRIVATE FUNCTIONS

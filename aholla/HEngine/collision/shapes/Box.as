@@ -97,10 +97,12 @@ package aholla.HEngine.collision.shapes
 		 * Draws this shape into the given graphics object
 		 * @param	graphics
 		 */
-		public function render(graphics:Graphics, $colour:uint = 0x00FFFF):void 
+		public function render(graphics:Graphics, shapeColour:uint = 0x00FFFF, shapeAlpha:Number = 0.1, boundsColour:uint = 0x0080FF, boundsAlpha:Number = 0.5):void 
 		{
-			_polygon.render(graphics, $colour);
-		}		
+			_polygon.render(graphics, shapeColour, shapeAlpha, boundsColour, boundsAlpha);
+		}
+		
+		
 
 		/**
 		 * Translates the Box.
@@ -111,6 +113,7 @@ package aholla.HEngine.collision.shapes
 		{
 			_polygon.translate($tx, $ty);
 		}
+		
 		
 /*-------------------------------------------------
 * PRIVATE FUNCTIONS

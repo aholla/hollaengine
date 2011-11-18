@@ -8,6 +8,7 @@
 
 package aholla.HEngine.collision.shapes
 {
+	import aholla.HEngine.HEUtils;
 	import flash.display.Graphics;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
@@ -47,17 +48,17 @@ package aholla.HEngine.collision.shapes
 		 * Renders the outline of this object to the given graphics object
 		 * @param	g
 		 */
-		public function render(graphics:Graphics, $colour:uint):void 
+		public function render(graphics:Graphics, shapeColour:uint = 0x00FFFF, shapeAlpha:Number = 0.1, boundsColour:uint = 0x0080FF, boundsAlpha:Number = 0.5):void 
 		{
 			// bounds
-			graphics.lineStyle(0.1, 0x0080FF, 0.5);
+			graphics.lineStyle(0.1, boundsColour, boundsAlpha);
 			graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
 			
 			// shape
-			graphics.lineStyle(0.5, $colour, 0.8);
-			graphics.beginFill($colour, 0.1);
+			graphics.lineStyle(0.5, shapeColour, 0.8);
+			graphics.beginFill(shapeColour, shapeAlpha);
 			
-			// loop through the vertices, drawing from one to another	
+			//loop through the vertices, drawing from one to another	
 			var basePt:Point = new Point(0, 0);	
 			
 			var len:int = vertices.length;
@@ -72,7 +73,7 @@ package aholla.HEngine.collision.shapes
 				pt = basePt.add(vertex);
 				graphics.lineTo(pt.x, pt.y);
 			}
-			graphics.endFill()
+			graphics.endFill();	
 		}
 		
 		/**
@@ -116,7 +117,6 @@ package aholla.HEngine.collision.shapes
 		{
 			// flag the transform list as dirty
 			_transfromDirty = true;
-			//
 			return _rawVertices.splice(pos, 1)[0];
 		}
 		
@@ -135,6 +135,18 @@ package aholla.HEngine.collision.shapes
 			_transfromDirty = true;
 		}
 		
+		/**
+		 * Translates the polygons position.
+		 * @param	$tx:Number
+		 * @param	$ty:Number
+		 */
+		public function translate($tx:Number, $ty:Number):void
+		{
+			_tx = $tx;
+			_ty = $ty;			
+			updateTransformation();			
+		}
+		
 		// PRIVATE FUNCTIONS
 		// ------------------------------------------------------------------------------------------
 		
@@ -148,22 +160,12 @@ package aholla.HEngine.collision.shapes
 			_transform.identity();
 			_transform.translate(_tx, _ty);
 			_transform.scale(_scaleX, _scaleY);			
-			_transform.rotate(_rotation * Math.PI / 180);
+			_transform.rotate(_rotation * HEUtils.TO_RADIANS);
 			// mark the points as dirty
 			_transfromDirty = true;
 		}	
 		
-		/**
-		 * Translates the polygons position.
-		 * @param	$tx:Number
-		 * @param	$ty:Number
-		 */
-		public function translate($tx:Number, $ty:Number):void
-		{
-			_tx = $tx;
-			_ty = $ty;			
-			updateTransformation();			
-		}
+		
 		
 		
 		// EVENT HANDLERS
@@ -182,7 +184,7 @@ package aholla.HEngine.collision.shapes
 		}
 		public function set x(value:Number):void 
 		{
-			_x = value + _tx;
+			_x = value;
 		}
 		
 		/**
@@ -194,7 +196,7 @@ package aholla.HEngine.collision.shapes
 		}
 		public function set y(value:Number):void 
 		{
-			_y = value + _ty;
+			_y = value;
 		}
 		
 		/**
@@ -231,6 +233,7 @@ package aholla.HEngine.collision.shapes
 		public function set scale(value:Number):void
 		{
 			_scale = value;
+			_scaleX = _scaleY = _scale;
 			updateTransformation();
 		}
 		
@@ -294,19 +297,7 @@ package aholla.HEngine.collision.shapes
 		}
 		
 		public function get tx():Number	{	return _tx;		}		
-		public function get ty():Number	{	return _ty;		}
-		
-		//public function set tx($value:Number):void
-		//{
-			//_tx = $value;
-			//updateTransformation();
-		//}
-		//
-		//public function set ty($value:Number):void
-		//{
-			//_ty = $value;
-			//updateTransformation();
-		//}		
+		public function get ty():Number	{	return _ty;		}	
 		
 	}
 }

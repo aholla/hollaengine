@@ -8,6 +8,7 @@ package aholla.HEngine.core.entity
 	import aholla.HEngine.collision.CollisionInfo;
 	import aholla.HEngine.collision.shapes.IShape;
 	import aholla.HEngine.core.entity.IComponent;
+	import flash.display.Bitmap;
 	import flash.utils.Dictionary;
 	import org.osflash.signals.ISignal;
 	
@@ -78,12 +79,28 @@ package aholla.HEngine.core.entity
 		function destroy():void;
 		
 		/**
-		 * Initializes the Renderer. If blitted is true the rendering mode will be blitting, else it will be displayLit. May change this method in future.
+		 * Initializes an animated Renderer. If blitted is true the rendering mode will be blitting, else it will be displayList. May change this method in future.
 		 * @param	isBlitted:Boolean - Set to true to use blitting and spritesheets. Set to false to use the display list.
 		 * @param	spritemap:Spritemap - The spritemap class that contains the blitting info.
-		 * @param	isCentered:Boolean - If teh entities origin is centered, else it will be top left aligned.
+		 * @param	isCentered:Boolean - If the entities origin is centered, else it will be top left aligned.
+		 * @param	smoothing:Boolean - If the graphic will be smoothed if manipulated.
+		 * @param	offsetX:Number - the distance in pixels the render will be horizontally offset from it's Transform's x.
+		 * @param	offsetY:Number - the distance in pixels the render will be vertically offset from it's Transform's y.
 		 */
-		function createRenderer(isBlitted:Boolean = true, spritemap:Spritemap = null, isCentered:Boolean = true, offsetX:Number = 0, offsetY:Number = 0):void;
+		function createRendererAnimated(isBlitted:Boolean = true, spritemap:Spritemap = null, isCentered:Boolean = true, smoothing:Boolean = false, offsetX:Number = 0, offsetY:Number = 0):void
+		
+		
+		/**
+		 * Initializes a static Renderer. This will sidplay an static, non-animated bitmap and can be blitted or put on teh display list.
+		 * @param	isBlitted:Boolean - Set to true to use blitting and spritesheets. Set to false to use the display list.
+		 * @param	image:Bitmap - The bitmap used for the renderer.
+		 * @param	isCentered:Boolean - If the entities origin is centered, else it will be top left aligned.
+		 * @param	smoothing:Boolean - If the graphic will be smoothed if manipulated.
+		 * @param	offsetX:Number - the distance in pixels the render will be horizontally offset from it's Transform's x.
+		 * @param	offsetY:Number - the distance in pixels the render will be vertically offset from it's Transform's y.
+		 */
+		function createRendererStatic(isBlitted:Boolean = true, image:Bitmap = null, isCentered:Boolean = true, smoothing:Boolean = false, offsetX:Number = 0, offsetY:Number = 0):void
+		
 		
 		/**
 		 * Initializes the collider so the component is able for collision detection.
