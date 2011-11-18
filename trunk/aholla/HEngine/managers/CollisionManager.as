@@ -70,7 +70,8 @@ package aholla.HEngine.managers
 		}
 		
 		public function onUpdate():void
-		{			
+		{		
+			
 			if (!HE.isPaused)
 			{
 				// first update quadtree

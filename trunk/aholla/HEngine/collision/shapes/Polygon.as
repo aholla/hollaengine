@@ -7,7 +7,9 @@
 
 package aholla.HEngine.collision.shapes 
 {
+	import aholla.HEngine.HEUtils;
 	import flash.display.Graphics;
+	import flash.display.Shape;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -94,17 +96,19 @@ package aholla.HEngine.collision.shapes
 		 * Renders the outline of this object to the given graphics object
 		 * @param	graphics:Display object for rendering and a colour
 		 */
-		public function render(graphics:Graphics, $colour:uint = 0x00FFFF):void 
+		public function render(graphics:Graphics, shapeColour:uint = 0x00FFFF, shapeAlpha:Number = 0.1, boundsColour:uint = 0x0080FF, boundsAlpha:Number = 0.5):void 
 		{
 			// bounds
-			graphics.lineStyle(0.1, 0x0080FF, 0.5);
+			graphics.lineStyle(0.1, boundsColour, boundsAlpha);
 			graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
 			
-			// shape
-			graphics.lineStyle(0.5, $colour, 0.8);
-			graphics.beginFill($colour, 0.1);
 			
-			// loop through the vertices, drawing from one to another	
+			trace("shape alpha:", shapeAlpha)
+			// shape
+			graphics.lineStyle(0.5, shapeColour, 0.8);
+			graphics.beginFill(shapeColour, shapeAlpha);
+			
+			//loop through the vertices, drawing from one to another	
 			var basePt:Point = new Point(0, 0);	
 			
 			var len:int = vertices.length;
@@ -215,6 +219,7 @@ package aholla.HEngine.collision.shapes
 			return p;
 		}
 		
+		
 /*-------------------------------------------------
 * PRIVATE FUNCTIONS
 -------------------------------------------------*/
@@ -228,7 +233,7 @@ package aholla.HEngine.collision.shapes
 			_bounds = null;
 			_transform.identity();			
 			_transform.scale(_scaleX, _scaleY);	
-			_transform.rotate(_rotation * Math.PI / 180);			
+			_transform.rotate(_rotation * HEUtils.TO_RADIANS);			
 			_transform.translate(_tx, _ty);
 			// mark the points as dirty
 			_transfromDirty = true;
@@ -304,7 +309,6 @@ package aholla.HEngine.collision.shapes
 		public function get scale():Number{	return _scale;}		
 		public function set scale(value:Number):void
 		{
-			//trace("SET SCALE", )
 			_scale = value;
 			_scaleX = _scaleY = _scale;
 			updateTransformation();

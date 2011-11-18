@@ -13,19 +13,25 @@ package aholla.HEngine.core.entity
 	
 	public interface IRendererComponent extends IComponent
 	{
-		function drawBox($width:int, $height:int, $colour:uint = 0xFF0000, $alpha:Number = 1):void
-		function drawCircle($radius:int, $colour:uint = 0xFF0000, $alpha:Number = 1):void
-		function drawPolygon($verticies:Array, $tx:Number = 0, $ty:Number = 0, $colour:uint = 0xFF0000, $alpha:Number = 1, $lineAlpha:Number = 0):void
+		function drawBox($width:int, $height:int, 	$colour:uint = 0xFF0000, $alpha:Number = 1):void		
+		function drawCircle($radius:int, 			$colour:uint = 0xFF0000, $alpha:Number = 1):void
+		function drawPolygon($verticies:Array, 		$colour:uint = 0xFF0000, $alpha:Number = 1):void
 		
 		/**
 		 * Stops the animations running.
 		 */
 		function stop():void;
 		
-		function render(canvasData:BitmapData = null):void;
-		function debugRender(canvasDebugData:BitmapData):void;
 		function play($animation:String):void;
 		
+		
+		function render(canvasData:BitmapData = null):void;
+		function debugRender(canvasDebugData:BitmapData):void;
+		
+		
+		function flashColour(colour:uint = 0xFFFFFF, duration:Number = 1, alpha:Number = 1, delay:Number = 0):void;
+		
+		function tint(colour:uint = 0xFFFFFF, alpha:Number = 1):void;
 		
 		
 		function get alpha():Number;

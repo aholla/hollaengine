@@ -29,18 +29,18 @@ package aholla.HEngine.collision.shapes
 * PUBLIC CONSTRUCTOR
 -------------------------------------------------*/
 			
-		public function Circle ($radius:Number = 0)
+		public function Circle ($radius:Number = 0, $tx:Number = 0, $ty:Number = 0)
 		{
 			_x			= 0;
-			_y			= 0;	
-			_tx			= 0;
-			_ty			= 0;
+			_y			= 0;			
 			_scale		= 1;		
 			_scaleX		= 1;		
 			_scaleY		= 1;		
 			_rawScale	= 1;		
 			_radius		= 0;
 			_rotation	= 0;
+			_tx			= $tx;
+			_ty			= $ty;
 			setRadius($radius * _scale);
 		}
 		
@@ -66,17 +66,17 @@ package aholla.HEngine.collision.shapes
 		 * Renders this circle into the given graphics object
 		 * @param	g
 		 */
-		public function render(g:Graphics, $colour:uint = 0x00FFFF):void 
+		public function render(graphics:Graphics, shapeColour:uint = 0x00FFFF, shapeAlpha:Number = 0.1, boundsColour:uint = 0x0080FF, boundsAlpha:Number = 0.5):void 
 		{
 			// bounds
-			g.lineStyle(0.1, 0x0080FF, 0.5);					
-			g.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);			
+			graphics.lineStyle(0.1, boundsColour, boundsAlpha);				
+			graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);			
 			
 			// shape
-			g.lineStyle(0.5, $colour, 0.8);
-			g.beginFill($colour, 0.1);
-			g.drawCircle(_tx, _ty, transformedRadius);
-			g.endFill();
+			graphics.lineStyle(0.5, shapeColour, 0.8);
+			graphics.beginFill(shapeColour, shapeAlpha);
+			graphics.drawCircle(_tx, _ty, transformedRadius);
+			graphics.endFill();
 		}
 		
 		public function translate($tx:Number, $ty:Number):void

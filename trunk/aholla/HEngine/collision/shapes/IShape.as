@@ -17,7 +17,7 @@ package aholla.HEngine.collision.shapes
 	public interface IShape
 	{		
 		function destroy():void;
-		function render(graphics:Graphics, $colour:uint = 0x00FFFF):void;
+		function render(graphics:Graphics, shapeColour:uint = 0x00FFFF, shapeAlpha:Number = 0.1, boundsColour:uint = 0x0080FF, boundsAlpha:Number = 0.5):void
 		function translate($tx:Number, $ty:Number):void;
 		
 		function get x():Number;
