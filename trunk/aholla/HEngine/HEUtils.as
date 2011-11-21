@@ -1,6 +1,7 @@
 package aholla.HEngine
 {
 	import flash.geom.Point;
+	import flash.utils.ByteArray;
 	
 	/**
 	 * Maths Utility class based on functions writen by Iain Lobb.
@@ -37,6 +38,11 @@ package aholla.HEngine
 			var dx:Number = $pointB.x - $pointA.x;
 			var dy:Number = $pointB.y - $pointA.y;	
 			return Math.atan2(dy, dx);
+		}
+		
+		static public function bytesToXML($bytes:ByteArray):XML
+		{
+			return XML($bytes.readUTFBytes($bytes.length));
 		}
 		
 		/*

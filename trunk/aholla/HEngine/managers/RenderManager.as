@@ -71,7 +71,10 @@ package aholla.HEngine.managers
 				componentList.sort(sortDepth, true);
 			
 			canvasData.lock();
-			canvasData.fillRect(canvasRect, 0x000000);			
+			canvasData.fillRect(canvasRect, 0x000000);	
+			
+			trace(componentList.size() )
+			
 			var head:SLLNode = componentList.head;
 			while (head)
 			{

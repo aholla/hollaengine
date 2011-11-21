@@ -100,10 +100,8 @@ package aholla.HEngine.collision.shapes
 		{
 			// bounds
 			graphics.lineStyle(0.1, boundsColour, boundsAlpha);
-			graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
+			graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);			
 			
-			
-			trace("shape alpha:", shapeAlpha)
 			// shape
 			graphics.lineStyle(0.5, shapeColour, 0.8);
 			graphics.beginFill(shapeColour, shapeAlpha);

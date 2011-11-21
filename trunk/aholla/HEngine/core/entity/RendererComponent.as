@@ -30,15 +30,14 @@ package aholla.HEngine.core.entity
 		protected var colourTransform				:ColorTransform;
 		protected var camera						:Camera; 
 		protected var debugSprite					:Sprite;
-		//protected var debugAlpha					:Number;		
-		//protected var hasDebugRendered				:Boolean
+		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
 -------------------------------------------------*/
 	
 		public function RendererComponent() 
 		{
-			camera = HE.camera;			
+			camera = HE.camera;		
 			_graphic = new Bitmap();
 			_bounds = new Rectangle();			
 			_offsetX = _offsetY = 1;			
@@ -158,6 +157,24 @@ package aholla.HEngine.core.entity
 			
 		}		
 		
+		public function setGraphic(image:Bitmap, $width:int = 0, $height:int = 0):void 
+		{
+			var _w:int = ($width != 0) ? $width : image.width;
+			var _h:int = ($height != 0) ? $height : image.height;			
+			_graphic = image;			
+			
+			if (_isCentered)	
+			{
+				_offsetX = -_w * 0.5;
+				_offsetY = -_h * 0.5;
+				_bounds = new Rectangle(0, 0, _w, _h);
+			}
+			else
+			{
+				_bounds = new Rectangle(0, 0, _w, _h);
+			}		
+		}
+		
 		
 /*-------------------------------------------------
 * PRIVATE FUNCTIONS
@@ -174,20 +191,21 @@ package aholla.HEngine.core.entity
 * GETTERS / SETTERS
 -------------------------------------------------*/			
 		
-		public function set graphic($graphic:Bitmap):void 	
-		{	
-			_graphic = $graphic;
-			if (_isCentered)	
-			{
-				_graphic.x = -_graphic.width * 0.5;
-				_graphic.y = -_graphic.height * 0.5;
-				_bounds = new Rectangle( -_graphic.width * 0.5, -_graphic.height * 0.5, _graphic.width, _graphic.height);
-			}
-			else
-			{
-				_bounds = new Rectangle(0, 0, _graphic.width, _graphic.height);
-			}
-		}
+		//public function set graphic($graphic:Bitmap):void 	
+		//{	
+			//_graphic = $graphic;
+			//if (_isCentered)	
+			//{
+				//_graphic.x = -_graphic.width * 0.5;
+				//_graphic.y = -_graphic.height * 0.5;
+				//_bounds = new Rectangle( -_graphic.width * 0.5, -_graphic.height * 0.5, _graphic.width, _graphic.height);
+			//}
+			//else
+			//{
+				//_bounds = new Rectangle(0, 0, _graphic.width, _graphic.height);
+			//}
+			//trace("set graphic")
+		//}
 		public function get graphic():Bitmap 				{	return _graphic; }		
 		
 		public function get alpha():Number 						{	return _alpha;}		

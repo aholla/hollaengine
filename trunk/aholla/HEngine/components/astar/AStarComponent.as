@@ -7,7 +7,7 @@
  * @author Adam
  */
 
-package aholla.HEngine.components.aStarComponent 
+package aholla.HEngine.components.astar 
 {	
 	import aholla.HEngine.core.entity.Component;
 	import aholla.HEngine.core.Logger;

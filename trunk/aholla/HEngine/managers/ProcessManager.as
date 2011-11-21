@@ -254,7 +254,7 @@ package aholla.HEngine.managers
 		 * @param	e
 		 */
 		public function onUpdate(e:Event):void 
-		{		
+		{
 			if (!isPaused)
 			{	
 				var node:SLLNode = _updatedComponentList.head;
@@ -266,7 +266,7 @@ package aholla.HEngine.managers
 				_collisionManager.onUpdate();				
 				_renderManager.onUpdate();
 				camera.onUpdate();
-			}			
+			}
 			_inputManager.update();			
 		}
 		

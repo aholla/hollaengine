@@ -54,7 +54,8 @@ package aholla.HEngine.core.entity
 			_isCollider 	= $isCollider;
 			_colliderGroup	= $colliderGroup;			
 			_shape 			= $shape;			
-			_shape.translate($offsetX, $offsetY);		
+			_shape.translate($offsetX, $offsetY);	
+			setSize();
 		}
 		
 		public function render($graphic:Sprite, $colour:uint = 0x00FFFF):void

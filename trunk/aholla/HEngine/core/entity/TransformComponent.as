@@ -51,7 +51,7 @@ package aholla.HEngine.core.entity
 			_scaleX 		= 1;
 			_scaleY 		= 1;
 			_layerIndex 	= 0;
-			_bounds 		= new Rectangle();
+			_bounds 		= new Rectangle(0, 0, 1, 1);// Give it a rectangle.
 			_velocity 		= new Point();
 			_acceleration 	= new Point();
 		}
