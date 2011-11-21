@@ -102,6 +102,7 @@ package aholla.HEngine.core.entity
 		function createRendererStatic(isBlitted:Boolean = true, image:Bitmap = null, isCentered:Boolean = true, smoothing:Boolean = false, offsetX:Number = 0, offsetY:Number = 0):void
 		
 		
+		function createRendererTiledBlitted(levelData:Array, tilesheet:Bitmap, tileWidth:int, tileHeight:int, offsetX:int = 0, offsetY:int = 0):void
 		/**
 		 * Initializes the collider so the component is able for collision detection.
 		 * @param	$shape:Ishape - The shape used for collision.

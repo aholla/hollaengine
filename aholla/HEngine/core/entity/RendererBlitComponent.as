@@ -25,7 +25,9 @@ package aholla.HEngine.core.entity
 		private var _spritemap						:Spritemap;
 		private var dest							:Point;
 		private var _smoothing						:Boolean;
-		private var _buffer							:BitmapData;		
+		private var _buffer							:BitmapData;
+		private var _isDirty						:Boolean;
+		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
 -------------------------------------------------*/
@@ -70,7 +72,7 @@ package aholla.HEngine.core.entity
 			
 			
 			
-			if (!owner.transform.isDirty)
+			if (!_isDirty && !owner.transform.isDirty)
 			{
 				//trace("Copy");
 				canvasData.copyPixels(_graphic.bitmapData, _bounds, dest, null, null, true);
@@ -111,14 +113,14 @@ package aholla.HEngine.core.entity
 		
 		override public function flashColour(colour:uint = 0xFFFFFF, duration:Number = 1, alpha:Number = 1, delay:Number = 0):void
 		{		
-			owner.transform.isDirty = true;
+			_isDirty = true;
 			colourTransform.color = colour;	
 			colourTransform.alphaMultiplier = 0.5;
 		}
 		
 		override public function tint(colour:uint = 0xFFFFFF, alpha:Number = 1):void
 		{
-			owner.transform.isDirty = true;
+			_isDirty = true;
 			colourTransform.color = colour;
 			colourTransform.alphaMultiplier = 0.5;
 		}		
@@ -126,7 +128,7 @@ package aholla.HEngine.core.entity
 		public function initSpritemap(spritemap:Spritemap):void 
 		{
 			_spritemap 			= spritemap;
-			_bounds 				= _spritemap.cellRect;
+			_bounds 			= _spritemap.cellRect;
 			_graphic.bitmapData = _spritemap.data;
 			
 			_buffer = new BitmapData(_bounds.width, _bounds.height, true, 0x00000000);
@@ -151,7 +153,26 @@ package aholla.HEngine.core.entity
 		
 /*-------------------------------------------------
 * GETTERS / SETTERS
--------------------------------------------------*/			
+-------------------------------------------------*/	
+
+		override public function get alpha():Number 
+		{
+			return super.alpha;
+		}
+		
+		override public function set alpha(value:Number):void 
+		{
+			super.alpha = value;
+			if (_alpha != 1)
+			{
+				colourTransform.alphaMultiplier = _alpha;
+				_isDirty = true;
+			}
+			else
+			{
+				_isDirty = false;
+			}
+		}
 
 	}
 }

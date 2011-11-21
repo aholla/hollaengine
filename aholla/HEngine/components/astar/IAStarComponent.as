@@ -3,7 +3,7 @@
  * @author Adam
  */
 
-package aholla.HEngine.components.aStarComponent
+package aholla.HEngine.components.astar
 {
 	import flash.geom.Point;
 	

@@ -59,6 +59,7 @@ package aholla.HEngine
 		static public var world						:World;
 		
 		static public var isDebug					:Boolean = false;
+		static public var isDebugShowQuadTree		:Boolean = false;
 		
 		static private var sortDepths				:Boolean;
 		

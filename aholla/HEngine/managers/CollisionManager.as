@@ -70,8 +70,7 @@ package aholla.HEngine.managers
 		}
 		
 		public function onUpdate():void
-		{		
-			
+		{	
 			if (!HE.isPaused)
 			{
 				// first update quadtree
@@ -99,6 +98,7 @@ package aholla.HEngine.managers
 					}
 					
 					var entityList:SLL = quadtree.query(entityA.transform.bounds);					
+					
 					if (entityList.size() > 1)
 					{
 						var entityItem:SLLNode = entityList.head;
@@ -141,11 +141,13 @@ package aholla.HEngine.managers
 			entityB = null;			
 		}
 		
-		public function updateWorldSize():void 
+		public function updateWorldSize():void
 		{			
 			quadtree.destroy();
 			quadtree = null;
 			quadtree = new QuadtreeNode(new Rectangle(0, 0, HE.WORLD_WIDTH, HE.WORLD_HEIGHT));
+			
+			trace(this, "update world siize", HE.WORLD_WIDTH, HE.WORLD_HEIGHT)
 		}
 		
 /*-------------------------------------------------

@@ -14,6 +14,7 @@ package aholla.HEngine.core.entity
 	import aholla.HEngine.core.Logger;
 	import aholla.HEngine.HE;
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.utils.Dictionary;
 	import org.osflash.signals.ISignal;
 	import org.osflash.signals.Signal;
@@ -185,6 +186,7 @@ package aholla.HEngine.core.entity
 			
 			if (isBlitted)
 			{
+				trace("created a bloitted renderer")
 				_renderer = new RendererBlitComponent(isCentered, offsetX, offsetY, smoothing);
 			}
 			else
@@ -192,9 +194,20 @@ package aholla.HEngine.core.entity
 				//_renderer = new RendererMovieClipComponent();
 			}
 			
-			if(image)
-				_renderer.graphic = image;
-				
+			//if (image)
+			//{
+				//_renderer.setGraphic(image);
+			//}
+			
+			addComponent(_renderer, RENDERER);
+		}
+		
+		public function createRendererTiledBlitted(levelData:Array, tilesheet:Bitmap, tileWidth:int, tileHeight:int, offsetX:int = 0, offsetY:int = 0):void
+		{
+			checkForExistingRenderer();
+			
+			_renderer = new TiledRendererComponent();
+			(_renderer as TiledRendererComponent).initTilesheet(levelData, tilesheet.bitmapData, tileWidth, tileHeight, offsetX, offsetY);
 			addComponent(_renderer, RENDERER);
 		}
 		
@@ -205,7 +218,9 @@ package aholla.HEngine.core.entity
 		{
 			if (HE.isDebug && !_renderer)
 			{
-				_renderer = new RendererBlitComponent();
+				_renderer = new RendererBlitComponent();				
+				var bd:BitmapData = new BitmapData($shape.bounds.width, $shape.bounds.height, true, 0x00000000);
+				_renderer.setGraphic(new Bitmap(bd));
 				addComponent(_renderer, RENDERER);
 			}
 			

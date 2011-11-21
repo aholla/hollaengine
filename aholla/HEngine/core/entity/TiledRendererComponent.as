@@ -20,7 +20,7 @@ package aholla.HEngine.core.entity
 		public var map										:Array;
 			
 		private var tilesheetData							:BitmapData;
-		private var tileSheetDisplay						:Bitmap;
+		//private var tileSheetDisplay						:Bitmap;
 		private var tileSource								:BitmapData;			
 		private var _y										:Number = 0;		
 		private var _zIndex									:Number = 0;			
@@ -46,17 +46,20 @@ package aholla.HEngine.core.entity
 		private var maxCol									:int;
 		private var minRow									:int;
 		private var maxRow									:int;		
-		private var camera									:Camera;		
+		//private var camera									:Camera;		
 		private var isScrolling								:Boolean;		
 		private var tilesheetPos							:Point;
 		private var tilesheetOffset							:Point;
+		
+		private var isBlitted								:Boolean;
 		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
 -------------------------------------------------*/
 	
-		public function TiledRendererComponent() 
+		public function TiledRendererComponent(isBlitted:Boolean = true) 
 		{
+			this.isBlitted = isBlitted;
 			super();
 		}
 		
@@ -74,12 +77,14 @@ package aholla.HEngine.core.entity
 			tilesheetPos 	= new Point($x, $y);
 			tilesheetOffset = new Point(int(tilesheetPos.x / tileW), int(tilesheetPos.y / tileH));
 			
+			trace("tilesheetOffset",  tilesheetOffset)
+			
 			screenW = HE.SCREEN_WIDTH;
 			screenH = HE.SCREEN_HEIGHT;
 			tilesheetData = new BitmapData(screenW, screenH);
 			
-			tileSheetDisplay = new Bitmap(tilesheetData);
-			_display.addChild(tileSheetDisplay);
+			//tileSheetDisplay = new Bitmap(tilesheetData);
+			//_display.addChild(tileSheetDisplay);
 			
 			mapWidth = map[0].length * $tileW;
 			mapHeight = map.length * $tileH;
@@ -105,7 +110,7 @@ package aholla.HEngine.core.entity
 			
 		}
 		
-		override public function onUpdate():void
+		override public function render(canvasData:BitmapData = null):void
 		{
 			screenColumns 	= Math.ceil(screenW / tileW);
 			screenRows 		= Math.ceil(screenH / tileH);
@@ -119,6 +124,9 @@ package aholla.HEngine.core.entity
             maxRow = minRow + tilesheetOffset.y + screenRows + 1;
             minRow = Math.max(0, Math.min(mapRows, minRow));
             maxRow = Math.max(0, Math.min(mapRows, maxRow));
+			
+			
+			//trace(minCol, maxCol)
 			
 			tilesheetData.lock();
 			tilesheetData.fillRect(bufferRect, 0xFF0000);
@@ -134,24 +142,26 @@ package aholla.HEngine.core.entity
 					tileRect.width = tileW;
 					tileRect.height = tileH;					
 					tilePos.x = (col * tileW) - camera.x + tilesheetPos.x;				
-					tilePos.y = (row * tileH) - camera.y + tilesheetPos.y;	
-					
+					tilePos.y = (row * tileH) - camera.y + tilesheetPos.y;					
 					tilesheetData.copyPixels(tileSource, tileRect, tilePos);
                 }
             }
-			tilesheetData.unlock();			
-			_display.zIndex = _zIndex;
+			tilesheetData.unlock();	
+			
+			tilePos.x = tilePos.y = 0;
+			canvasData.copyPixels(tilesheetData, bufferRect, tilePos, null, null, true);
+			//_display.zIndex = _zIndex;
 		}
 		
 		override public function destroy():void 
 		{
 			tilesheetData.dispose();			
-			_display.removeChild(tileSheetDisplay);
+			//_display.removeChild(tileSheetDisplay);
 			
 			tileSource.dispose();
 			
 			tilesheetData 		= null;
-			tileSheetDisplay 	= null;
+			//tileSheetDisplay 	= null;
 			tileSource 			= null;
 			
 			super.destroy();
@@ -181,9 +191,9 @@ package aholla.HEngine.core.entity
 		public function set y(value:Number):void
 		{
 			_y = value;
-			_display.y = _y;
+			//_display.y = _y;
 			_zIndex = (_layerIndex + 1) *  _y;
-			_display.zIndex = _zIndex;
+			//_display.zIndex = _zIndex;
 		}
 		
 		public function get layerIndex():Number 

@@ -33,6 +33,8 @@ package aholla.HEngine.core.entity
 		
 		function tint(colour:uint = 0xFFFFFF, alpha:Number = 1):void;
 		
+		function setGraphic(image:Bitmap, width:int = 0, height:int = 0):void;
+		
 		
 		function get alpha():Number;
 		function set alpha($value:Number):void;
@@ -58,8 +60,8 @@ package aholla.HEngine.core.entity
 		/**
 		 * Graphic of renderer.
 		 * */
+		//function set graphic($graphic:Bitmap):void;
 		function get graphic():Bitmap;
-		function set graphic($graphic:Bitmap):void;
 
 		
 
