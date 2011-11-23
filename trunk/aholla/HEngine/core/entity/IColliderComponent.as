@@ -3,8 +3,6 @@ package aholla.HEngine.core.entity
 	import aholla.HEngine.collision.QuadtreeNode;
 	import aholla.HEngine.collision.shapes.IShape;
 	import flash.display.Sprite;
-	import flash.geom.Rectangle;
-	import flash.media.SoundTransform;
 	
 	/**
 	 * ...
@@ -28,10 +26,11 @@ package aholla.HEngine.core.entity
 		function get offsetY():Number;
 		
 		/**
-		 * The quadtree the entity is in.
+		 * The quadtree node the entity is in.
 		 */
 		function get quadtreeNode():QuadtreeNode;
 		function set quadtreeNode($value:QuadtreeNode):void;
+		
 		
 	}
 	

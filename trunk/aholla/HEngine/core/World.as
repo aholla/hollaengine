@@ -7,12 +7,15 @@ package aholla.HEngine.core
 {	
 	import aholla.HEngine.core.entity.IRendererComponent;
 	import aholla.HEngine.HE;
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	
 	public class World extends Sprite
 	{
 		private var _entityRenderArr				:Array = new Array();
-		public var debugLayer						:Sprite;
+		private var _debugLayer						:Sprite;
+		private var _debugData						:BitmapData;
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
 -------------------------------------------------*/
@@ -21,9 +24,12 @@ package aholla.HEngine.core
 		{
 			name = "world";			
 			updateWorldSize();
-			debugLayer = new Sprite();
-			debugLayer.name = "debugLayer";
-			addChild(debugLayer);
+			
+			if (HE.isDebug)
+			{
+				initDebugLayer();
+				initDebugData();				
+			}
 		}
 		
 /*-------------------------------------------------
@@ -42,7 +48,7 @@ package aholla.HEngine.core
 			//{
 				//_entityRenderArr[_entityRenderArr.length] = $renderer;
 			//}
-			//addChild(debugLayer);
+			//addChild(_debugLayer);
 		}
 		
 		/**
@@ -88,12 +94,19 @@ package aholla.HEngine.core
 		 */
 		public function updateWorldSize():void 
 		{
+			trace(this, "updateWorldSize");
 			if (HE.isDebug)
 			{
 				graphics.clear();
-				graphics.beginFill(0xFF0000, 0.5);
-				graphics.drawRect(0, 0, HE.WORLD_WIDTH,  HE.WORLD_HEIGHT);
+				graphics.beginFill(0xFF0000, 1);
+				graphics.drawRect(0, 0, HE.SCREEN_WIDTH,  HE.SCREEN_HEIGHT);
 				graphics.endFill();
+				
+				if (_debugData)
+				{
+					_debugData.dispose();
+					_debugData = new BitmapData(HE.SCREEN_WIDTH, HE.SCREEN_HEIGHT, true, 0x00000000);
+				}
 			}
 		}
 		
@@ -101,6 +114,18 @@ package aholla.HEngine.core
 * PRIVATE FUNCTIONS
 -------------------------------------------------*/
 		
+		private function initDebugLayer():void 
+		{
+			_debugLayer = new Sprite();
+			_debugLayer.name = "_debugLayer";
+			addChild(_debugLayer);
+		}
+		
+		private function initDebugData():void 
+		{
+			_debugData = new BitmapData(HE.SCREEN_WIDTH, HE.SCREEN_HEIGHT, true, 0x00000000);
+			addChild(new Bitmap(_debugData));
+		}
 		
 /*-------------------------------------------------
 * EVENT HANDLING
@@ -112,6 +137,22 @@ package aholla.HEngine.core
 -------------------------------------------------*/	
 		
 		public function get entityRenderArr():Array {	return _entityRenderArr;}
+		
+		public function get debugLayer():Sprite 
+		{
+			if (!_debugLayer)
+				initDebugLayer();
+			return _debugLayer;
+		}
+		
+		public function get debugData():BitmapData 
+		{
+			if (!_debugData)
+				initDebugData();
+			return _debugData;
+		}
+		
+
 		
 		
 	}

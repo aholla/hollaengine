@@ -11,8 +11,6 @@ package aholla.HEngine.managers
 	import aholla.HEngine.core.entity.IRendererComponent;
 	import aholla.HEngine.core.entity.IUpdatedComponent;
 	import aholla.HEngine.HE;
-	import de.polygonal.ds.SLL;
-	import de.polygonal.ds.SLLNode;
 	import flash.events.Event;
 	import flash.utils.Dictionary;
 	
@@ -21,12 +19,10 @@ package aholla.HEngine.managers
 		private var _inputManager					:InputManager;
 		private var _collisionManager				:CollisionManager;		
 		private var _renderManager					:RenderManager;
-		
-		private var _componentList					:SLL;
-		private var _updatedComponentList			:SLL;		
+		private var _componentList					:Vector.<IComponent>;
+		private var _updatedComponentList			:Vector.<IUpdatedComponent>;		
 		private var _componentDict					:Dictionary;
-		private var _updatedComponentDict			:Dictionary;
-		
+		private var _updatedComponentDict			:Dictionary;		
 		private var camera							:Camera;
 		private var _isPaused						:Boolean;
 		private var _sortDepths						:Boolean;		
@@ -45,8 +41,8 @@ package aholla.HEngine.managers
 			_collisionManager 	= new CollisionManager();
 			_renderManager 		= new RenderManager(_sortDepths);
 			
-			_componentList 			= new SLL();
-			_updatedComponentList 	= new SLL();
+			_componentList 			= new Vector.<IComponent>;
+			_updatedComponentList 	= new Vector.<IUpdatedComponent>;
 			
 			_componentDict			= new Dictionary(true);
 			_updatedComponentDict	= new Dictionary(true);
@@ -64,9 +60,9 @@ package aholla.HEngine.managers
 		 */
 		public function addComponent($component:IComponent):void
 		{
-			//TODO; should probably add some checking to see if component already exists.
-			var node:SLLNode = _componentList.append($component);
-			_componentDict[$component] = node;
+			//TODO; should probably add some checking to see if component already exists.			
+			_componentList.push($component);
+			_componentDict[$component] = $component;
 		}
 		
 		/**
@@ -75,13 +71,10 @@ package aholla.HEngine.managers
 		 */ 
 		public function removeComponent($component:IComponent):void
 		{
-			var node:SLLNode = (_componentDict[$component] as SLLNode);
-			if (node)
-			{
-				node.free();
-				node.unlink();
-				delete _updatedComponentDict[$component];
-			}
+			var index:int = _componentList.indexOf($component);
+			if (index != -1)
+				_componentList.splice(index, 1);
+			delete _updatedComponentDict[$component];
 		}
 		
 		/**
@@ -90,9 +83,9 @@ package aholla.HEngine.managers
 		 */
 		public function addUpdatedComponent($updatedComponent:IUpdatedComponent):void
 		{
-			//TODO; should probably add some checking to see if component already exists.
-			var node:SLLNode = _updatedComponentList.append($updatedComponent);
-			_updatedComponentDict[$updatedComponent] = node;	
+			//TODO; should probably add some checking to see if component already exists.			
+			_updatedComponentList.push($updatedComponent);
+			_updatedComponentDict[$updatedComponent] = $updatedComponent;
 		}	
 		
 		/**
@@ -101,13 +94,10 @@ package aholla.HEngine.managers
 		 */
 		public function removeUpdatedComponent($updatedComponent:IUpdatedComponent):void
 		{	
-			var node:SLLNode = (_updatedComponentDict[$updatedComponent] as SLLNode);
-			if (node)
-			{
-				node.free();
-				node.unlink();
-				delete _updatedComponentDict[$updatedComponent];
-			}
+			var index:int = _updatedComponentList.indexOf($updatedComponent);
+			if (index != -1)
+				_updatedComponentList.splice(index, 1);
+			delete _updatedComponentDict[$updatedComponent];
 		}		
 		
 		/**
@@ -151,13 +141,13 @@ package aholla.HEngine.managers
 		 */
 		public function start():void
 		{
-			isPaused = false;
-			var node:SLLNode = _componentList.head;
-			while (node)
+			isPaused = false;			
+			var len:int = _componentList.length;
+			for (var i:int = 0; i < len; i++) 
 			{
-				(node.val as IComponent).onUnPause();
-				node = node.next;
-			}
+				var _component:IComponent = _componentList[i] as IComponent;
+				_component.onUnPause();
+			}			
 		}
 		
 		/**
@@ -165,13 +155,13 @@ package aholla.HEngine.managers
 		 */
 		public function pause():void
 		{
-			isPaused = true;	
-			var node:SLLNode = _componentList.head;
-			while (node)
+			isPaused = true;
+			var len:int = _componentList.length;
+			for (var i:int = 0; i < len; i++) 
 			{
-				(node.val as IComponent).onPause();
-				node = node.next;
-			}
+				var _component:IComponent = _componentList[i] as IComponent;
+				_component.onPause();
+			}			
 		}
 		
 		/**
@@ -179,13 +169,13 @@ package aholla.HEngine.managers
 		 */
 		public function unPause():void
 		{
-			isPaused = false;			
-			var node:SLLNode = _componentList.head;
-			while (node)
+			isPaused = false;
+			var len:int = _componentList.length;
+			for (var i:int = 0; i < len; i++) 
 			{
-				(node.val as IComponent).onUnPause();
-				node = node.next;
-			}
+				var _component:IComponent = _componentList[i] as IComponent;
+				_component.onUnPause();
+			}			
 		}
 		
 		/**
@@ -229,15 +219,14 @@ package aholla.HEngine.managers
 			_collisionManager = null;			
 			
 			camera.destroy();
-			camera = null;
+			camera = null;		
 			
-			_componentList.free();
-			_componentList.clear(true);
+			_componentList = new Vector.<IComponent>;			
+			_updatedComponentList	= new Vector.<IComponent>;
+			
 			_componentDict = new Dictionary();
-			
-			_updatedComponentList.free();
-			_updatedComponentList.clear(true);
 			_updatedComponentDict = new Dictionary();
+			
 		}
 		
 /*-------------------------------------------------
@@ -257,13 +246,13 @@ package aholla.HEngine.managers
 		{
 			if (!isPaused)
 			{	
-				var node:SLLNode = _updatedComponentList.head;
-				while (node)
+				var len:int = _updatedComponentList.length;
+				for (var i:int = 0; i < len; i++) 
 				{
-					(node.val as IUpdatedComponent).onUpdate();
-					node = node.next;
-				}				
-				_collisionManager.onUpdate();				
+					var _updatedComponent:IUpdatedComponent = _updatedComponentList[i] as IUpdatedComponent;
+					_updatedComponent.onUpdate();					
+				}
+				//_collisionManager.onUpdate();				
 				_renderManager.onUpdate();
 				camera.onUpdate();
 			}

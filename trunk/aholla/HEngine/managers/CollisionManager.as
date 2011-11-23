@@ -11,12 +11,8 @@ package aholla.HEngine.managers
 	import aholla.HEngine.collision.CollisionInfo;
 	import aholla.HEngine.collision.QuadtreeNode;
 	import aholla.HEngine.collision.SATCollision;
-	import aholla.HEngine.core.entity.ColliderComponent;
-	import aholla.HEngine.core.entity.Entity;
 	import aholla.HEngine.core.entity.IEntity;
 	import aholla.HEngine.HE;
-	import de.polygonal.ds.SLL;
-	import de.polygonal.ds.SLLNode;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 
@@ -25,19 +21,17 @@ package aholla.HEngine.managers
 	{			
 		public var quadtree							:QuadtreeNode; // currently public for the process manage to inform it if an entity moves.
 		
-		private var entityA							:IEntity;
-		private var entityB							:IEntity;
-		private var collisionList					:SLL;
 		private var collisionDict					:Dictionary;
+		private var collisionList					:Vector.<IEntity>;
 		
 /*--------------------------------------------------
 * PUBLIC CONSTRUCTOR
 --------------------------------------------------*/
 		
 		public function CollisionManager() 
-		{	
-			quadtree 		= new QuadtreeNode(new Rectangle(0, 0, HE.WORLD_WIDTH, HE.WORLD_HEIGHT));			
-			collisionList 	= new SLL();
+		{				
+			quadtree 		= new QuadtreeNode(new Rectangle(0, 0, HE.WORLD_WIDTH, HE.WORLD_HEIGHT));				
+			collisionList 	= new Vector.<IEntity>;
 			collisionDict 	= new Dictionary(true);
 		}
 		
@@ -52,82 +46,65 @@ package aholla.HEngine.managers
 		 */
 		public function addCollision($entity:IEntity):void
 		{
-			collisionList.append($entity);
-			collisionDict[$entity] = $entity
+			collisionList.push($entity)
+			collisionDict[$entity] = $entity;
 			quadtree.insert($entity);
 		} 
 		
 		public function removeCollision($entity:IEntity):void
 		{
 			quadtree.remove($entity);
-			var node:SLLNode = (collisionDict[$entity] as SLLNode);
-			if (node)
-			{
-				node.free();
-				node.unlink();
-				delete collisionDict[$entity];
-			}			
+			delete collisionDict[$entity];		
 		}
 		
 		public function onUpdate():void
 		{	
 			if (!HE.isPaused)
 			{
+				var i:int;				
+				var len:int;
+				var _entityA:IEntity;
+				var _entityB:IEntity;
+				
 				// first update quadtree
-				var node:SLLNode = collisionList.head;
-				while (node)
+				len = collisionList.length;
+				for (i = 0; i < len; i++) 
 				{
-					entityA = (node.val as IEntity);
-					if (entityA.transform.hasMoved)
+					_entityA = collisionList[i] as IEntity;
+					if (_entityA.transform.hasMoved)
 					{
-						quadtree.moved(entityA);
-						entityA.transform.hasMoved = false;
-					}
-					node = node.next;
+						quadtree.moved(_entityA);
+						_entityA.transform.hasMoved = false;
+					}					
 				}
 				
-				node  = collisionList.head;
-				while (node)
+				len = collisionList.length;
+				for (i = 0; i < len; i++) 
 				{
-					entityA = (node.val as IEntity);	
+					_entityA = collisionList[i] as IEntity;
 					
-					if (!entityA.collider.isCollider || !entityA.isActive) 
+					if (!_entityA.collider.isCollider || !_entityA.isActive) 
+						continue;
+					
+					var neighbourList:Vector.<IEntity> = quadtree.query(_entityA.transform.bounds);
+					var nLen:int = neighbourList.length;
+					if (nLen > 1)
 					{
-						node = node.next;
-						continue;	
-					}
-					
-					var entityList:SLL = quadtree.query(entityA.transform.bounds);					
-					
-					if (entityList.size() > 1)
-					{
-						var entityItem:SLLNode = entityList.head;
-						while (entityItem)
+						for (var j:int = 0; j < nLen; j++) 
 						{
-							entityB = entityItem.val as Entity;							
-							
-							if (entityB)
+							_entityB = neighbourList[j] as IEntity;
+							if (_entityB)
 							{
-								if (entityA == entityB || !entityB || !entityB.isActive || !entityB.collider.isActive || !entityA)	
-								{
-									entityItem = entityItem.next;
+								if (_entityA == _entityB || !_entityB || !_entityB.isActive || !_entityB.collider.isActive || !_entityA)
 									continue;
-								}
 								
-								if (entityA.collider.colliderGroup == entityB.collider.colliderGroup)
-								{
-									entityItem = entityItem.next;
-									continue;
-								}
+								if (_entityA.collider.colliderGroup == _entityB.collider.colliderGroup)
+									continue;									
 								else
-								{
-									testCollision(entityA, entityB);
-								}
+									testCollision(_entityA, _entityB);
 							}
-							entityItem = entityItem.next;
 						}
-					}					
-					node = node.next;
+					}
 				}
 			}
 		}
@@ -135,10 +112,7 @@ package aholla.HEngine.managers
 		public function destroy():void
 		{
 			quadtree.destroy();
-			quadtree = null;
-			
-			entityA = null;
-			entityB = null;			
+			quadtree = null;		
 		}
 		
 		public function updateWorldSize():void
@@ -146,8 +120,6 @@ package aholla.HEngine.managers
 			quadtree.destroy();
 			quadtree = null;
 			quadtree = new QuadtreeNode(new Rectangle(0, 0, HE.WORLD_WIDTH, HE.WORLD_HEIGHT));
-			
-			trace(this, "update world siize", HE.WORLD_WIDTH, HE.WORLD_HEIGHT)
 		}
 		
 /*-------------------------------------------------

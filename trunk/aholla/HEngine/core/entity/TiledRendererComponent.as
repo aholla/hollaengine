@@ -77,8 +77,6 @@ package aholla.HEngine.core.entity
 			tilesheetPos 	= new Point($x, $y);
 			tilesheetOffset = new Point(int(tilesheetPos.x / tileW), int(tilesheetPos.y / tileH));
 			
-			trace("tilesheetOffset",  tilesheetOffset)
-			
 			screenW = HE.SCREEN_WIDTH;
 			screenH = HE.SCREEN_HEIGHT;
 			tilesheetData = new BitmapData(screenW, screenH);
@@ -110,7 +108,7 @@ package aholla.HEngine.core.entity
 			
 		}
 		
-		override public function render(canvasData:BitmapData = null):void
+		override public function onRender(canvasData:BitmapData = null):void
 		{
 			screenColumns 	= Math.ceil(screenW / tileW);
 			screenRows 		= Math.ceil(screenH / tileH);
@@ -123,10 +121,7 @@ package aholla.HEngine.core.entity
             minRow = int(camera.y / tileH) - tilesheetOffset.y;
             maxRow = minRow + tilesheetOffset.y + screenRows + 1;
             minRow = Math.max(0, Math.min(mapRows, minRow));
-            maxRow = Math.max(0, Math.min(mapRows, maxRow));
-			
-			
-			//trace(minCol, maxCol)
+            maxRow = Math.max(0, Math.min(mapRows, maxRow));			
 			
 			tilesheetData.lock();
 			tilesheetData.fillRect(bufferRect, 0xFF0000);

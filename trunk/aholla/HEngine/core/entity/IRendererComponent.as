@@ -25,8 +25,9 @@ package aholla.HEngine.core.entity
 		function play($animation:String):void;
 		
 		
-		function render(canvasData:BitmapData = null):void;
-		function debugRender(canvasDebugData:BitmapData):void;
+		function onRender(canvasData:BitmapData = null):void;
+		//function debugRender(canvasDebugData:BitmapData):void;
+		function debugRender():void;
 		
 		
 		function flashColour(colour:uint = 0xFFFFFF, duration:Number = 1, alpha:Number = 1, delay:Number = 0):void;

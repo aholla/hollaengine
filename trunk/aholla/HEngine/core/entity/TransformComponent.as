@@ -12,6 +12,7 @@
 package aholla.HEngine.core.entity
 {
 	import aholla.HEngine.core.entity.IEntity;
+	import aholla.HEngine.HE;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
@@ -74,6 +75,14 @@ package aholla.HEngine.core.entity
 		override public function destroy():void 
 		{
 			super.destroy();
+		}
+		
+		public function isOnscreen():Boolean
+		{
+			if (_bounds.x > HE.SCREEN_WIDTH + HE.camera.x || _bounds.width < 0 || _bounds.y > HE.SCREEN_HEIGHT + HE.camera.y || _bounds.height < 0)
+				return false;
+			else
+				return true;
 		}
 		
 /*-------------------------------------------------
