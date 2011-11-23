@@ -17,6 +17,7 @@ package aholla.HEngine.core.entity
 	import flash.display.Sprite;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;	
 	
 	public class RendererComponent extends Component implements IRendererComponent
@@ -30,6 +31,7 @@ package aholla.HEngine.core.entity
 		protected var colourTransform				:ColorTransform;
 		protected var camera						:Camera; 
 		protected var debugSprite					:Sprite;
+		protected var debugBuffer					:BitmapData;
 		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -68,17 +70,18 @@ package aholla.HEngine.core.entity
 			var shape:IShape = new Box($width, $height, false);
 			shape.render(sprite.graphics, $colour, $alpha, $colour, 0);			
 			
-			_graphic.bitmapData.dispose();
-			_graphic.bitmapData = new BitmapData(sprite.width, sprite.height, true, 0x00000000);
-			_graphic.bitmapData.draw(sprite);			
-			
-			_bounds = _graphic.bitmapData.rect;
-			
-			if (_isCentered)
-			{
-				_offsetX += -_graphic.bitmapData.width * 0.5;
-				_offsetY += -_graphic.bitmapData.height * 0.5;
-			}			
+			//_graphic.bitmapData.dispose();
+			//_graphic.bitmapData = new BitmapData(sprite.width, sprite.height, true, 0x00000000);
+			//_graphic.bitmapData.draw(sprite);			
+			//
+			//_bounds = _graphic.bitmapData.rect;
+			//
+			//if (_isCentered)
+			//{
+				//_offsetX += -_graphic.bitmapData.width * 0.5;
+				//_offsetY += -_graphic.bitmapData.height * 0.5;
+			//}	
+			drawShape(sprite);
 		}
 		
 		public function drawCircle(radius:int, colour:uint = 0xFF0000, alpha:Number = 1):void
@@ -87,55 +90,68 @@ package aholla.HEngine.core.entity
 			var shape:IShape =  new Circle(radius, radius, radius);
 			shape.render(sprite.graphics, colour, alpha, colour, 0);	
 			
-			_graphic.bitmapData.dispose();
-			_graphic.bitmapData = new BitmapData(sprite.width, sprite.height, true, 0x00000000);
-			_graphic.bitmapData.draw(sprite);			
-			
-			_bounds = _graphic.bitmapData.rect;
-			
-			if (_isCentered)
-			{
-				_offsetX += -_graphic.bitmapData.width * 0.5;
-				_offsetY += -_graphic.bitmapData.height * 0.5;
-			}
+			//_graphic.bitmapData.dispose();
+			//_graphic.bitmapData = new BitmapData(sprite.width, sprite.height, true, 0x00000000);
+			//_graphic.bitmapData.draw(sprite);			
+			//
+			//_bounds = _graphic.bitmapData.rect;
+			//
+			//if (_isCentered)
+			//{
+				//_offsetX += -_graphic.bitmapData.width * 0.5;
+				//_offsetY += -_graphic.bitmapData.height * 0.5;
+			//}
+			drawShape(sprite);
 		}
 		
 		public function drawPolygon($verticies:Array, $colour:uint = 0xFF0000, $alpha:Number = 1):void 
 		{
 			var sprite:Sprite = new Sprite();
-			var shape:IShape =  Polygon.fromArray($verticies, 0, 0);
+			//var shape:IShape =  Polygon.fromArray($verticies, 0, 0);
+			var shape:IShape =  Polygon.fromArray($verticies, false);
 			shape.render(sprite.graphics, $colour, $alpha, $colour, 0);
 			
-			_graphic.bitmapData.dispose();
-			_graphic.bitmapData = new BitmapData(sprite.width, sprite.height, true, 0x00000000);;
-			_graphic.bitmapData.draw(sprite);			
-			
-			_bounds = _graphic.bitmapData.rect;
-			
-			if (_isCentered)
-			{
-				_offsetX += -_graphic.bitmapData.width * 0.5;
-				_offsetY += -_graphic.bitmapData.height * 0.5;
-			}
+			//_graphic.bitmapData.dispose();
+			//_graphic.bitmapData = new BitmapData(sprite.width, sprite.height, true, 0x00000000);;
+			//_graphic.bitmapData.draw(sprite);			
+			//
+			//_bounds = _graphic.bitmapData.rect;
+			//
+			//if (_isCentered)
+			//{
+				//_offsetX += -_graphic.bitmapData.width * 0.5;
+				//_offsetY += -_graphic.bitmapData.height * 0.5;
+			//}
+			drawShape(sprite);
+		}	
+		
+		public function onRender(canvasData:BitmapData = null):void 
+		{
 		}		
 		
-		public function render(canvasData:BitmapData = null):void 
-		{
-		}
-		
-		
-		public function debugRender(canvasData:BitmapData):void 
+		public function debugRender():void 
 		{
 			if (owner.collider)
 			{
-				if (!debugSprite)
+				if (owner.transform.isOnscreen())
 				{
-					debugSprite = new Sprite();
-					owner.collider.render(debugSprite);
+					if (!debugSprite)
+					{
+						debugSprite = new Sprite();
+						owner.collider.render(debugSprite);						
+						debugBuffer = new BitmapData(debugSprite.width+1, debugSprite.height+1, true, 0x00000000);						
+						var debugMatrix:Matrix = new Matrix();
+						debugMatrix.translate(- owner.collider.offsetX + (owner.collider.bounds.width * 0.5),  - owner.collider.offsetY + (owner.collider.bounds.height * 0.5));		
+						debugBuffer.draw(debugSprite, debugMatrix);
+					}		
+					
+					var debugRect:Rectangle = new Rectangle(0, 0, debugBuffer.width, debugBuffer.height);
+					var debugPos:Point = new Point();
+					debugPos.x = owner.transform.x - HE.camera.x + owner.collider.offsetX - (owner.collider.bounds.width * 0.5);
+					debugPos.y = owner.transform.y - HE.camera.y + owner.collider.offsetY - (owner.collider.bounds.height * 0.5);
+					
+					HE.world.debugData.copyPixels(debugBuffer, debugRect, debugPos, null, null, true);
 				}
-				var matrix:Matrix = new Matrix();
-				matrix.translate(owner.transform.x, owner.transform.y);
-				canvasData.draw(debugSprite, matrix);				
 			}
 		}
 		
@@ -173,13 +189,26 @@ package aholla.HEngine.core.entity
 			{
 				_bounds = new Rectangle(0, 0, _w, _h);
 			}		
-		}
-		
+		}	
 		
 /*-------------------------------------------------
 * PRIVATE FUNCTIONS
 -------------------------------------------------*/
 		
+		private function drawShape(sprite:Sprite):void
+		{
+			_graphic.bitmapData.dispose();
+			_graphic.bitmapData = new BitmapData(sprite.width, sprite.height, true, 0x00000000);;
+			_graphic.bitmapData.draw(sprite);			
+			
+			_bounds = _graphic.bitmapData.rect;
+			
+			if (_isCentered)
+			{
+				_offsetX += -_graphic.bitmapData.width * 0.5;
+				_offsetY += -_graphic.bitmapData.height * 0.5;
+			}
+		}
 		
 /*-------------------------------------------------
 * EVENT HANDLING

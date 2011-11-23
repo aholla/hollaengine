@@ -29,7 +29,9 @@ package aholla.HEngine.collision.shapes
 		private var _transfromDirty					:Boolean = true; // tracks if the current transform is up to date		
 		private var _rawVertices					:Vector.<Point> = new Vector.<Point>;
 		private var _transformedVertices			:Vector.<Point> = new Vector.<Point>;
-		private var _bounds							:Rectangle;
+		private var _bounds							:Rectangle;				
+		private var _width							:int;
+		private var _height							:int;
 		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -77,16 +79,51 @@ package aholla.HEngine.collision.shapes
 		 * @param	points...
 		 * @return
 		 */
-		static public function fromArray(points:Array, $tx:Number = 0, $ty:Number = 0):Polygon 
+		//static public function fromArray(points:Array, $tx:Number = 0, $ty:Number = 0):Polygon 
+		static public function fromArray(points:Array, centreReg:Boolean):Polygon 
 		{
 			var poly:Polygon = new Polygon();
+			
+			var lowX	:int = int.MAX_VALUE;
+			var highX	:int = 0;
+			var lowY	:int = int.MAX_VALUE;
+			var highY	:int = 0;
+			var pX		:int;
+			var pY		:int;
+			for (var i:int = 0; i < points.length; i++) 
+			{
+				var p:Point = points[i] as Point;				
+				pX = p.x;
+				pY = p.y;					
+				if (pX < lowX) 	lowX = pX;
+				if (pX > highX) highX = pX;
+				if (pY < lowY)	lowY = pY;
+				if (pY > highY) highY = pY;				
+			}
+			
+			poly.width = highX;
+			poly.height = highY;
+			
 			for each (var pt:Point in points) 
 			{
 				poly.addVertex(pt);
-			}			
-			poly.translate($tx, $ty)
+			}
+			
+			for (var j:int = 0; j < poly.vertices.length; j++) 
+			{
+				if (centreReg) 
+				{
+					poly.getVertexAt(j).x -= poly.width * 0.5;
+					poly.getVertexAt(j).y -= poly.height * 0.5;
+				}
+				
+			}
+			poly.markAsDirty();
+			poly.markAsDirty();
+			poly.updateTransformation();
 			return poly;
 		}
+
 		
 /*-------------------------------------------------
 * PUBLIC FUNCTIONS
@@ -192,8 +229,8 @@ package aholla.HEngine.collision.shapes
 		 */
 		public function translate($tx:Number, $ty:Number):void
 		{
-			_tx = $tx;
-			_ty = $ty;			
+			_tx += $tx;
+			_ty += $ty;			
 			updateTransformation();			
 		}
 		
@@ -378,6 +415,26 @@ package aholla.HEngine.collision.shapes
 		
 		public function get tx():Number	{	return _tx;		}		
 		public function get ty():Number	{	return _ty;		}
+		
+		public function get width():int 
+		{
+			return _width;
+		}
+		
+		public function set width(value:int):void 
+		{
+			_width = value;
+		}
+		
+		public function get height():int 
+		{
+			return _height;
+		}
+		
+		public function set height(value:int):void 
+		{
+			_height = value;
+		}
 	}
 
 }

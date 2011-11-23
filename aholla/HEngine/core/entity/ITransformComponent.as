@@ -10,6 +10,7 @@ package aholla.HEngine.core.entity
 	
 	public interface ITransformComponent extends IComponent
 	{	
+		function isOnscreen():Boolean;
 		function get x():Number;		
 		function set x(value:Number):void;
 		

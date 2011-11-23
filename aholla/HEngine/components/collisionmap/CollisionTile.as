@@ -6,6 +6,7 @@
 package aholla.HEngine.components.collisionmap
 {
 	
+	import aholla.HEngine.collision.shapes.Box;
 	import aholla.HEngine.collision.shapes.Polygon;
 	import aholla.HEngine.core.entity.IEntity;
 	import aholla.HEngine.core.entity.RendererComponent;
@@ -23,7 +24,7 @@ package aholla.HEngine.components.collisionmap
 		private var tileH							:int;
 		private var col								:int;
 		private var row								:int;
-		private var offset							:Point = new Point();
+		private var offset							:Point;
 		private var isCentered						:Boolean;
 		
 /*--------------------------------------------------
@@ -83,9 +84,9 @@ package aholla.HEngine.components.collisionmap
 				break;
 				
 				
-				default:
-					Logger.error(this, "CollisionTile - tile number not listed: " + type);
-					return;
+				//default:
+					//Logger.error(this, "CollisionTile - tile number not listed: " + type);
+					//return;
 			}	
 			
 			createTile(type, polyArr, 0xFF0000);
@@ -144,7 +145,7 @@ package aholla.HEngine.components.collisionmap
 		
 		private function createTile($type:int, $polyArr:Array, $colour:uint):void 
 		{
-			var _tileEntity:IEntity  = HE.allocateEntity(TILE + "_" + id);
+			var _tileEntity:IEntity  = HE.allocateEntity(TILE);
 			_tileEntity.groupName = TILE;
 			
 			_tileEntity.transform.x = (col * tileW) + offset.x;
@@ -154,10 +155,8 @@ package aholla.HEngine.components.collisionmap
 			{
 				_tileEntity.transform.x += tileW * 0.5;
 				_tileEntity.transform.y += tileH * 0.5;
-			}
-			
-			_tileEntity.createCollider(Polygon.fromArray($polyArr, 0, 0), false, -(tileW * 0.5), -(tileH * 0.5), TILE);
-			 
+			}			 
+			_tileEntity.createCollider(Polygon.fromArray($polyArr, true), false, 0, 0, TILE);		 
 			_tileEntity.start();
 		}
 		

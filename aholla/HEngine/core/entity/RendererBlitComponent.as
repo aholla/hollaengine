@@ -49,51 +49,56 @@ package aholla.HEngine.core.entity
 * PUBLIC FUNCTIONS
 * -------------------------------------------------*/		
 	
-		override public function render(canvasData:BitmapData = null):void 
+		override public function onRender(canvasData:BitmapData = null):void 
 		{
 			//_bounds is set the the spritesheet rect when it is set.
-			
-			var scaleX:Number = owner.transform.scaleX;
-			var scaleY:Number = owner.transform.scaleY;			
-			
-			if (_spritemap)
-				_spritemap.onUpdate();
-			
-			if (camera.isMoving)
+			if (owner.transform.isOnscreen())
 			{
-				dest.x = int(owner.transform.x - camera.x) + (_offsetX * scaleX);
-				dest.y = int(owner.transform.y - camera.y) + (_offsetY * scaleY);
-			}
-			else
-			{				
-				dest.x = int(owner.transform.x + (_offsetX * scaleX));
-				dest.y = int(owner.transform.y + (_offsetY * scaleY));
-			}
-			
-			
-			
-			if (!_isDirty && !owner.transform.isDirty)
-			{
-				//trace("Copy");
-				canvasData.copyPixels(_graphic.bitmapData, _bounds, dest, null, null, true);
-			}
-			else
-			{
-				//trace("DRAW");
-				if (!_buffer)
-					_buffer = new BitmapData(_bounds.width, _bounds.height, true, 0x00000000);
+				var scaleX:Number = owner.transform.scaleX;
+				var scaleY:Number = owner.transform.scaleY;			
 				
-				_buffer.lock();
-				_buffer.fillRect(_buffer.rect, 0);
-				_buffer.copyPixels(_graphic.bitmapData, _bounds, new Point, null, null, true);
-				_buffer.unlock();				
+				if (_spritemap)
+					_spritemap.onUpdate();
 				
-				var matrix:Matrix = new Matrix();				
-				matrix.translate(- _bounds.width * 0.5, - _bounds.height * 0.5);
-				matrix.rotate(owner.transform.rotation * HEUtils.TO_RADIANS);
-				matrix.scale(scaleX, scaleY);
-				matrix.translate(dest.x + ((_bounds.width * 0.5) *scaleX), dest.y + ((_bounds.width * 0.5)*scaleY));
-				canvasData.draw(_buffer, matrix, colourTransform, null, null, _smoothing);
+				if (camera.isMoving)
+				{
+					dest.x = int(owner.transform.x - camera.x) + (_offsetX * scaleX);
+					dest.y = int(owner.transform.y - camera.y) + (_offsetY * scaleY);
+				}
+				else
+				{				
+					dest.x = int(owner.transform.x + (_offsetX * scaleX));
+					dest.y = int(owner.transform.y + (_offsetY * scaleY));
+				}
+				
+				if (!_isDirty && !owner.transform.isDirty)
+				{
+					//trace("Copy");
+					canvasData.copyPixels(_graphic.bitmapData, _bounds, dest, null, null, true);
+				}
+				else
+				{
+					//trace("DRAW");
+					if (!_buffer)
+						_buffer = new BitmapData(_bounds.width, _bounds.height, true, 0x00000000);
+					
+					_buffer.lock();
+					_buffer.fillRect(_buffer.rect, 0);
+					_buffer.copyPixels(_graphic.bitmapData, _bounds, new Point, null, null, true);
+					_buffer.unlock();				
+					
+					var matrix:Matrix = new Matrix();				
+					matrix.translate(- _bounds.width * 0.5, - _bounds.height * 0.5);
+					matrix.rotate(owner.transform.rotation * HEUtils.TO_RADIANS);
+					matrix.scale(scaleX, scaleY);
+					matrix.translate(dest.x + ((_bounds.width * 0.5) *scaleX), dest.y + ((_bounds.width * 0.5)*scaleY));
+					canvasData.draw(_buffer, matrix, colourTransform, null, null, _smoothing);
+				}
+				
+				if (HE.isDebug)
+				{
+					//debugRender();
+				}
 			}
 		}
 		

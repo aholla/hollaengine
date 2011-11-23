@@ -39,8 +39,11 @@ package aholla.HEngine.managers
 			{
 				var name:String = $name.toLowerCase();
 				if (_entityDict[name])
-					name += String(_count++);
-					
+				{
+					_count++;
+					name += String(_count);
+				}
+				
 				var _entity:IEntity = new Entity(name);
 				_entityDict[name] = _entity;
 				_entity.groupName = $name;

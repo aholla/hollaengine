@@ -13,6 +13,7 @@ package aholla.HEngine.core.entity
 	import aholla.HEngine.core.entity.ITransformComponent;
 	import aholla.HEngine.core.Logger;
 	import aholla.HEngine.HE;
+	import de.polygonal.ds.IntHashTable;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.utils.Dictionary;
@@ -35,7 +36,7 @@ package aholla.HEngine.core.entity
 		private var _componentsDict					:Dictionary;
 		private var _isActive						:Boolean;
 		private var _messageCollision				:Signal = new Signal();
-		
+		//private var intHashTable					:IntHashTable;
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
 -------------------------------------------------*/
@@ -47,6 +48,10 @@ package aholla.HEngine.core.entity
 			
 			_transform 	= new TransformComponent();
 			addComponent(transform, TRANSFORM);
+			
+			//intHashTable = new IntHashTable();
+			
+			//intHashTable.set(
 		}		
 		
 /*-------------------------------------------------

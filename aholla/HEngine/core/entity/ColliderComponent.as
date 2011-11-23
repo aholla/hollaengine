@@ -16,6 +16,8 @@ package aholla.HEngine.core.entity
 		private var _isCollider						:Boolean;
 		private var _colliderGroup					:String;
 		private var _quadtreeNode					:QuadtreeNode;
+		private var _offsetX						:int;
+		private var _offsetY						:int;
 		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -23,6 +25,7 @@ package aholla.HEngine.core.entity
 		
 		public function ColliderComponent() 
 		{
+			_offsetX = _offsetY = 0;
 		}
 		
 /*-------------------------------------------------
@@ -54,7 +57,9 @@ package aholla.HEngine.core.entity
 			_isCollider 	= $isCollider;
 			_colliderGroup	= $colliderGroup;			
 			_shape 			= $shape;			
-			_shape.translate($offsetX, $offsetY);	
+			_shape.translate($offsetX, $offsetY);
+			_offsetX = $offsetX;
+			_offsetY = $offsetY;
 			setSize();
 		}
 		
@@ -101,27 +106,11 @@ package aholla.HEngine.core.entity
 		public function get isCollider():Boolean 				{ 	return _isCollider;	}		
 		public function set isCollider(value:Boolean):void 		{ 	_isCollider = value; }
 		
-		public function get offsetX():Number 
-		{ 
-			if (_shape)	
-				return _shape.tx;
-			else 
-				return 0;
-		}
+		public function get offsetX():Number 					{ 		return _offsetX;	}		
+		public function get offsetY():Number					{ 		return _offsetY;	}		
 		
-		public function get offsetY():Number
-		{ 
-			if (_shape)	
-				return _shape.ty;
-			else 
-				return 0;
-		}		
-		
-		public function get quadtreeNode():QuadtreeNode { return _quadtreeNode;	}
-		public function set quadtreeNode($value:QuadtreeNode):void 
-		{
-			_quadtreeNode = $value;
-		}	
+		public function get quadtreeNode():QuadtreeNode 			{ return _quadtreeNode;	}
+		public function set quadtreeNode($value:QuadtreeNode):void 	{ _quadtreeNode = $value;	}
 		
 	}
 

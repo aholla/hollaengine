@@ -91,7 +91,7 @@ package aholla.HEngine.core.entity
 		}	
 		
 		
-		override public function render(canvasData:BitmapData = null):void
+		override public function onRender(canvasData:BitmapData = null):void
 		{		
 			super.render(canvasData);
 			if (camera.isMoving)

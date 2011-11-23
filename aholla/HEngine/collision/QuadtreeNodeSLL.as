@@ -8,14 +8,17 @@ package aholla.HEngine.collision
 {
 	import aholla.HEngine.core.entity.IEntity;
 	import aholla.HEngine.HE;
+	import de.polygonal.ds.SLL;
+	import de.polygonal.ds.SLLIterator;
+	import de.polygonal.ds.SLLNode;
 	import flash.geom.Rectangle;
 	
-	public class QuadtreeNode
+	public class QuadtreeNodeSLL
 	{
 		public static var MIN_SIZE					:int = 100;
 		
-		private var _nodes							:Vector.<QuadtreeNode>;
-		private var _contents						:Vector.<IEntity>;
+		private var _nodes							:SLL;
+		private var _contents						:SLL;
 		private var _bounds							:Rectangle;
 		private var centerX							:int = 0;
 		private var centerY							:int = 0;
@@ -24,31 +27,27 @@ package aholla.HEngine.collision
 * PUBLIC CONSTRUCTOR
 -------------------------------------------------*/
 		
-		public function QuadtreeNode($bounds:Rectangle)
+		public function QuadtreeNodeSLL($bounds:Rectangle)
 		{
-			_nodes 		= new Vector.<QuadtreeNode>();
-			_contents 	= new Vector.<IEntity>();			
-			_bounds = $bounds;			
-			centerX = _bounds.width * 0.5;
-			centerY = _bounds.height * 0.5;
+			_nodes 		= new SLL();
+			_contents 	= new SLL();
+			_bounds 	= $bounds;
 			
-			if (HE.isDebugShowQuadTree)
-			{
-				HE.world.debugLayer.graphics.lineStyle(0.5, 0x99B5FF, 0.1);
-				HE.world.debugLayer.graphics.drawRect(_bounds.x, _bounds.y, _bounds.width, _bounds.height);
-			}
+			centerX = _bounds.width * 0.5;
+			centerY = _bounds.height * 0.5;				
 		}
 		
 /*-------------------------------------------------
 * PUBLIC FUNCTIONS
 -------------------------------------------------*/
 		
+
 		/**
 		 * Inserts an Entities into the Quadtree.
 		 * @param	$entity
 		 */
 		public function insert($entity:IEntity):void
-		{				
+		{
 			// if the entities is outside the quadtree, there's a problem.
             if (!_bounds.containsRect($entity.transform.bounds))
             {
@@ -59,41 +58,41 @@ package aholla.HEngine.collision
 			
 			// If there are no subnodes and the node is a Leaf then create the subnodes if greater 
 			// than the smallest size (tuning the node into a Branch).
-            if (_nodes.length == 0)
+            if (_nodes.isEmpty())
 			{			
 				// the smallest subnode has an area 
 				if ((_bounds.height * _bounds.width) <= MIN_SIZE)
 					return;
 					
-				_nodes.push(new QuadtreeNode(new Rectangle(_bounds.x, _bounds.y, centerX, centerY)));
-				_nodes.push(new QuadtreeNode(new Rectangle(_bounds.left, _bounds.top + centerY, centerX, centerY)));
-				_nodes.push(new QuadtreeNode(new Rectangle(_bounds.left + centerX, _bounds.top, centerX, centerY)));
-				_nodes.push(new QuadtreeNode(new Rectangle(_bounds.left + centerX, _bounds.top + centerY, centerX, centerY)));
+				_nodes.append(new QuadtreeNodeSLL(new Rectangle(_bounds.x, _bounds.y, centerX, centerY)));
+				_nodes.append(new QuadtreeNodeSLL(new Rectangle(_bounds.left, _bounds.top + centerY, centerX, centerY)));
+				_nodes.append(new QuadtreeNodeSLL(new Rectangle(_bounds.left + centerX, _bounds.top, centerX, centerY)));
+				_nodes.append(new QuadtreeNodeSLL(new Rectangle(_bounds.left + centerX, _bounds.top + centerY, centerX, centerY)));
 			}
 			
             // for each subnode:
             // if the node contains the entity, add the item to that node and return
-            // this recurses into the node that is just large enough to fit this item        
-			var len:int = _nodes.length;
-			for (var i:int = 0; i < len; i++) 
+            // this recurses into the node that is just large enough to fit this item            
+			var quadtreeNode:SLLNode = _nodes.head;
+			while (quadtreeNode)
 			{
-				var item:QuadtreeNode = _nodes[i] as QuadtreeNode;
-				if(item.bounds.containsRect($entity.transform.bounds))
+				if ((quadtreeNode.val as QuadtreeNodeSLL).bounds.containsRect($entity.transform.bounds))
                 {
-					item.insert($entity);
+					(quadtreeNode.val as QuadtreeNodeSLL).insert($entity);
                     return;
-				}
-			}			
+                }
+				quadtreeNode = quadtreeNode.next;
+			}	
 			
             // if we make it to here, either
             // 1) none of the subnodes completely contained the entity. or
             // 2) we're at the smallest subnode size allowed 
             // add the item to this node's contents.
-			_contents.push($entity);
 			
 			// Add the reference o f teh quad tree to teh entity (stored in the collider
-			// as that seems a good place) for fast easy removal when it moves of is deleted.	
-			$entity.collider.quadtreeNode = this;			
+			// as that seems a good place) for fast easy removal when it moves of is deleted.
+			
+			$entity.collider.quadtreeNode = _contents.append($entity);	
 		}
 		
 		
@@ -102,40 +101,42 @@ package aholla.HEngine.collision
 		 * @param	$queryBounds
 		 * @return
 		 */
-		public function query($queryBounds:Rectangle):Vector.<IEntity>
+		public function query($queryBounds:Rectangle):SLL
 		{		
-			var results:Vector.<IEntity> = new Vector.<IEntity>();			
+			var results:SLL = new SLL();
 			
 			// this quad contains items that are not entirely contained by
 			// it's four sub-quads. Iterate through the items in this quad 
-			// to see if they intersect.			
-			var i:int;
-			var len:int;
-			
-			len = _contents.length;
-			for (i = 0; i < len; i++) 
+			// to see if they intersect.
+			var contentNode:SLLNode = _contents.head;
+			while (contentNode)
 			{
-				var item:IEntity = _contents[i] as IEntity;
-				if ($queryBounds.intersects(item.transform.bounds))
+				if ($queryBounds.intersects((contentNode.val as IEntity).transform.bounds))
 				{
-					results.push(item);
+					results.append(contentNode.val);
 				}
+				contentNode = contentNode.next;
 			}
+			//contentNode.free();
+			//contentNode = null;
 			
-			len = _nodes.length;
-			for (i = 0; i < len; i++) 
+			var quadtreeNode:SLLNode = _nodes.head;
+			while (quadtreeNode)
 			{
-				var node:QuadtreeNode = _nodes[i] as QuadtreeNode;
+				var node:QuadtreeNodeSLL = quadtreeNode.val as QuadtreeNodeSLL;
 				
 				if (node.isEmpty())
+				{
+					quadtreeNode = quadtreeNode.next;
 					continue;
-					
+				}
+				
 				// Case 1: search area completely contained by sub-quad
 				// if a node completely contains the query area, go down that branch
-				// and skip the remaining nodes (break this loop)
+				// and skip the remaining nodes (break this loop)				
 				if (node.bounds.containsRect($queryBounds))
 				{
-					results = results.concat(node.query($queryBounds));
+					results.merge(node.query($queryBounds));
 					break;
 				}
 				
@@ -143,21 +144,24 @@ package aholla.HEngine.collision
 				// if the query area completely contains a sub-quad,
 				// just add all the contents of that quad and it's children 
 				// to the result set. You need to continue the loop to test 
-				// the other quads		
+				// the other quads				
 				if ($queryBounds.containsRect(node.bounds))
 				{
-					results = results.concat(node.subTreeContents());
+					results.merge(node.subTreeContents());
+					quadtreeNode = quadtreeNode.next;
 					continue;
 				}
 				
 				//Case 3: search area intersects with sub-quad
 				//traverse into this quad, continue the loop to search other
-				//quads	
+				//quads				
 				if (node.bounds.intersects($queryBounds))
 				{
-					results = results.concat(node.query($queryBounds));
+					results.merge(node.query($queryBounds));
 				}
-			}			
+				
+				quadtreeNode = quadtreeNode.next;
+			}
 			return results;
 		}		
 		
@@ -166,15 +170,17 @@ package aholla.HEngine.collision
 		 * Returns all the Entities within the child nodes.
 		 * @return
 		 */
-		public function subTreeContents():Vector.<IEntity>
+		public function subTreeContents():SLL
 		{
-			var results:Vector.<IEntity> = new Vector.<IEntity>();			
-			var len:int = _nodes.length;
-			for (var i:int = 0; i < len; i++) 
+			var results:SLL = new SLL();
+			results = results.concat(_contents);
+			
+			var quadtreeNode:SLLNode = _nodes.head;
+			while (quadtreeNode)
 			{
-				var node:QuadtreeNode = _nodes[i] as QuadtreeNode;
-				results = results.concat(node.subTreeContents());
-			}
+				results.merge((quadtreeNode.val as QuadtreeNodeSLL).subTreeContents())
+				quadtreeNode = quadtreeNode.next;
+			}	
 			return results;
 		}	
 		
@@ -185,7 +191,7 @@ package aholla.HEngine.collision
 		 */
 		public function isEmpty():Boolean 
 		{
-			return _nodes.length == 0;
+			return _nodes.size() == 0;
 		}	
 		
 		
@@ -207,15 +213,13 @@ package aholla.HEngine.collision
 		public function remove($entity:IEntity):void
 		{
 			// retrieves the node where the entity is stored (from the collider)
-			// and removed it from teh conects of the node.	
+			// and removed it from teh conects of the node.
 			if ($entity.collider.quadtreeNode)
 			{
-				var index:int = $entity.collider.quadtreeNode.contents.indexOf($entity);
-				if ($entity != -1)
-				{
-					$entity.collider.quadtreeNode.contents.splice(index, 1);
-					$entity.collider.quadtreeNode = null;
-				}
+				var node:SLLNode = $entity.collider.quadtreeNode;				
+				node.unlink();
+				node.free();
+				$entity.collider.quadtreeNode = null;			
 			}
 		}
 		
@@ -225,17 +229,22 @@ package aholla.HEngine.collision
 		 */		
 		public function destroy():void 
 		{
-			_contents 	= new Vector.<IEntity>;
-			_nodes 		= new Vector.<QuadtreeNode>;
+			_contents.merge(subTreeContents());
+			_contents.clear();
+			_nodes.clear();
+			_contents.clear();			
+			_nodes  	= null;
+			_contents  	= null;
 		}
-		
 		
 		/**
 		 * Destroys the node and subnodes.
 		 */		
 		public function reset():void 
 		{
-			destroy();			
+			destroy();
+			_nodes 		= new SLL();
+			_contents 	= new SLL();			
 			centerX = _bounds.width * 0.5;
 			centerY = _bounds.height * 0.5;
 		}
@@ -255,9 +264,9 @@ package aholla.HEngine.collision
 * GETTERS / SETTERS
 -------------------------------------------------*/	
 		
-		public function get contents():Vector.<IEntity>			{	return _contents;}		
-		public function get nodes():Vector.<QuadtreeNode> 		{	return _nodes;	}		
-		public function get bounds():Rectangle 					{	return _bounds;	}
+		public function get contents():SLL			{	return _contents;}		
+		public function get nodes():SLL 			{	return _nodes;	}		
+		public function get bounds():Rectangle 		{	return _bounds;	}
 		
 	}
 
