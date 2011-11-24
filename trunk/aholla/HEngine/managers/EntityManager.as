@@ -12,7 +12,7 @@ package aholla.HEngine.managers
 	
 	public class EntityManager
 	{
-		private var _entityDict						:Dictionary = new Dictionary(true);		
+		private var _entityDict						:Dictionary = new Dictionary(true);
 		private var _count							:int = 0;
 		
 /*-------------------------------------------------
