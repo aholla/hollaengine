@@ -44,8 +44,6 @@ package aholla.HEngine.core.entity
 			_bounds = new Rectangle();			
 			_offsetX = _offsetY = 1;			
 			_isCentered = true;
-			
-			//debugAlpha = 0.8;
 		}
 		
 /*-------------------------------------------------
@@ -69,18 +67,6 @@ package aholla.HEngine.core.entity
 			var sprite:Sprite = new Sprite();
 			var shape:IShape = new Box($width, $height, false);
 			shape.render(sprite.graphics, $colour, $alpha, $colour, 0);			
-			
-			//_graphic.bitmapData.dispose();
-			//_graphic.bitmapData = new BitmapData(sprite.width, sprite.height, true, 0x00000000);
-			//_graphic.bitmapData.draw(sprite);			
-			//
-			//_bounds = _graphic.bitmapData.rect;
-			//
-			//if (_isCentered)
-			//{
-				//_offsetX += -_graphic.bitmapData.width * 0.5;
-				//_offsetY += -_graphic.bitmapData.height * 0.5;
-			//}	
 			drawShape(sprite);
 		}
 		
@@ -88,40 +74,15 @@ package aholla.HEngine.core.entity
 		{			
 			var sprite:Sprite = new Sprite();			
 			var shape:IShape =  new Circle(radius, radius, radius);
-			shape.render(sprite.graphics, colour, alpha, colour, 0);	
-			
-			//_graphic.bitmapData.dispose();
-			//_graphic.bitmapData = new BitmapData(sprite.width, sprite.height, true, 0x00000000);
-			//_graphic.bitmapData.draw(sprite);			
-			//
-			//_bounds = _graphic.bitmapData.rect;
-			//
-			//if (_isCentered)
-			//{
-				//_offsetX += -_graphic.bitmapData.width * 0.5;
-				//_offsetY += -_graphic.bitmapData.height * 0.5;
-			//}
+			shape.render(sprite.graphics, colour, alpha, colour, 0);			
 			drawShape(sprite);
 		}
 		
 		public function drawPolygon($verticies:Array, $colour:uint = 0xFF0000, $alpha:Number = 1):void 
 		{
 			var sprite:Sprite = new Sprite();
-			//var shape:IShape =  Polygon.fromArray($verticies, 0, 0);
 			var shape:IShape =  Polygon.fromArray($verticies, false);
 			shape.render(sprite.graphics, $colour, $alpha, $colour, 0);
-			
-			//_graphic.bitmapData.dispose();
-			//_graphic.bitmapData = new BitmapData(sprite.width, sprite.height, true, 0x00000000);;
-			//_graphic.bitmapData.draw(sprite);			
-			//
-			//_bounds = _graphic.bitmapData.rect;
-			//
-			//if (_isCentered)
-			//{
-				//_offsetX += -_graphic.bitmapData.width * 0.5;
-				//_offsetY += -_graphic.bitmapData.height * 0.5;
-			//}
 			drawShape(sprite);
 		}	
 		
@@ -197,12 +158,9 @@ package aholla.HEngine.core.entity
 		
 		private function drawShape(sprite:Sprite):void
 		{
-			_graphic.bitmapData.dispose();
 			_graphic.bitmapData = new BitmapData(sprite.width, sprite.height, true, 0x00000000);;
 			_graphic.bitmapData.draw(sprite);			
-			
-			_bounds = _graphic.bitmapData.rect;
-			
+			_bounds = _graphic.bitmapData.rect;			
 			if (_isCentered)
 			{
 				_offsetX += -_graphic.bitmapData.width * 0.5;
@@ -220,23 +178,8 @@ package aholla.HEngine.core.entity
 * GETTERS / SETTERS
 -------------------------------------------------*/			
 		
-		//public function set graphic($graphic:Bitmap):void 	
-		//{	
-			//_graphic = $graphic;
-			//if (_isCentered)	
-			//{
-				//_graphic.x = -_graphic.width * 0.5;
-				//_graphic.y = -_graphic.height * 0.5;
-				//_bounds = new Rectangle( -_graphic.width * 0.5, -_graphic.height * 0.5, _graphic.width, _graphic.height);
-			//}
-			//else
-			//{
-				//_bounds = new Rectangle(0, 0, _graphic.width, _graphic.height);
-			//}
-			//trace("set graphic")
-		//}
-		public function get graphic():Bitmap 				{	return _graphic; }		
-		
+		public function get graphic():Bitmap 					{	return _graphic; }		
+			
 		public function get alpha():Number 						{	return _alpha;}		
 		public function set alpha($value:Number):void 			{	_alpha = $value;}
 		

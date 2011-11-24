@@ -13,6 +13,8 @@ package aholla.HEngine.core.entity
 	import aholla.HEngine.core.entity.ITransformComponent;
 	import aholla.HEngine.core.Logger;
 	import aholla.HEngine.HE;
+	import de.polygonal.ds.Hashable;
+	import de.polygonal.ds.HashKey;
 	import de.polygonal.ds.IntHashTable;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -20,7 +22,7 @@ package aholla.HEngine.core.entity
 	import org.osflash.signals.ISignal;
 	import org.osflash.signals.Signal;
 	
-	public class Entity implements IEntity
+	public class Entity implements IEntity, Hashable
 	{
 		private static const TRANSFORM				:String = "transform";
 		private static const RENDERER				:String = "renderer";
@@ -37,12 +39,16 @@ package aholla.HEngine.core.entity
 		private var _isActive						:Boolean;
 		private var _messageCollision				:Signal = new Signal();
 		//private var intHashTable					:IntHashTable;
+		
+		public var key								:int;
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
 -------------------------------------------------*/
 	
 		public function Entity($name:String) 
 		{
+			key = HashKey.next();
+			
 			_name 		= $name;
 			_componentsDict = new Dictionary(true);						
 			

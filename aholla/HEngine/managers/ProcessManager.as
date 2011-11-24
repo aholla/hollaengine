@@ -252,7 +252,7 @@ package aholla.HEngine.managers
 					var _updatedComponent:IUpdatedComponent = _updatedComponentList[i] as IUpdatedComponent;
 					_updatedComponent.onUpdate();					
 				}
-				//_collisionManager.onUpdate();				
+				_collisionManager.onUpdate();				
 				_renderManager.onUpdate();
 				camera.onUpdate();
 			}

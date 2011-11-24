@@ -8,11 +8,12 @@ package aholla.HEngine.core.entity
 	import aholla.HEngine.collision.CollisionInfo;
 	import aholla.HEngine.collision.shapes.IShape;
 	import aholla.HEngine.core.entity.IComponent;
+	import de.polygonal.ds.Hashable;
 	import flash.display.Bitmap;
 	import flash.utils.Dictionary;
 	import org.osflash.signals.ISignal;
 	
-	public interface IEntity 
+	public interface IEntity extends Hashable
 	{	
 		/**
 		 * "Starts" all the components that have been added;
