@@ -70,7 +70,6 @@ class Circle implements IShape
 	{
 		// bounds
 		graphics.lineStyle(0.1, boundsColour, boundsAlpha);	
-		trace("1" + " " + bounds.x + " " + bounds.y + " " + bounds.width+ " " + bounds.height);
 		graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);			
 		
 		// shape
@@ -90,7 +89,7 @@ class Circle implements IShape
 	/**
 	 * A clean up routine that destroys all external references to prepare the class for garbage collection
 	 */
-	public function destroy () : Void
+	public function destroy():Void
 	{
 		
 	}
@@ -107,7 +106,6 @@ class Circle implements IShape
 	{
 		bounds = null;
 		radius = Math.abs(value);
-		trace(">>> " +  radius + " " + Math.abs(value) +" "+  value);
 	}
 	
 /*-------------------------------------------------

@@ -94,7 +94,7 @@ interface IEntity
 	 * @param	isCollider:Bool - if the shape is an "active" collider, it checks against other items.
 	 * @param	collisionGroup:String - a group identifier to stop collisions with similar items
 	 */
-	function createCollider(shape:IShape, isCollider:Bool = true, offsetX:Float = 0, offsetY:Float = 0, collisionGroup:String = null):Void;		
+	function createCollider(shape:IShape, isCollider:Bool = true, offsetX:Int = 0, offsetY:Int = 0, collisionGroup:String = null):Void;		
 	
 	
 	

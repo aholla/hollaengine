@@ -12,19 +12,19 @@ import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
-import flash.geom.PoInt;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 class TiledRendererComponent extends RendererComponent, implements ITiledRender
 {
-	public var map										:Array;
+	public var map										:Array<Array<Int>>;
 		
 	private var tilesheetData							:BitmapData;
 	//private var tileSheetDisplay						:Bitmap;
 	private var tileSource								:BitmapData;			
-	private var _y										:Float = 0;		
-	private var _zIndex									:Float = 0;			
-	private var _layerIndex								:Float = 0;		
+	//private var _y										:Float = 0;		
+	private var zIndex									:Int;			
+	private var layerIndex								:Int;		
 	private var tileW									:Int;
 	private var tileH									:Int;		
 	private var screenW									:Int;		
@@ -39,7 +39,7 @@ class TiledRendererComponent extends RendererComponent, implements ITiledRender
 	private var col										:Int;		
 	private var tileIndex								:Int;
 	private var tileRect								:Rectangle;
-	private var tilePos									:PoInt;
+	private var tilePos									:Point;
 	private var tilesPerSheet							:Int;			
 	private var bufferRect								:Rectangle;		
 	private var minCol									:Int;
@@ -48,8 +48,8 @@ class TiledRendererComponent extends RendererComponent, implements ITiledRender
 	private var maxRow									:Int;		
 	//private var camera									:Camera;		
 	private var isScrolling								:Bool;		
-	private var tilesheetPos							:PoInt;
-	private var tilesheetOffset							:PoInt;
+	private var tilesheetPos							:Point;
+	private var tilesheetOffset							:Point;
 	
 	private var isBlitted								:Bool;
 	
@@ -67,37 +67,42 @@ class TiledRendererComponent extends RendererComponent, implements ITiledRender
 * PUBLIC FUNCTIONS
 -------------------------------------------------*/
 	
-	public function initTilesheet(map:Array, tilesheet:BitmapData, tileW:Int, tileH:Int, x:Int = 0, y:Int = 0):Void
+	public function initTilesheet(map:Array<Array<Int>>, tilesheet:BitmapData, tileW:Int, tileH:Int, x:Int = 0, y:Int = 0):Void
 	{
-		map = map;
-		tileW = tileW;
-		tileH = tileH;
+		this.map = map;
+		this.tileW = tileW;
+		this.tileH = tileH;
 		tileSource	= tilesheet;
 		
-		tilesheetPos 	= new PoInt(x, y);
-		tilesheetOffset = new PoInt(Int(tilesheetPos.x / tileW), Int(tilesheetPos.y / tileH));
+		tilesheetPos 	= new Point(x, y);
+		tilesheetOffset = new Point(Std.int(tilesheetPos.x / tileW), Std.int(tilesheetPos.y / tileH));
 		
 		screenW = HE.SCREEN_WIDTH;
 		screenH = HE.SCREEN_HEIGHT;
 		tilesheetData = new BitmapData(screenW, screenH);
 		
+		//------------------------
+		// DISPLAY LIST
 		//tileSheetDisplay = new Bitmap(tilesheetData);
 		//_display.addChild(tileSheetDisplay);
+		//------------------------
 		
 		mapWidth = map[0].length * tileW;
 		mapHeight = map.length * tileH;
 		
 		tileRect = new Rectangle();
-		tilePos = new PoInt();
+		tilePos = new Point();
 		
-		tilesPerSheet = tileSource.width / tileW;
+		tilesPerSheet = Std.int(tileSource.width / tileW);
 		
-		mapColumns 	= Int(mapWidth / tileW);			
-		mapRows 	= Int(mapHeight / tileH);
+		mapColumns 	= Std.int(mapWidth / tileW);			
+		mapRows 	= Std.int(mapHeight / tileH);
 		row = 0;			
 		col = 0;
 		
-		_zIndex = (_layerIndex + 1) * _y;
+		layerIndex = 0;
+		zIndex = 0;
+		zIndex = (layerIndex + 1);// * _y;
 		
 		camera = HE.camera;
 		
@@ -113,29 +118,31 @@ class TiledRendererComponent extends RendererComponent, implements ITiledRender
 		screenColumns 	= Math.ceil(screenW / tileW);
 		screenRows 		= Math.ceil(screenH / tileH);
 		
-		minCol = Int(camera.x / tileW) - tilesheetOffset.x;
-		maxCol = minCol + tilesheetOffset.x + screenColumns + 1;
-		minCol = Math.max(0, Math.min(mapColumns, minCol));
-		maxCol = Math.max(0, Math.min(mapColumns, maxCol));			
+		minCol = Std.int((camera.x / tileW) - tilesheetOffset.x);
+		maxCol = Std.int(minCol + tilesheetOffset.x + screenColumns) + 1;
+		minCol = Std.int(Math.max(0, Math.min(mapColumns, minCol)));
+		maxCol = Std.int(Math.max(0, Math.min(mapColumns, maxCol)));			
 		
-		minRow = Int(camera.y / tileH) - tilesheetOffset.y;
-		maxRow = minRow + tilesheetOffset.y + screenRows + 1;
-		minRow = Math.max(0, Math.min(mapRows, minRow));
-		maxRow = Math.max(0, Math.min(mapRows, maxRow));			
+		minRow = Std.int((camera.y / tileH) - tilesheetOffset.y);
+		maxRow = Std.int(minRow + tilesheetOffset.y + screenRows) + 1;
+		minRow = Std.int(Math.max(0, Math.min(mapRows, minRow)));
+		maxRow = Std.int(Math.max(0, Math.min(mapRows, maxRow)));			
 		
 		tilesheetData.lock();
 		tilesheetData.fillRect(bufferRect, 0xFF0000);
 		
 		//for (row = minRow; row < maxRow; row++) 
-		for (row = minRow in row ...  maxRow) 
+		row = minRow;
+		for (row in minRow...maxRow) 
 		{
 			//for (col = minCol; col < maxCol; col++) 
-			for(col = minCol in col ... maxCOL)
+			col = minCol;
+			for(col in minCol...maxCol)
 			{
-				tileIndex = map[row][col];					
+				tileIndex = Std.int(map[row][col]);					
 				
-				tileRect.x = Int((tileIndex % tilesPerSheet)) * tileW;
-				tileRect.y = Int((tileIndex / tilesPerSheet)) * tileH;					
+				tileRect.x = Std.int((tileIndex % tilesPerSheet)) * tileW;
+				tileRect.y = Std.int((tileIndex / tilesPerSheet)) * tileH;					
 				tileRect.width = tileW;
 				tileRect.height = tileH;					
 				tilePos.x = (col * tileW) - camera.x + tilesheetPos.x;				
@@ -147,7 +154,7 @@ class TiledRendererComponent extends RendererComponent, implements ITiledRender
 		
 		tilePos.x = tilePos.y = 0;
 		canvasData.copyPixels(tilesheetData, bufferRect, tilePos, null, null, true);
-		//_display.zIndex = _zIndex;
+		//_display.zIndex = zIndex;
 	}
 	
 	override public function destroy():Void 

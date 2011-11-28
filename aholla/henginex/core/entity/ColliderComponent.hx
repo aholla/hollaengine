@@ -27,6 +27,8 @@ class ColliderComponent extends Component, implements IColliderComponent
 	
 	public function new() 
 	{
+		super();
+		
 		bounds = new Rectangle(0, 0, 1, 1);
 		offsetX = offsetY = 0;
 	}
@@ -55,7 +57,7 @@ class ColliderComponent extends Component, implements IColliderComponent
 		super.destroy();
 	}
 	
-	public function create(shape:IShape, isCollider:Bool = true, offsetX:Float = 0, offsetY:Float = 0, colliderGroup:String = null):Void 
+	public function create(shape:IShape, isCollider:Bool = true, offsetX:Int = 0, offsetY:Int = 0, colliderGroup:String = null):Void 
 	{
 		this.isCollider 	= isCollider;
 		this.colliderGroup	= colliderGroup;			
@@ -82,8 +84,8 @@ class ColliderComponent extends Component, implements IColliderComponent
 		shape.scaleX 	= owner.transform.scaleX;
 		shape.scaleY 	= owner.transform.scaleY;
 		
-		owner.transform.width 	= shape.bounds.width;
-		owner.transform.height 	= shape.bounds.height;	
+		owner.transform.width 	= Std.int(shape.bounds.width);
+		owner.transform.height 	= Std.int(shape.bounds.height);	
 	}
 	
 /*-------------------------------------------------
