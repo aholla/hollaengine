@@ -14,6 +14,7 @@ import aholla.henginex.core.entity.ITransformComponent;
 import aholla.henginex.core.Logger;
 import aholla.henginex.HE;
 import nme.display.Bitmap;
+import nme.display.BitmapData;
 
 class Entity implements IEntity
 {
@@ -155,8 +156,11 @@ class Entity implements IEntity
 		if (isBlitted)
 		{
 			renderer = new RendererBlitComponent(isCentered, offsetX, offsetY, smoothing);
-			//if (spritemap)
+			if (spritemap != null)
+			{
+				//cast(
 				//(renderer as RendererBlitComponent).initSpritemap(spritemap);
+			}
 		}
 		else
 		{
@@ -176,7 +180,6 @@ class Entity implements IEntity
 		if (isBlitted)
 		{
 			renderer = new RendererBlitComponent(isCentered, offsetX, offsetY, smoothing);
-			trace("created a static blitted renderer");
 		}
 		else
 		{
@@ -187,9 +190,12 @@ class Entity implements IEntity
 	
 	public function createRendererTiledBlitted(levelData:Array<Int>, tilesheet:Bitmap, tileWidth:Int, tileHeight:Int, offsetX:Int = 0, offsetY:Int = 0):Void
 	{
-		//checkForExistingRenderer();
+		checkForExistingRenderer();
 		
-		//renderer = new TiledRendererComponent();
+		renderer = new TiledRendererComponent();
+		
+		trace(Std.is(renderer, TiledRendererComponent));
+		//cast(renderer.ini
 		//(renderer as TiledRendererComponent).initTilesheet(levelData, tilesheet.bitmapData, tileWidth, tileHeight, offsetX, offsetY);
 		//cast(renderer, ITiledRender)..initTilesheet(levelData, tilesheet.bitmapData, tileWidth, tileHeight, offsetX, offsetY);
 		
@@ -200,26 +206,26 @@ class Entity implements IEntity
 	/**
 	 * @inheritDoc
 	 */
-	public function createCollider(shape:IShape, isCollider:Bool = true, offsetX:Float = 0, offsetY:Float = 0, collisionGroup:String = null):Void
+	public function createCollider(shape:IShape, isCollider:Bool = true, offsetX:Int = 0, offsetY:Int = 0, collisionGroup:String = null):Void
 	{
-		//if (HE.isDebug && !renderer)
-		//{
-			//renderer = new RendererBlitComponent();				
-			//var bd:BitmapData = new BitmapData(shape.bounds.width, shape.bounds.height, true, 0x00000000);
-			//renderer.setGraphic(new Bitmap(bd));
-			//addComponent(renderer, RENDERER);
-		//}
-		//
-		//if (!collisionGroup && _groupName)
-		//{
-			//collisionGroup = _groupName;
-		//}
-		//
-		//collider = new ColliderComponent();
-		//addComponent(collider, COLLIDER);
-		//
-		//collider.create(shape, isCollider, offsetX, offsetY, collisionGroup);			
-		//HE.processManager.addCollision(this);
+		if (HE.isDebug && renderer == null)
+		{
+			renderer = new RendererBlitComponent();				
+			var bd:BitmapData = new BitmapData(Std.int(shape.bounds.width), Std.int(shape.bounds.height), true, 0x00000000);
+			renderer.setGraphic(new Bitmap(bd));
+			addComponent(renderer, RENDERER);
+		}
+		
+		if (collisionGroup == null && groupName != null)
+		{
+			collisionGroup = groupName;
+		}
+		
+		collider = new ColliderComponent();
+		addComponent(collider, COLLIDER);
+		
+		collider.create(shape, isCollider, offsetX, offsetY, collisionGroup);			
+		HE.processManager.addCollision(this);
 	}
 	
 /*-------------------------------------------------

@@ -52,7 +52,6 @@ class Box implements IPolygon
 		polygon = new Polygon();
 		for(i in 0...4)
 		{
-			trace("box" + i);
 			polygon.addVertex(new Point());
 		}
 		this.width = width;
