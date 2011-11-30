@@ -73,7 +73,6 @@ class ProcessManager
 	 */ 
 	public function removeComponent(component:IComponent):Void
 	{
-		//var index:Int = componentList.indexOf(component);
 		var index:Int = Lambda.indexOf(componentList, component);
 		if (index != -1)
 			componentList.splice(index, 1);
@@ -97,7 +96,6 @@ class ProcessManager
 	 */
 	public function removeUpdatedComponent(updatedComponent:IUpdatedComponent):Void
 	{	
-		//var index:Int = updatedComponentList.indexOf(updatedComponent);
 		var index:Int = Lambda.indexOf(updatedComponentList, updatedComponent);
 		if (index != -1)
 			updatedComponentList.splice(index, 1);

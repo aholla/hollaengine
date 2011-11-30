@@ -97,7 +97,7 @@ class RendererBlitComponent extends RendererComponent, implements IRendererCompo
 			
 			if (HE.isDebug)
 			{
-				//debugRender();
+				debugRender();
 			}
 		}
 	}
@@ -130,9 +130,9 @@ class RendererBlitComponent extends RendererComponent, implements IRendererCompo
 		colourTransform.alphaMultiplier = 0.5;
 	}		
 	
-	public function initspmap(spmap:Spritemap):Void 
+	public function initSpriteMap(spritemap:Spritemap):Void 
 	{
-		this.spmap 			= spmap;
+		this.spmap 			= spritemap;
 		bounds 				= spmap.cellRect;
 		graphic.bitmapData 	= spmap.data;
 		
