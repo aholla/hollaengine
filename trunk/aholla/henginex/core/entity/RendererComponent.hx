@@ -91,6 +91,8 @@ class RendererComponent extends Component, implements IRendererComponent
 	
 	public function onRender(canvasData:BitmapData = null):Void 
 	{
+		if (HE.isDebug)
+			debugRender();
 	}		
 	
 	public function debugRender():Void 
@@ -99,13 +101,20 @@ class RendererComponent extends Component, implements IRendererComponent
 		{
 			if (owner.transform.isOnscreen())
 			{
+				/*
 				if (debugSprite == null)
 				{
 					debugSprite = new Sprite();
-					owner.collider.render(debugSprite);						
-					debugBuffer = new BitmapData(Std.int(debugSprite.width)+1, Std.int(debugSprite.height)+1, true, 0xFFFFFFFF);						
+					owner.collider.render(debugSprite);	
+					
+					debugBuffer = new BitmapData(Std.int(debugSprite.width)+1, Std.int(debugSprite.height)+1, true, 0x00000000);						
+					
+					
+					//trace(( - owner.collider.offsetX + (owner.collider.bounds.width * 0.5)) + " : " + owner.collider.offsetX +  " : " +(owner.collider.bounds.width * 0.5));
+					//trace("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX " + ( - owner.collider.offsetX + (owner.collider.bounds.width * 0.5)));
+						
 					var debugMatrix:Matrix = new Matrix();
-					debugMatrix.translate(- owner.collider.offsetX + (owner.collider.bounds.width * 0.5),  - owner.collider.offsetY + (owner.collider.bounds.height * 0.5));		
+					debugMatrix.translate(- (owner.collider.offsetX + (owner.collider.bounds.width * 0.5)),  - owner.collider.offsetY + (owner.collider.bounds.height * 0.5));		
 					debugBuffer.draw(debugSprite, debugMatrix);
 				}		
 				
@@ -115,7 +124,31 @@ class RendererComponent extends Component, implements IRendererComponent
 				debugPos.y = owner.transform.y - HE.camera.y + owner.collider.offsetY - (owner.collider.bounds.height * 0.5);
 				
 				HE.world.debugData.copyPixels(debugBuffer, debugRect, debugPos, null, null, true);
+				//HE.world.debugData.draw(debugSprite);
+				*/
+				/*
+				if (debugSprite == null)
+				{
+					debugSprite = new Sprite();
+					owner.collider.render(debugSprite);						
+					debugBuffer = new BitmapData(Std.int(debugSprite.width)+1, Std.int(debugSprite.height)+1, true, 0x00000000);						
+					var debugMatrix:Matrix = new Matrix();
+					
+					//trace(( - owner.collider.offsetX + (owner.collider.bounds.width * 0.5)));
+					
+					debugMatrix.translate(- owner.collider.offsetX + (owner.collider.bounds.width * 0.5),  - owner.collider.offsetY + (owner.collider.bounds.height * 0.5));		
+					debugBuffer.draw(debugSprite, debugMatrix);
+				}		
+					
+				var debugRect:Rectangle = new Rectangle(0, 0, debugBuffer.width, debugBuffer.height);
+				var debugPos:Point = new Point();
+				debugPos.x = owner.transform.x - HE.camera.x + owner.collider.offsetX - (owner.collider.bounds.width * 0.5);
+				debugPos.y = owner.transform.y - HE.camera.y + owner.collider.offsetY - (owner.collider.bounds.height * 0.5);
+				
+				HE.world.debugData.copyPixels(debugBuffer, debugRect, debugPos, null, null, true);
+				*/
 			}
+			
 		}
 	}
 	

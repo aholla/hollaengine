@@ -59,17 +59,18 @@ class ColliderComponent extends Component, implements IColliderComponent
 	
 	public function create(shape:IShape, isCollider:Bool = true, offsetX:Int = 0, offsetY:Int = 0, colliderGroup:String = null):Void 
 	{
+		this.shape 			= shape;			
 		this.isCollider 	= isCollider;
 		this.colliderGroup	= colliderGroup;			
-		this.shape 			= shape;			
 		this.offsetX 		= offsetX;
 		this.offsetY 		= offsetY;
+		
 		shape.translate(offsetX, offsetY);
 		setSize();
 	}
 	
 	public function render(graphic:Sprite, colour:UInt = 0x00FFFF):Void
-	{			
+	{	
 		shape.render(graphic.graphics, colour);		
 	}	
 	
@@ -79,13 +80,13 @@ class ColliderComponent extends Component, implements IColliderComponent
 	
 	private function setSize():Void
 	{
-		shape.rotation = owner.transform.rotation;
+		shape.rotation 	= owner.transform.rotation;
 		shape.scale 	= owner.transform.scale;			
 		shape.scaleX 	= owner.transform.scaleX;
 		shape.scaleY 	= owner.transform.scaleY;
 		
-		owner.transform.width 	= Std.int(shape.bounds.width);
-		owner.transform.height 	= Std.int(shape.bounds.height);	
+		//owner.transform.width 	= Std.int(shape.bounds.width);
+		//owner.transform.height 	= Std.int(shape.bounds.height);	
 	}
 	
 /*-------------------------------------------------

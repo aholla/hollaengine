@@ -29,13 +29,17 @@ class Polygon implements IPolygon
 	public var ty(getTY, null)						:Int;
 	public var width								:Int;
 	public var height								:Int;
+	
 	public var bounds(getBounds, null)				:Rectangle;	
+	
 	public var transfromDirty						:Bool;	
 	private var transform							:Matrix;
 	
 	public var vertices(getVertices, null)			:Array<Point>;
 	public var rawVertices(getRawVertices, null)	:Array<Point>;
 	public var transformedVertices(default, null)	:Array<Point>;
+	
+	private var _bounds:Rectangle;
 	
 
 /*-------------------------------------------------
@@ -52,7 +56,7 @@ class Polygon implements IPolygon
 		ty 		= 0;
 		width 	= 0;
 		height 	= 0;
-		bounds 	= new Rectangle(0, 0, 1, 1);
+		_bounds 	= new Rectangle(0, 0, 1, 1);
 		transform = new Matrix();
 		transfromDirty = true;
 		vertices 			= [];
@@ -109,7 +113,7 @@ class Polygon implements IPolygon
 		var highY	:Int = 0;
 		var pX		:Int;
 		var pY		:Int;
-		//for (var i:Int = 0; i < Points.length; i++) 
+		
 		for (i in 0...points.length)
 		{
 			var p:Point = points[i];				
@@ -124,13 +128,11 @@ class Polygon implements IPolygon
 		poly.width = highX;
 		poly.height = highY;
 		
-		//for each (var pt:Point in Points) 
 		for (pt in points) 
 		{
 			poly.addVertex(pt);
 		}
 		
-		//for (var j:Int = 0; j < poly.vertices.length; j++) 
 		for(j in 0...poly.vertices.length)
 		{
 			if (centreReg) 
@@ -159,7 +161,9 @@ class Polygon implements IPolygon
 	{
 		// bounds
 		graphics.lineStyle(0.1, boundsColour, boundsAlpha);
-		graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);			
+		graphics.drawRect(_bounds.x, _bounds.y, _bounds.width, _bounds.height);			
+		
+		trace("recder:" + " " + _bounds);
 		
 		// shape
 		graphics.lineStyle(0.5, shapeColour, 0.8);
@@ -244,6 +248,7 @@ class Polygon implements IPolygon
 	 */
 	public function markAsDirty():Void 
 	{
+		_bounds = null;
 		transfromDirty = true;
 	}
 		
@@ -291,7 +296,7 @@ class Polygon implements IPolygon
 	 */
 	private function updateTransformation():Void 
 	{
-		bounds = null;		
+		_bounds = null;		
 		if (transform == null)
 			transform = new Matrix();
 			
@@ -444,9 +449,9 @@ class Polygon implements IPolygon
 	 */
 	private function getBounds():Rectangle
 	{
-		if (bounds != null)
+		if (_bounds != null)
 		{
-			return bounds;
+			return _bounds;
 		}
 		else
 		{
@@ -457,21 +462,26 @@ class Polygon implements IPolygon
 			var pX		:Int;
 			var pY		:Int;
 			
+			trace("---------");
 			for(pt in rawVertices)
 			{
 				pX = Std.int(transform.transformPoint(pt).x);
 				pY = Std.int(transform.transformPoint(pt).y);
+				
+				trace(pX);
 				
 				if (pX < lowX) 	lowX = pX;
 				if (pX > highX) highX = pX;
 				if (pY < lowY)	lowY = pY;
 				if (pY > highY) highY = pY;
 			}
-			width  = (highX - lowX);
-			height = (highY - lowY);				
+			width  = (highX - lowX);			
+			height = (highY - lowY);
 			
-			bounds = new Rectangle(lowX, lowY, width, height);
-			return bounds;
+			trace("getBounds, width = " + " " + width);
+			
+			_bounds = new Rectangle(lowX, lowY, width, height);
+			return _bounds;
 		}
 	}		
 

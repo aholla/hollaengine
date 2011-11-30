@@ -62,7 +62,6 @@ class Entity implements IEntity
 		for (component in componentHash)
 		{
 			component.start();
-			trace("start: " + component);
 		}
 		isActive = true;
 	}

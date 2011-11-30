@@ -54,11 +54,13 @@ class Box implements IPolygon
 		{
 			polygon.addVertex(new Point());
 		}
-		this.width = width;
-		this.height = height;
-		this.centerReg = centerReg;
+		this.centerReg 	= centerReg;
+		this.width 		= width;
+		this.height 	= height;
 		
-		updateShape();			
+		updateShape();
+		
+		trace(">>>>>>>>>>>>>>>>>>>>>>>> NEW BOX:" + width + " : " + height +  " | " + polygon.bounds +  " | " + centerReg);
 	}
 	
 /*-------------------------------------------------
@@ -190,6 +192,7 @@ class Box implements IPolygon
 	
 	private function setCenterReg(value:Bool):Bool
 	{
+		centerReg = value;
 		return value;
 	}
 	

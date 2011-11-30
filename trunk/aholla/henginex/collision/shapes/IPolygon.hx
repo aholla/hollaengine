@@ -10,7 +10,6 @@ package aholla.henginex.collision.shapes;
 
 import nme.geom.Point;
 
-//interface IPolygon extends IShape
 interface IPolygon implements IShape
 {		
 	var vertices(getVertices, null):Array<Point>;

@@ -70,7 +70,8 @@ class RenderManager
 		}
 		
 		canvasData.lock();
-		canvasData.fillRect(canvasRect, 0xFFFFFFFF);				
+		//canvasData.fillRect(canvasRect, 0xFFFFFFFF);				
+		canvasData.fillRect(canvasRect, 0x808080);				
 		var len:Int = componentList.length;
 		for (i in 0...len) 
 		{

@@ -128,8 +128,6 @@ class World extends Sprite
 	{
 		debugData = new BitmapData(HE.SCREEN_WIDTH, HE.SCREEN_HEIGHT, true, 0xFFFFFFF);
 		addChild(new Bitmap(debugData));
-		
-		trace(debugData);
 	}
 	
 /*-------------------------------------------------
