@@ -1,18 +1,13 @@
 /**
  * ...
  * @author Adam
+ * VERSION 0.0.1;
  */
 
 package aholla.screenManager
-{
-	
+{	
 	public interface IScreen
-	{	
-		/**
-		 * Inityialisation
-		 */
-		function init() : void;
-		
+	{			
 		/**
 		 * Load all of the data and graphics that this scene needs to function.
 		 */
@@ -24,24 +19,19 @@ package aholla.screenManager
 		function unload() :void;
 		
 		/**
-		 * Transition IN the section.
+		 * Called when the Screen is added to the stage.
 		 */
-		function transIn() :void;
-	
-		/**
-		 * Tranmsition OUT the section.
-		 */
-		function transOut() :void;
+		function init():void
 		
 		/**
 		 * Pause
 		 */
-		function pause() : void;
+		//function pause() : void;
 		
 		/**
-		 * Pause
+		 * resume
 		 */
-		function resume() : void;
+		//function resume() : void;		
 		
 		function set isLoaded($value:Boolean):void
 		function get isLoaded():Boolean
@@ -50,6 +40,7 @@ package aholla.screenManager
 		
 		function get x():Number;
 		function set x(value:Number):void;
+		
 		function get y():Number;
 		function set y(value:Number):void;
 	}	
