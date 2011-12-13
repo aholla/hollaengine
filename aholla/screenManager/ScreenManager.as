@@ -1,22 +1,28 @@
 /**
  * TODO: ScreenManager - A lot of this code seems strange. transitions seen to do crazy thing. Needs better intergration.
  * @author Adam
+ * VERSION 0.0.1;
  */
 
 package aholla.screenManager
 {
 	import aholla.screenManager.transitions.ITransition;
+	import aholla.screenManager.transitions.TransitionColourFade;
 	import aholla.screenManager.transitions.TransitionEvent;
 	import flash.display.Sprite;
 
 	public class ScreenManager
 	{
+		//static public  const TRANSITION_COMPLETE	:String = "transition_complete"
+		
 		private static var 	_instance				:ScreenManager;
 		private static var 	_allowInstance			:Boolean;
 		
-		private var display							:Sprite;		
+		public var display							:Sprite;		
 		private var screensVec						:Vector.<IScreen> 		= new Vector.<IScreen>();
 		private var transitionVec					:Vector.<ITransition> 	= new Vector.<ITransition>();
+		private var currentScreen					:IScreen
+		private var colourOverlay					:ITransition;
 		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -26,7 +32,7 @@ package aholla.screenManager
 		{
 			if (!ScreenManager._allowInstance)
 			{
-				throw new Error("Error: Use ScreenManager.inst instead of the new keyword.");
+				throw new Error("Error: Use Core.screen_manager instead of the new keyword.");
 			}
 			display = new Sprite();
 		}
@@ -35,9 +41,9 @@ package aholla.screenManager
 		{
 			if (ScreenManager._instance == null)
 			{
-				ScreenManager._allowInstance	= true;
-				ScreenManager._instance			= new ScreenManager();
-				ScreenManager._allowInstance	= false;
+				ScreenManager._allowInstance		= true;
+				ScreenManager._instance				= new ScreenManager();
+				ScreenManager._allowInstance		= false;
 			}
 			return ScreenManager._instance;
 		}
@@ -46,13 +52,13 @@ package aholla.screenManager
 * PUBLIC FUNCTIONS
 -------------------------------------------------*/
 		
-		public function newScreen($screen:IScreen, $replace:Boolean = true, $transition:ITransition = null):void 
+		public function addScreen($screen:IScreen, $replace:Boolean = true, $transition:ITransition = null):void 
 		{
-			transitionVec.push($transition);
 			
 			if ($transition != null) 
 			{
-				display.addChild(Sprite($transition));
+				transitionVec.push($transition);
+				display.addChild($transition as Sprite);
 				$transition.addEventListener(TransitionEvent.TRANSITION_IN_COMPLETE, onTransitionInComplete, false, 0, true);
 				$transition.addEventListener(TransitionEvent.TRANSITION_OUT_COMPLETE, onTransitionOutComplete, false, 0, true);
 				$transition.transitionIn();
@@ -62,20 +68,19 @@ package aholla.screenManager
 			{			
 				showScreen($screen, $replace);
 			}
-			
-			display.stage.focus = display.stage;
 		}
 		
 		
 		public function removeScreen($screen:IScreen):void
 		{
-			var _found:Boolean;
+			var _found:Boolean; 
 			for (var i:int = 0; i < screensVec.length; i++) 
 			{
+				
 				var _screen:IScreen = screensVec[i];
 				if (_screen == $screen)
 				{
-					display.removeChild(Sprite(_screen));
+					display.removeChild(_screen as Sprite);
 					_screen.unload();
 					screensVec[i] = null;
 					_found = true;
@@ -83,7 +88,26 @@ package aholla.screenManager
 				}
 			}
 			if(_found)
-				screensVec.splice(i, 1);
+				screensVec.splice(i, 1); 
+			if (screensVec.length > 0) currentScreen = screensVec[screensVec.length - 1];
+		}
+		
+		public function addColourOverlay($width:int, $height:int, $colour:uint = 0x000000, $alpha:Number = 1, $duration:Number = 1):void
+		{
+			colourOverlay = new TransitionColourFade(currentScreen, false, $width, $height, $colour, $alpha, $duration);
+			transitionVec.push(colourOverlay);
+			
+			display.addChild(colourOverlay as Sprite);
+			colourOverlay.transitionIn();			
+		}
+		
+		public function removeColourOverlay():void
+		{
+			if (colourOverlay)
+			{
+				colourOverlay.addEventListener(TransitionEvent.TRANSITION_OUT_COMPLETE, onTransitionOutComplete, false, 0, true);
+				colourOverlay.transitionOut();
+			}
 		}
 		
 		public function destroy():void
@@ -100,7 +124,7 @@ package aholla.screenManager
 			for (var i:int = 0; i < screensVec.length; i++) 
 			{
 				screensVec[i].unload();
-				display.removeChild(Sprite(screensVec[i]));
+				display.removeChild(screensVec[i] as Sprite);
 				screensVec[i] = null;
 			}
 			screensVec = null;
@@ -113,16 +137,22 @@ package aholla.screenManager
 				removeAllScreens();
 				screensVec = new Vector.<IScreen>();
 				screensVec.push($screen);
-				display.addChild(Sprite($screen));
+				
+				if(!$screen.isLoaded)	$screen.load();
+				display.addChild($screen as Sprite);
 			}
 			else
 			{
 				screensVec.push($screen);
-				display.addChild(Sprite($screen));
-			}
+				
+				if (!$screen.isLoaded)	$screen.load();				
+				display.addChild($screen as Sprite);
+			}			
 			
-			if(!$screen.isLoaded)
-				$screen.load();
+			currentScreen = $screen;
+			
+			if(display.stage)
+				display.stage.focus = display.stage;
 		}
 		
 /*-------------------------------------------------
@@ -143,8 +173,7 @@ package aholla.screenManager
 				var _transition:ITransition = transitionVec[i];
 				if (e.transition == _transition)
 				{
-					display.removeChild(Sprite(_transition));
-					
+					display.removeChild(_transition as Sprite);					
 					_transition.removeEventListener(TransitionEvent.TRANSITION_IN_COMPLETE, onTransitionInComplete);
 					_transition.removeEventListener(TransitionEvent.TRANSITION_OUT_COMPLETE, onTransitionOutComplete);
 					_transition.destroy();
@@ -160,6 +189,8 @@ package aholla.screenManager
 -------------------------------------------------*/	
 		
 		public function get getDisplay():Sprite	{ return display };
+		
+		public function get getCurrentScreen():IScreen { return currentScreen };
 		
 	}
 }

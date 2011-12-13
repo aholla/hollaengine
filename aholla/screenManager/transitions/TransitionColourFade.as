@@ -1,6 +1,7 @@
 /**
  * ...
  * @author Adam
+  * VERSION 0.0.1;
  */
 
 package aholla.screenManager.transitions
@@ -23,15 +24,15 @@ package aholla.screenManager.transitions
 * PUBLIC CONSTRUCTOR
 -------------------------------------------------*/
 	
-		public function TransitionColourFade($screen:IScreen, $replace:Boolean, $width:int, $height:int, $colour:uint = 0x000000, $duration:Number = 1) 
+		public function TransitionColourFade($screen:IScreen, $replace:Boolean, $width:int, $height:int, $colour:uint = 0x000000, $alpha:Number = 1, $duration:Number = 1) 
 		{
 			this.screen 	= $screen;
 			this.replace 	= $replace;
 			
-			duration = $duration *0.5;
+			duration = $duration;
 			
 			colour = new Sprite();		
-			colour.graphics.beginFill($colour, 1);
+			colour.graphics.beginFill($colour, $alpha);
 			colour.graphics.drawRect(0, 0, $width, $height);
 			colour.graphics.endFill();
 			colour.alpha = 0;
@@ -59,8 +60,7 @@ package aholla.screenManager.transitions
 			{
 				removeChild(colour);
 				colour = null;
-			}
-			
+			}			
 			this.screen = null;
 		}
 		
@@ -70,8 +70,7 @@ package aholla.screenManager.transitions
 		
 		private function transitionInComplete():void 
 		{
-			dispatchEvent(new TransitionEvent(TransitionEvent.TRANSITION_IN_COMPLETE, screen, replace, this));
-			transitionOut();
+			dispatchEvent(new TransitionEvent(TransitionEvent.TRANSITION_IN_COMPLETE, screen, replace, this, true));
 		}
 		
 		private function transitionOutComplete():void 

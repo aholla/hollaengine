@@ -1,6 +1,7 @@
 /**
  * ...
  * @author Adam
+  * VERSION 0.0.1;
  * 
  * All transitions need to implement this interface.
  */

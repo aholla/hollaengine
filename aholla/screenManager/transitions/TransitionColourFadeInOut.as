@@ -4,32 +4,39 @@
   * VERSION 0.0.1;
  */
 
-package  aholla.screenManager.transitions
+package aholla.screenManager.transitions
 {
 	import aholla.screenManager.IScreen;
-	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
-	public class TransitionFadeIn extends Sprite implements ITransition
+	public class TransitionColourFadeInOut extends Sprite implements ITransition
 	{
 		private var screen							:IScreen;
 		private var replace							:Boolean;
+		
+		private var colour							:Sprite;
 		private var duration						:Number;
 	
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
 -------------------------------------------------*/
 	
-		public function TransitionFadeIn($screen:IScreen, $replace:Boolean, $duration:Number = 1) 
+		public function TransitionColourFadeInOut($screen:IScreen, $replace:Boolean, $width:int, $height:int, $colour:uint = 0x000000, $alpha:Number = 1, $duration:Number = 1) 
 		{
-			this.screen = $screen;
-			this.replace = $replace;
+			this.screen 	= $screen;
+			this.replace 	= $replace;
 			
-			duration = $duration;
-			screen.alpha = 0;
+			duration = $duration *0.5;
+			
+			colour = new Sprite();		
+			colour.graphics.beginFill($colour, $alpha);
+			colour.graphics.drawRect(0, 0, $width, $height);
+			colour.graphics.endFill();
+			colour.alpha = 0;
+			addChild(colour);
 		}		
 		
 /*-------------------------------------------------
@@ -38,18 +45,24 @@ package  aholla.screenManager.transitions
 		
 		public function transitionIn():void 
 		{
-			dispatchEvent(new TransitionEvent(TransitionEvent.TRANSITION_IN_COMPLETE, screen, replace, this));	
-			TweenNano.to(screen, duration, {alpha:1, onComplete:transitionOutComplete});
+			TweenNano.to(colour, duration, {alpha:1, onComplete:transitionInComplete});
 		}
 		
 		public function transitionOut():void 
 		{
+			TweenNano.to(colour, duration, {alpha:0, onComplete:transitionOutComplete});
 		}
 		
 		public function destroy():void
 		{
-			TweenNano.killTweensOf(screen);
-			this.screen = null;		
+			TweenNano.killTweensOf(colour);
+			if (colour)
+			{
+				removeChild(colour);
+				colour = null;
+			}
+			
+			this.screen = null;
 		}
 		
 /*-------------------------------------------------
@@ -59,6 +72,7 @@ package  aholla.screenManager.transitions
 		private function transitionInComplete():void 
 		{
 			dispatchEvent(new TransitionEvent(TransitionEvent.TRANSITION_IN_COMPLETE, screen, replace, this));
+			transitionOut();
 		}
 		
 		private function transitionOutComplete():void 

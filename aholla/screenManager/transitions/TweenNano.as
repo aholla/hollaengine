@@ -2,6 +2,7 @@
  * Adam H.
  * I have bundled this version of TweenNano into the ScreenManager package
  * to aid its simple transitions.
+ * VERSION 0.0.1;
  */
 
  
