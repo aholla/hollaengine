@@ -14,27 +14,36 @@ package aholla.hxhengine.core.entity;
 import aholla.hxhengine.core.entity.IEntity;
 import aholla.hxhengine.HE;
 import flash.geom.Point;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
-//class TransformComponent extends Component, implements ITransformComponent, implements IComponent
+
 class TransformComponent extends Component, implements ITransformComponent
 {
-	public var x									:Int;
-	public var y									:Int;
+	public var x(default, setX)						:Int;
+	public var y(default, setY)						:Int;
 	public var z									:Int;
-	public var width								:Int;
-	public var height								:Int;		
+	public var width(getWidth, setWidth)				:Int;
+	public var height(getHeight, setHeight)			:Int;		
 	public var zIndex								:Int;	
-	public var rotation								:Float;
-	public var scale								:Float;
-	public var scaleX								:Float;
-	public var scaleY								:Float;
+	public var rotation(getRotation, setRotation)		:Float;
+	public var scale(getScale, setScale)			:Float;
+	public var scaleX(getScaleX, setScaleX)			:Float;
+	public var scaleY(getScaleY, setScaleY)			:Float;
 	public var layerIndex							:Float;
-	public var bounds								:Rectangle;
+	public var bounds(getBounds, null)				:Rectangle;
 	public var velocity								:Point;
 	public var acceleration							:Point;
 	public var isDirty								:Bool;
 	public var hasMoved								:Bool;
+	
+	private var _bounds								:Rectangle;
+	private var _width								:Int;
+	private var _height								:Int;
+	private var _scale								:Float;
+	private var _scaleX								:Float;
+	private var _scaleY								:Float;
+	private var _rotation							:Float;
 	
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -43,19 +52,18 @@ class TransformComponent extends Component, implements ITransformComponent
 	public function new()
 	{
 		super();
-		
+		_bounds 	= new Rectangle(0, 0, 10, 10);// Give it a rectangle.
 		x 			= 0;
 		y 			= 0;
 		z 			= 0;
-		width 		= 0;
-		height 		= 0;
+		_width 		= 10;
+		_height 	= 10;
 		zIndex 		= 0;
-		rotation 	= 0;
-		scale 		= 1;
-		scaleX 		= 1;
-		scaleY 		= 1;
+		_rotation 	= 0;
+		_scale 		= 1;
+		_scaleX 	= 1;
+		_scaleY 	= 1;		
 		layerIndex 	= 0;
-		bounds 		= new Rectangle(0, 0, 1, 1);// Give it a rectangle.
 		velocity 		= new Point();
 		acceleration 	= new Point();
 	}
@@ -82,7 +90,7 @@ class TransformComponent extends Component, implements ITransformComponent
 	
 	public function isOnscreen():Bool
 	{
-		if (bounds.x > HE.SCREEN_WIDTH + HE.camera.x || bounds.width < 0 || bounds.y > HE.SCREEN_HEIGHT + HE.camera.y || bounds.height < 0)
+		if (_bounds.x > HE.SCREEN_WIDTH + HE.camera.x || _bounds.width < 0 || _bounds.y > HE.SCREEN_HEIGHT + HE.camera.y || _bounds.height < 0)
 			return false;
 		else
 			return true;
@@ -94,13 +102,13 @@ class TransformComponent extends Component, implements ITransformComponent
 	
 	private function checkIfDirty():Bool
 	{	
-		if (rotation != 0)
+		if (_rotation != 0)
 			return true;	
-		else if (scale != 1)	
+		else if (_scale != 1)	
 			return true;
-		else if (scaleX != 1)	
+		else if (_scaleX != 1)	
 			return true;
-		else if (scaleY != 1)	
+		else if (_scaleY != 1)	
 			return true;
 		else
 			return false;
@@ -115,6 +123,104 @@ class TransformComponent extends Component, implements ITransformComponent
 * GETTERS / SETTERS
 -------------------------------------------------*/
 
+	private function setX(value:Int):Int
+	{
+		hasMoved = true;
+		return x = value;
+	}
+	
+	private function setY(value:Int):Int
+	{
+		hasMoved = true;
+		return y = value;
+	}
+	
+	private function getWidth():Int
+	{
+		return _width;
+	}
+	private function setWidth(value:Int):Int 			
+	{	
+		_bounds.width = value;
+		_width = value;
+		return _width = value;
+		
+	}
+	
+	private function getHeight():Int
+	{
+		return _height;
+	}
+	private function setHeight(value:Int):Int 			
+	{	
+		_bounds.height = value;
+		return _height = value;
+	}
+	
+	private function getRotation():Float
+	{
+		return _rotation;
+	}
+	private function setRotation(value:Float):Float 		
+	{	
+		_rotation = value;
+		isDirty = checkIfDirty();
+		if (owner.collider != null)	owner.collider.shape.rotation = value;
+		return _rotation;
+	}
+	
+	private function getScale():Float 						
+	{	
+		return _scale = (_scaleX > _scaleY) ? _scaleX: _scaleY;
+	}	
+	private function setScale(value:Float):Float 			
+	{	
+		_scaleX = value;
+		_scaleY = value;
+		_scale = value;
+		_bounds.width 	= _width * _scaleX;
+		_bounds.height 	= _height * _scaleY;
+		isDirty = checkIfDirty();
+		if (owner.collider != null)	owner.collider.shape.scale = value;
+		return _scale;
+	}	
+
+	private function getScaleX():Float
+	{
+		return _scaleX;
+	}	
+	private function setScaleX(value:Float):Float 			
+	{	
+		_scaleX = value; 
+		_bounds.width 	= _width * _scaleX;
+		isDirty = checkIfDirty();
+		if (owner.collider != null)	owner.collider.shape.scaleX = value;
+		return _scaleX;
+	}
+	
+	private function getScaleY():Float
+	{
+		return _scaleY;
+	}
+	private function setScaleY(value:Float):Float 			
+	{	
+		_scaleY = value;
+		_bounds.height 	= _height * _scaleY;
+		isDirty = checkIfDirty();
+		if (owner.collider != null)	owner.collider.shape.scaleY = value;
+		return _scaleY;
+	}
+		
+	private function getBounds():Rectangle
+	{
+		if (owner.collider != null)
+		{
+			_bounds.x 		= x + owner.collider.bounds.x;
+			_bounds.y 		= y + owner.collider.bounds.y;				
+		}			
+		return _bounds;
+	}
+	
 	override public function toString():String 
 	{
 		return "[Component name=" + name + " isActive=" + isActive + " owner= " + owner+ " x=" + x + " y=" + y + " z=" + z + " zIndex=" + zIndex + " width=" + width + " height=" + height + 

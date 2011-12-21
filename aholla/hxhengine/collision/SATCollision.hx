@@ -14,6 +14,8 @@ import aholla.hxhengine.collision.shapes.IShape;
 import aholla.hxhengine.core.entity.IEntity;
 import flash.display.Graphics;
 import flash.geom.Point;
+import nme.errors.Error;
+import nme.Lib;
 
 
 /**
@@ -50,7 +52,7 @@ class SATCollision
 		var shapeB:IShape = entityB.collider.shape;
 		
 		// circle circle is easy
-		if (shapeA == Circle && shapeB == Circle)
+		if (Std.is(shapeA, Circle) && Std.is(shapeB, Circle))
 		{
 			return checkCircleCollision(entityA, entityB, true);
 		}
@@ -59,7 +61,7 @@ class SATCollision
 		var result2:CollisionInfo;			
 		
 		// most likely two polygons, test for that next...
-		if (shapeA == IPolygon && shapeB == IPolygon) 
+		if (Std.is(shapeA, IPolygon) && Std.is(shapeB, IPolygon) )
 		{
 			// check both polygons sides against eachother
 			result1 = checkPolygons(entityA, entityB, false, true);
@@ -143,11 +145,11 @@ class SATCollision
 	 */
 	static private function calculateCollisionInfoSeparation(obj:CollisionInfo, obj2:CollisionInfo = null):CollisionInfo 
 	{
-		obj.separation = new Point(obj.Arrayx * obj.distance, obj.Arrayy * obj.distance);
+		obj.separation = new Point(obj.vector.x * obj.distance, obj.vector.y * obj.distance);
 		obj.separation.x *= 1.000001; // @Adam - a little bit of padding to stop objects getting stuck on corners.
 		obj.separation.y *= 1.000001;
-		if (obj2) obj.shapeAContained = (obj.shapeAContained && obj2.shapeAContained);	// hack to check for containment
-		if (obj2) obj.shapeBContained = (obj.shapeBContained && obj2.shapeBContained);	
+		if (obj2 != null) obj.shapeAContained = (obj.shapeAContained && obj2.shapeAContained);	// hack to check for containment
+		if (obj2 != null) obj.shapeBContained = (obj.shapeBContained && obj2.shapeBContained);	
 		return obj;
 	}
 	
@@ -159,11 +161,12 @@ class SATCollision
 	 * @return 	collisionInfo
 	 */
 	static private function checkCircleCollision(entityA:IEntity, entityB:IEntity, docalc:Bool):CollisionInfo 
-	{
-		var circleA:Circle = entityA.collider.shape;
-		var circleB:Circle = entityB.collider.shape;
+	{	
+		var circleA:Circle = cast(entityA.collider.shape, Circle);
+		var circleB:Circle = cast(entityB.collider.shape, Circle);
 		
 		// get the toal of both radius
+		//var radiusTotal:Float = Std.int(circleA.transformedRadius) +  Std.int(circleB.transformedRadius);
 		var radiusTotal:Float = circleA.transformedRadius + circleB.transformedRadius;
 		
 		// look how far away the circles are
@@ -183,9 +186,9 @@ class SATCollision
 		info.shapeA 		= circleA;
 		info.shapeB 		= circleB;
 		info.vector 		= new Point(circleB.x - circleA.x, circleB.y - circleA.y);
-		info.Arraynormalize(1);			
+		info.vector.normalize(1);			
 		info.distance 		= Math.sqrt(distSquared);
-		info.separation		= new Point(info.Arrayx*diff, info.Arrayy*diff);
+		info.separation		= new Point(info.vector.x*diff, info.vector.y*diff);
 		info.shapeAContained = (circleA.transformedRadius <= circleB.transformedRadius && dist <= circleB.transformedRadius - circleA.transformedRadius);
 		info.shapeBContained = (circleB.transformedRadius <= circleA.transformedRadius && dist <= circleA.transformedRadius - circleB.transformedRadius);
 		
@@ -208,8 +211,8 @@ class SATCollision
 	 */
 	static private function checkPolygons(entityA:IEntity, entityB:IEntity, flip:Bool, docalc:Bool ):CollisionInfo 
 	{
-		var polygonA:IPolygon = entityA.collider.shape;
-		var polygonB:IPolygon = entityB.collider.shape;
+		var polygonA:IPolygon = cast(entityA.collider.shape, IPolygon);
+		var polygonB:IPolygon = cast(entityB.collider.shape, IPolygon);
 		
 		// working vars
 		var min0:Float, max0:Float;
@@ -226,7 +229,7 @@ class SATCollision
 		var p2		:Array<Point>;
 		var ra		:Point;
 		
-		var shortestDist:Float = Float.MAX_VALUE;
+		var shortestDist:Float = 999999999;
 		var distmin		:Float;
 		var distminAbs	:Float;
 		
@@ -239,22 +242,22 @@ class SATCollision
 		result.shapeBContained = true;
 		
 		// get the vertices
-		p1 = polygonA.vertices.concat();
-		p2 = polygonB.vertices.concat();
+		p1 = polygonA.vertices.concat([]);
+		p2 = polygonB.vertices.concat([]);
 		
 		// small hack here to deal with line segments - adds a small depth to make it act like a thing rectangle
 		if (p1.length == 2) 
 		{
 			ra = new Point(-(p1[1].y - p1[0].y), p1[1].x - p1[0].x);
 			ra.normalize(0.0000001);
-			p1[p1.length] = Point(p1[1]).add(ra);
+			p1.push(p1[1].add(ra));
 		}
 		
 		if (p2.length == 2) 
 		{
 			ra = new Point(-(p2[1].y - p2[0].y), p2[1].x - p2[0].x);
 			ra.normalize(0.0000001);
-			p2[p2.length] = Point(p2[1]).add(ra);
+			p2.push(p2[1].add(ra));
 		}
 		
 		// get the offset
@@ -345,8 +348,8 @@ class SATCollision
 	 */
 	static private function checkCirclePolygon(entityA:IEntity, entityB:IEntity, flip:Bool, docalc:Bool ):CollisionInfo 
 	{
-		var circleA:Circle 		= entityA.collider.shape;
-		var polygonA:IPolygon 	= entityB.collider.shape;
+		var circleA:Circle 		= cast(entityA.collider.shape, Circle);
+		var polygonA:IPolygon 	= cast(entityB.collider.shape, IPolygon);
 		
 		// working vars
 		var min0:Float, max0:Float;
@@ -364,19 +367,19 @@ class SATCollision
 		
 		
 		var currentDist:Float;
-		var dist:Float = Float.MAX_VALUE;
+		var dist:Float = 999999999;
 		var closestPoint:Point = new Point();
 		var ra:Point = new Point();
 		
-		var shortestDist:Float = Float.MAX_VALUE;
+		var shortestDist:Float = 999999999;
 		var distmin:Float;
 		var distminAbs:Float;
 		
 		var result:CollisionInfo = new CollisionInfo();
 		result.entityA = (flip) ? entityA : entityB;
 		result.entityB = (flip) ? entityB : entityA;			
-		result.shapeA = (flip) ? circleA : polygonA;
-		result.shapeB = (flip) ? polygonA : circleA;
+		result.shapeA = (flip) ? cast(circleA, IShape) : cast(polygonA, IShape);
+		result.shapeB = (flip) ? cast(polygonA, IShape) : cast(circleA, IShape);
 		
 		result.shapeAContained = true;
 		result.shapeBContained = true;
@@ -386,14 +389,14 @@ class SATCollision
 		vOffset = new Point(polygonA.x - circleA.x, polygonA.y - circleA.y);			
 		
 		// get the vertices
-		p1 = polygonA.vertices.concat();
+		p1 = polygonA.vertices.concat([]);
 		
 		// small hack here to deal with line segments - adds a small depth to make it act like a thing rectangle
 		if (p1.length == 2) 
 		{
 			ra = new Point(-(p1[1].y - p1[0].y), p1[1].x - p1[0].x);
 			ra.normalize(0.00001);
-			p1[p1.length] = Point(p1[1]).add(ra);
+			p1.push(p1[1].add(ra));
 		}
 		
 		// find the closest Point
@@ -550,7 +553,7 @@ class SATCollision
 	 * @param	PointIndex
 	 * @return
 	 */
-	static private function getAxisNormal(vertexArray:Array<Point>, PointIndex:UInt):Point 
+	static private function getAxisNormal(vertexArray:Array<Point>, PointIndex:Int):Point 
 	{
 		// grab the Points
 		var pt1:Point = vertexArray[PointIndex];

@@ -39,6 +39,6 @@ class CollisionInfo
 	
 	public function toString():String 
 	{
-		return "[CollisionInfo entityA=" +entityA + "entityB=" + entityB + "shapeA=" + shapeA + " shapeB=" + shapeB + " distance=" + distance + " vector=" + vector + " shapeAContained=" + shapeAContained + " shapeBContained=" + shapeBContained + " separation=" + separation + "]";
+		return "[CollisionInfo: entityA=" +entityA + " entityB=" + entityB + " shapeA=" + shapeA + " shapeB=" + shapeB + " distance=" + distance + " vector=" + vector + " shapeAContained=" + shapeAContained + " shapeBContained=" + shapeBContained + " separation=" + separation + "]";
 	}
 }

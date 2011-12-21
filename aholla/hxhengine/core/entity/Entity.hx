@@ -13,6 +13,10 @@ import aholla.hxhengine.core.entity.IComponent;
 import aholla.hxhengine.core.entity.ITransformComponent;
 import aholla.hxhengine.core.Logger;
 import aholla.hxhengine.HE;
+import hsl.haxe.DirectSignaler;
+import hsl.haxe.Signaler;
+import hxs.Signal;
+import hxs.Signal1;
 import nme.display.Bitmap;
 import nme.display.BitmapData;
 
@@ -35,7 +39,7 @@ class Entity implements IEntity
 	public var name(default, null)					:String;
 	public var componentHash(default, null)			:Hash<IComponent>;
 	
-	//private var _messageCollision					:Signal = new Signal();
+	public var messageCollision(default, null)		:Signal1<CollisionInfo>;
 	
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -48,6 +52,8 @@ class Entity implements IEntity
 		
 		transform 	= new TransformComponent();
 		addComponent(transform, TRANSFORM);
+		
+		messageCollision = new Signal1(this);
 	}		
 	
 /*-------------------------------------------------
@@ -64,6 +70,8 @@ class Entity implements IEntity
 			component.start();
 		}
 		isActive = true;
+		
+		messageCollision.dispatch(new CollisionInfo());	
 	}
 	
 	/**
@@ -127,9 +135,11 @@ class Entity implements IEntity
 		componentHash = null;
 		isActive = false;
 		
-		//if (_messageCollision)
-			//_messageCollision.removeAll();
-		//_messageCollision = null;
+		if (messageCollision != null)
+		{
+			messageCollision.removeAll();
+			messageCollision = null;
+		}
 		
 		HE.entityManager.removeEntity(this.name);
 	}
@@ -139,67 +149,42 @@ class Entity implements IEntity
 	 */
 	public function onCollision(collisionInfo:CollisionInfo):Void
 	{			
-		//if (isActive && collisionInfo)
-		//{
-			//_messageCollision.dispatch(collisionInfo);
-		//}
+		if (isActive && collisionInfo != null)
+		{
+			messageCollision.dispatch(collisionInfo);
+		}
 	}
 	
 	/**
 	 * @inheritDoc
 	 */
-	public function createRendererAnimated(isBlitted:Bool = true, spritemap:Spritemap = null, isCentered:Bool = true, smoothing:Bool = false, offsetX:Int = 0, offsetY:Int = 0):Void
+	public function createRendererAnimated(spritemap:Spritemap = null, isCentered:Bool = true, smoothing:Bool = false, offsetX:Int = 0, offsetY:Int = 0):Void
 	{			
 		checkForExistingRenderer();
-		
-		if (isBlitted)
+		renderer = new RendererBlitComponent(isCentered, offsetX, offsetY, smoothing);
+		if (spritemap != null)
 		{
-			renderer = new RendererBlitComponent(isCentered, offsetX, offsetY, smoothing);
-			if (spritemap != null)
-			{
-				//cast(
-				//(renderer as RendererBlitComponent).initSpritemap(spritemap);
-			}
-		}
-		else
-		{
-			/*renderer = new RendererMovieClipComponent();*/
-		}
-		
+			cast(renderer, RendererBlitComponent).initSpriteMap(spritemap);
+		}		
 		addComponent(renderer, RENDERER);
 	}
 	
 	/**
 	 * @inheritDoc
 	 */
-	public function createRendererStatic(isBlitted:Bool = true, image:Bitmap = null, isCentered:Bool = true, smoothing:Bool = false, offsetX:Int = 0, offsetY:Int = 0):Void
+	public function createRendererStatic(image:Bitmap = null, isCentered:Bool = true, smoothing:Bool = false, offsetX:Int = 0, offsetY:Int = 0):Void
 	{
 		checkForExistingRenderer();
-		
-		if (isBlitted)
-		{
-			renderer = new RendererBlitComponent(isCentered, offsetX, offsetY, smoothing);
-		}
-		else
-		{
-			 /*renderer = new RendererMovieClipComponent();*/
-		}
+		renderer = new RendererBlitComponent(isCentered, offsetX, offsetY, smoothing);		
 		addComponent(renderer, RENDERER);
 	}
 	
-	public function createRendererTiledBlitted(levelData:Array<Int>, tilesheet:Bitmap, tileWidth:Int, tileHeight:Int, offsetX:Int = 0, offsetY:Int = 0):Void
+	public function createRendererTiledBlitted(levelData:Array<Array<Int>>, tilesheet:Bitmap, tileWidth:Int, tileHeight:Int, offsetX:Int = 0, offsetY:Int = 0):Void
 	{
-		checkForExistingRenderer();
-		
+		checkForExistingRenderer();		
 		renderer = new TiledRendererComponent();
-		
-		trace(Std.is(renderer, TiledRendererComponent));
-		//cast(renderer.ini
-		//(renderer as TiledRendererComponent).initTilesheet(levelData, tilesheet.bitmapData, tileWidth, tileHeight, offsetX, offsetY);
-		//cast(renderer, ITiledRender)..initTilesheet(levelData, tilesheet.bitmapData, tileWidth, tileHeight, offsetX, offsetY);
-		
-		//cast(
-		//addComponent(renderer, RENDERER);
+		cast(renderer, TiledRendererComponent).initTilesheet(levelData, tilesheet.bitmapData, tileWidth, tileHeight, offsetX, offsetY);
+		addComponent(renderer, RENDERER);
 	}
 	
 	/**
@@ -253,34 +238,9 @@ class Entity implements IEntity
 		return name;
 	}
 	
-/*
-	public function get id():Int							{ 	return _id; }
-	public function get guid():String						{ 	return _guid; }
-	public function get name():String						{ 	return _name.toLowerCase(); }
-	public function get groupName():String					{ 	return _groupName.toLowerCase(); }
-	public function get componentsDict():Dictionary			{ 	return _componentsDict; }		
-	public function get messageCollision():ISignal 			{ 	return _messageCollision; }		
-	public function get isActive():Bool 					{ 	return _isActive; }
-	public function get transform():ITransformComponent 	{	return transform;	}			
-	public function get collider():ColliderComponent 		{	return collider;	}
-	
-	public function set isActive(value:Bool):Void		{ 	_isActive = value; }
-	public function set id(id:Int):Void					{ 	_id = id; }
-	public function set guid(id:String):Void				{ 	_guid = id; }
-	public function set groupName(groupName:String):Void	{ 	_groupName = groupName; }
-	
-	
-	public function get renderer():IRendererComponent 		
-	{	
-		if (!renderer) Logger.error(this, "renderer is null and needs to be created first.");
-		return renderer;
-	}
-	
-	
 	public function toString():String
 	{
 		return "Entity:" +name +".";
 	}
-	*/
 	
 }

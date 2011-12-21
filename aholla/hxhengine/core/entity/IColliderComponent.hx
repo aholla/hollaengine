@@ -24,6 +24,7 @@ interface IColliderComponent implements IComponent
 	var offsetY(default, null):Int;	
 	var quadtreeNode:QuadtreeNode;
 	var bounds(getBounds, null):Rectangle;	
+	var isCentered(default, null):Bool;
 	
 }
 	
