@@ -28,6 +28,7 @@ interface IShape
 	var scaleY(getScaleY, setScaleY):Float;
 	var rotation(getRotation, setRotation):Float;
 	var tx(getTX, null):Int;
-	var ty(getTY, null):Int;	
+	var ty(getTY, null):Int;
+	var isCentered:Bool;
 	
 }

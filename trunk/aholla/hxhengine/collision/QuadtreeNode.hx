@@ -33,6 +33,9 @@ class QuadtreeNode
 		centerX 	= Std.int(bounds.width * 0.5);
 		centerY 	= Std.int(bounds.height * 0.5);
 		
+		
+		//trace(["new quad", bounds]);
+		
 		if (HE.isDebugShowQuadTree)
 		{
 			HE.world.debugLayer.graphics.lineStyle(0.5, 0x99B5FF, 0.1);

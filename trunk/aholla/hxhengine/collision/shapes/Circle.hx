@@ -24,6 +24,9 @@ class Circle implements IShape
 	public var radius								:Float;
 	public var rotation(getRotation, setRotation)	:Float;
 	public var bounds(getBounds, null)				:Rectangle;	
+	public var isCentered							:Bool;
+	
+	public var transformedRadius(getTransformedRadius, null):Float;
 	
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -40,7 +43,8 @@ class Circle implements IShape
 		rotation	= 0.0;
 		this.radius	= radius;
 		this.tx		= tx;
-		this.ty		= ty;		
+		this.ty		= ty;
+		isCentered = true;
 		setRadius(radius * scale);
 	}
 	
@@ -75,7 +79,7 @@ class Circle implements IShape
 		// shape
 		graphics.lineStyle(0.5, shapeColour, 0.8);
 		graphics.beginFill(shapeColour, shapeAlpha);
-		graphics.drawCircle(tx, ty, getTransformedRadius());
+		graphics.drawCircle(tx, ty, transformedRadius);
 		graphics.endFill();
 	}
 	
@@ -93,6 +97,8 @@ class Circle implements IShape
 	{
 		
 	}
+	
+	
 	
 /*-------------------------------------------------
 * PRIVATE FUNCTIONS
@@ -130,7 +136,6 @@ class Circle implements IShape
 	 */
 	private function getTransformedRadius():Float 
 	{
-		bounds = null;
 		return radius * Math.abs(scale);
 	}
 	

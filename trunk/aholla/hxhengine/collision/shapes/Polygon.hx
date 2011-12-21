@@ -39,7 +39,9 @@ class Polygon implements IPolygon
 	public var rawVertices(getRawVertices, null)	:Array<Point>;
 	public var transformedVertices(default, null)	:Array<Point>;
 	
-	private var _bounds:Rectangle;
+	private var _bounds								:Rectangle;
+	
+	public var isCentered							:Bool;
 	
 
 /*-------------------------------------------------
@@ -103,16 +105,17 @@ class Polygon implements IPolygon
 	 * @return
 	 */
 	//static public function fromArray(Points:Array, tx:Float = 0, ty:Float = 0):Polygon 
-	static public function fromArray(points:Array<Point>, centreReg:Bool):Polygon 
+	static public function fromArray(points:Array<Point>, centreReg:Bool = false):Polygon 
 	{
 		var poly:Polygon = new Polygon();
+		poly.isCentered = centreReg;
 		
 		var lowX	:Int = Std.int(Math.POSITIVE_INFINITY);
 		var highX	:Int = 0;
 		var lowY	:Int = Std.int(Math.POSITIVE_INFINITY);
 		var highY	:Int = 0;
 		var pX		:Int;
-		var pY		:Int;
+		var pY		:Int;		
 		
 		for (i in 0...points.length)
 		{
@@ -161,7 +164,7 @@ class Polygon implements IPolygon
 	{
 		// bounds
 		graphics.lineStyle(0.1, boundsColour, boundsAlpha);
-		graphics.drawRect(_bounds.x, _bounds.y, _bounds.width, _bounds.height);			
+		graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);			
 		
 		trace("recder:" + " " + _bounds);
 		
@@ -455,21 +458,16 @@ class Polygon implements IPolygon
 		}
 		else
 		{
-			var lowX	:Int = Std.int(Math.POSITIVE_INFINITY);
+			var lowX	:Int = 999999999;
 			var highX	:Int = 0;
-			var lowY	:Int = Std.int(Math.POSITIVE_INFINITY);
+			var lowY	:Int = 999999999;
 			var highY	:Int = 0;
 			var pX		:Int;
 			var pY		:Int;
-			
-			trace("---------");
 			for(pt in rawVertices)
 			{
 				pX = Std.int(transform.transformPoint(pt).x);
-				pY = Std.int(transform.transformPoint(pt).y);
-				
-				trace(pX);
-				
+				pY = Std.int(transform.transformPoint(pt).y);				
 				if (pX < lowX) 	lowX = pX;
 				if (pX > highX) highX = pX;
 				if (pY < lowY)	lowY = pY;
@@ -478,7 +476,7 @@ class Polygon implements IPolygon
 			width  = (highX - lowX);			
 			height = (highY - lowY);
 			
-			trace("getBounds, width = " + " " + width);
+			//trace([this, "width = " + " " + width, lowX, highX]);
 			
 			_bounds = new Rectangle(lowX, lowY, width, height);
 			return _bounds;

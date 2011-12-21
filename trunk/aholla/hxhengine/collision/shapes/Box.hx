@@ -36,6 +36,8 @@ class Box implements IPolygon
 	public var vertices(getVertices, null)			:Array<Point>;
 	public var rawVertices(getRawVertices, null)	:Array<Point>;
 	
+	public var isCentered							:Bool;
+	
 	private var polygon								:Polygon;
 	
 			
@@ -57,6 +59,8 @@ class Box implements IPolygon
 		this.centerReg 	= centerReg;
 		this.width 		= width;
 		this.height 	= height;
+		
+		isCentered = centerReg;
 		
 		updateShape();
 		

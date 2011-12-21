@@ -20,6 +20,7 @@ class ColliderComponent extends Component, implements IColliderComponent
 	public var quadtreeNode							:QuadtreeNode;
 	public var offsetX(default, null)				:Int;
 	public var offsetY(default, null)				:Int;
+	public var isCentered(default, null)			:Bool;
 	
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -64,7 +65,7 @@ class ColliderComponent extends Component, implements IColliderComponent
 		this.colliderGroup	= colliderGroup;			
 		this.offsetX 		= offsetX;
 		this.offsetY 		= offsetY;
-		
+		isCentered 			= shape.isCentered;
 		shape.translate(offsetX, offsetY);
 		setSize();
 	}
@@ -85,8 +86,10 @@ class ColliderComponent extends Component, implements IColliderComponent
 		shape.scaleX 	= owner.transform.scaleX;
 		shape.scaleY 	= owner.transform.scaleY;
 		
-		//owner.transform.width 	= Std.int(shape.bounds.width);
-		//owner.transform.height 	= Std.int(shape.bounds.height);	
+		owner.transform.width 	= Std.int(shape.bounds.width);
+		owner.transform.height 	= Std.int(shape.bounds.height);	
+		
+		//trace()
 	}
 	
 /*-------------------------------------------------
