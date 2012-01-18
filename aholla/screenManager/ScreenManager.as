@@ -1,7 +1,8 @@
 /**
  * TODO: ScreenManager - A lot of this code seems strange. transitions seen to do crazy thing. Needs better intergration.
  * @author Adam
- * VERSION 0.0.1;
+ * VERSION 0.0.2;
+ * Changes: Transision check bool.
  */
 
 package aholla.screenManager
@@ -18,11 +19,12 @@ package aholla.screenManager
 		private static var 	_instance				:ScreenManager;
 		private static var 	_allowInstance			:Boolean;
 		
-		public var display							:Sprite;		
+		public var display							:Sprite;	
 		private var screensVec						:Vector.<IScreen> 		= new Vector.<IScreen>();
 		private var transitionVec					:Vector.<ITransition> 	= new Vector.<ITransition>();
 		private var currentScreen					:IScreen
 		private var colourOverlay					:ITransition;
+		private var isTransitioning					:Boolean;
 		
 /*-------------------------------------------------
 * PUBLIC CONSTRUCTOR
@@ -54,9 +56,9 @@ package aholla.screenManager
 		
 		public function addScreen($screen:IScreen, $replace:Boolean = true, $transition:ITransition = null):void 
 		{
-			
 			if ($transition != null) 
 			{
+				isTransitioning = true;
 				transitionVec.push($transition);
 				display.addChild($transition as Sprite);
 				$transition.addEventListener(TransitionEvent.TRANSITION_IN_COMPLETE, onTransitionInComplete, false, 0, true);
@@ -182,6 +184,7 @@ package aholla.screenManager
 				}				
 			}
 			transitionVec.splice(i, 1);
+			isTransitioning = false;
 		}
 		
 /*-------------------------------------------------
@@ -191,6 +194,10 @@ package aholla.screenManager
 		public function get getDisplay():Sprite	{ return display };
 		
 		public function get getCurrentScreen():IScreen { return currentScreen };
+		
+		public function get getIsTrasnitionig():Boolean { return isTransitioning };
+
+		
 		
 	}
 }
