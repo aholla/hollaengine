@@ -3,6 +3,12 @@
  * @author Adam
  * VERSION 0.0.2;
  * Changes: Transision check bool.
+ * 
+ * Usage: First add the "display" to the display list:
+ * 				addChild(ScreenManager.inst.getDisplay);
+ * 			Then add a screen (which implements IScreen)
+ * 				ScreenManager.inst.addScreen(Iscreen);
+
  */
 
 package aholla.screenManager
@@ -19,7 +25,7 @@ package aholla.screenManager
 		private static var 	_instance				:ScreenManager;
 		private static var 	_allowInstance			:Boolean;
 		
-		public var display							:Sprite;	
+		private var display							:Sprite;	
 		private var screensVec						:Vector.<IScreen> 		= new Vector.<IScreen>();
 		private var transitionVec					:Vector.<ITransition> 	= new Vector.<ITransition>();
 		private var currentScreen					:IScreen
@@ -91,7 +97,11 @@ package aholla.screenManager
 			}
 			if(_found)
 				screensVec.splice(i, 1); 
-			if (screensVec.length > 0) currentScreen = screensVec[screensVec.length - 1];
+			if (screensVec.length > 0) 
+			{
+				currentScreen = screensVec[screensVec.length - 1];
+				display.stage.focus = display;
+			}
 		}
 		
 		public function addColourOverlay($width:int, $height:int, $colour:uint = 0x000000, $alpha:Number = 1, $duration:Number = 1):void

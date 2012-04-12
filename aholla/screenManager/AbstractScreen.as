@@ -29,28 +29,31 @@ package aholla.screenManager
 /*-------------------------------------------------
 * PUBLIC FUNCTIONS
 -------------------------------------------------*/
-			
+		
+		/**
+		 * Called from the ScreenManager. Can be overridden to "start" the screen when it is loaded.
+		 */
 		public function load():void 
 		{
 			_isLoaded = true;
 		}
 		
+		/**
+		 * Called from the ScreenManager. Can be overridden to "unload" the screen when it is unloaded.
+		 */
 		public function unload():void 
 		{
 			_isLoaded = false;
 			removeButtons();
 		}
 		
-		//public function pause():void 
-		//{
-			//trace("screen pause")
-		//}
-		//
-		//public function resume():void
-		//{
-			//trace("screen resume")
-		//}
-		
+		/**
+		 * Pass in a movieclip to create a "simple button"
+		 * @param	$button
+		 * @param	$clickCallback
+		 * @param	$rolloverCallback
+		 * @param	$rolloutCallback
+		 */
 		protected function addButton($button:MovieClip, $clickCallback:Function = null, $rolloverCallback:Function = null, $rolloutCallback:Function = null):void
 		{
 			$button.clickCallback 		= $clickCallback;
@@ -69,6 +72,26 @@ package aholla.screenManager
 			buttonsArr.push($button);
 		}
 		
+		/**
+		 * Remove a button from the screen.
+		 * @param	$button
+		 */
+		protected function removeButton($button:MovieClip):void
+		{
+			var id:int = buttonsArr.indexOf($button)
+			if (id >= 0)
+			{
+				$button.buttonMode = false;				
+				$button.removeEventListener(MouseEvent.CLICK,		onButtonClick);
+				$button.removeEventListener(MouseEvent.ROLL_OVER,	onButtonOver);
+				$button.removeEventListener(MouseEvent.ROLL_OUT,	onButtonOut);
+				buttonsArr.splice(id, 1);
+			}
+		}
+		
+		/**
+		 * Called when the screen is added to the Stage. Can be overridden to "initialise" the screen when it is added.
+		 */
 		public function init():void
 		{
 			// Does nothing but can be used to instantiate stuff.
@@ -78,6 +101,9 @@ package aholla.screenManager
 * PRIVATE FUNCTIONS
 -------------------------------------------------*/
 		
+		/**
+		 * Removes the button interactivity on "Unload".
+		 */
 		private function removeButtons():void
 		{
 			for each(var _btn:MovieClip in buttonsArr)
@@ -94,6 +120,10 @@ package aholla.screenManager
 * EVENT HANDLING
 -------------------------------------------------*/		
 		
+		/**
+		 * Button CLick method, calls a callback if provided or dispatched the mouseEvent.
+		 * @param	e
+		 */
 		private function onButtonClick(e:MouseEvent):void 
 		{
 			var _btn:MovieClip = e.currentTarget as MovieClip;
@@ -101,13 +131,17 @@ package aholla.screenManager
 			if (_callback != null)
 			{
 				if (_callback.length == 0) _callback();
-				else _callback(_btn)
+				else _callback(_btn);
 				
 			}
 			else
 				_btn.dispatchEvent(e);
 		}
 		
+		/**
+		 * Button Over method, calls a callback if provided or dispatched the mouseEvent.
+		 * @param	e
+		 */
 		private function onButtonOver(e:MouseEvent):void 
 		{
 			var _btn:MovieClip = e.currentTarget as MovieClip;	
@@ -127,6 +161,10 @@ package aholla.screenManager
 			}
 		}
 		
+		/**
+		 * Button Out method, calls a callback if provided or dispatched the mouseEvent.
+		 * @param	e
+		 */
 		private function onButtonOut(e:MouseEvent):void 
 		{
 			var _btn:MovieClip = e.currentTarget as MovieClip;	
