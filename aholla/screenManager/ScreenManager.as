@@ -1,11 +1,14 @@
 /**
  * TODO: ScreenManager - A lot of this code seems strange. transitions seen to do crazy thing. Needs better intergration.
  * @author Adam
- * VERSION 0.0.2;
+ * VERSION 0.0.3;
  * Changes: Transision check bool.
  * 
  * Usage: First add the "display" to the display list:
  * 				addChild(ScreenManager.inst.getDisplay);
+ * 				or
+ * 				ScreenManager.inst.init(DisplayObjectContainer);
+ * 
  * 			Then add a screen (which implements IScreen)
  * 				ScreenManager.inst.addScreen(Iscreen);
 
@@ -16,12 +19,11 @@ package aholla.screenManager
 	import aholla.screenManager.transitions.ITransition;
 	import aholla.screenManager.transitions.TransitionColourFade;
 	import aholla.screenManager.transitions.TransitionEvent;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 
 	public class ScreenManager
 	{
-		//static public  const TRANSITION_COMPLETE	:String = "transition_complete"
-		
 		private static var 	_instance				:ScreenManager;
 		private static var 	_allowInstance			:Boolean;
 		
@@ -59,7 +61,24 @@ package aholla.screenManager
 /*-------------------------------------------------
 * PUBLIC FUNCTIONS
 -------------------------------------------------*/
+
+		/**
+		 * Optional init method. This will add the ScreenManagers 'display' 
+		 * to the displayObject provided. Alternativly, use 'ScreenManager.inst.getDisplay' 
+		 * to add it manually to the display list.
+		 * @param	displayObject - to which the display will be added.
+		 */
+		public function init(displayObject:DisplayObjectContainer):void
+		{
+			displayObject.addChild(display);
+		}
 		
+		/**
+		 * Adds the provided screen to the display list.
+		 * @param	$screen - implements IScreen
+		 * @param	$replace - removes the old screen
+		 * @param	$transition - a customn tranition e.g new Transition()
+		 */
 		public function addScreen($screen:IScreen, $replace:Boolean = true, $transition:ITransition = null):void 
 		{
 			if ($transition != null) 
@@ -78,7 +97,10 @@ package aholla.screenManager
 			}
 		}
 		
-		
+		/**
+		 * Removes the provided screen.
+		 * @param	$screen
+		 */
 		public function removeScreen($screen:IScreen):void
 		{
 			var _found:Boolean; 
@@ -104,7 +126,15 @@ package aholla.screenManager
 			}
 		}
 		
-		public function addColourOverlay($width:int, $height:int, $colour:uint = 0x000000, $alpha:Number = 1, $duration:Number = 1):void
+		/**
+		 * Adds an animated colour fade coloured overlay to the screen.
+		 * @param	$width
+		 * @param	$height
+		 * @param	$colour
+		 * @param	$alpha
+		 * @param	$duration
+		 */
+		public function addOverlayColour($width:int, $height:int, $colour:uint = 0x000000, $alpha:Number = 1, $duration:Number = 1):void
 		{
 			colourOverlay = new TransitionColourFade(currentScreen, false, $width, $height, $colour, $alpha, $duration);
 			transitionVec.push(colourOverlay);
@@ -113,7 +143,10 @@ package aholla.screenManager
 			colourOverlay.transitionIn();			
 		}
 		
-		public function removeColourOverlay():void
+		/**
+		 * Removes the coloure doverlay
+		 */
+		public function removeOverlayColour():void
 		{
 			if (colourOverlay)
 			{
@@ -122,9 +155,18 @@ package aholla.screenManager
 			}
 		}
 		
+		/**
+		 * Clears everything for GC.
+		 */
 		public function destroy():void
 		{
 			onTransitionOutComplete(null);
+			screensVec= new Vector.<IScreen>();
+			transitionVec = new Vector.<ITransition>();
+			if(currentScreen)	currentScreen.unload();
+			if (colourOverlay)	colourOverlay.destroy();
+			currentScreen = null;
+			colourOverlay = null;
 		}
 
 /*-------------------------------------------------
