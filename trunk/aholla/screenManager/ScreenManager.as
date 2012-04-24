@@ -173,17 +173,6 @@ package aholla.screenManager
 * PRIVATE FUNCTIONS
 -------------------------------------------------*/
 		
-		private function removeAllScreens():void
-		{
-			for (var i:int = 0; i < screensVec.length; i++) 
-			{
-				screensVec[i].unload();
-				display.removeChild(screensVec[i] as Sprite);
-				screensVec[i] = null;
-			}
-			screensVec = null;
-		}
-		
 		private function showScreen($screen:IScreen, $replace:Boolean = true):void
 		{
 			if ($replace)
@@ -207,6 +196,17 @@ package aholla.screenManager
 			
 			if(display.stage)
 				display.stage.focus = display.stage;
+		}
+		
+		private function removeAllScreens():void
+		{
+			for (var i:int = 0; i < screensVec.length; i++) 
+			{
+				screensVec[i].unload();
+				display.removeChild(screensVec[i] as Sprite);
+				screensVec[i] = null;
+			}
+			screensVec = null;
 		}
 		
 /*-------------------------------------------------
