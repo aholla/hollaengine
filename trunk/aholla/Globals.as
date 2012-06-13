@@ -14,6 +14,7 @@ public class Globals
 	public static var stageHeight		:Number;
 	public static var stageCenterX		:Number;
 	public static var stageCenterY		:Number;
+	public static var config			:XML;
 	public static var xml				:XML;
 	public static var localMode			:Boolean;
 	public static var devMode			:Boolean;
@@ -71,7 +72,7 @@ public class Globals
 		Globals.localMode 		= new RegExp("file://").test(Globals.stage.loaderInfo.url);
 		Globals.stage.stageFocusRect = false;
 		
-		trace("Gloabls.localMode:", Globals.localMode);
+		trace("[Globals] localMode:", Globals.localMode);
 	}
 	
 /*-------------------------------------------------
