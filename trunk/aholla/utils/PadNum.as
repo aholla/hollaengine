@@ -3,7 +3,7 @@
  * @author ADAM
  */
 
-package com.aholla.utils 
+package aholla.utils 
 {
 	
 public class PadNum
@@ -46,6 +46,25 @@ public class PadNum
 			_str = _zerosStr + String($num);	
 			
 		return _str;
+	}
+	
+	public static function round($num:Number, $numDecimal:Number = 1):String
+	{
+		var decimal:Number = Math.pow(10, $numDecimal);
+		var value:Number = Math.round(decimal * $num) / decimal
+		if (value % 1)
+		{
+			return String(value);
+		}
+		else
+		{
+			var str:String = String(value) + ".";
+			for (var i:int = 0; i < $numDecimal; i++) 
+			{
+				str += "0";				
+			}
+			return str;
+		}
 	}
 	
 /*-------------------------------------------------

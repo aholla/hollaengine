@@ -21,7 +21,7 @@ package aholla.screenManager
 		/**
 		 * Called when the Screen is added to the stage.
 		 */
-		//function init():void
+		function init():void
 		
 		/**
 		 * Pause
