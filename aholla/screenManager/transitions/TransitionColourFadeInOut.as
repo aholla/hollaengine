@@ -60,7 +60,8 @@ package aholla.screenManager.transitions
 			{
 				removeChild(colour);
 				colour = null;
-			}			
+			}
+			
 			this.screen = null;
 		}
 		

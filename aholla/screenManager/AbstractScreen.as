@@ -92,7 +92,7 @@ package aholla.screenManager
 		/**
 		 * Called when the screen is added to the Stage. Can be overridden to "initialise" the screen when it is added.
 		 */
-		protected function init():void
+		public function init():void
 		{
 			// Does nothing but can be used to instantiate stuff.
 		}

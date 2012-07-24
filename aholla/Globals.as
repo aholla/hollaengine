@@ -3,8 +3,6 @@
 	
 import flash.display.DisplayObject;
 import flash.display.Stage;
-import flash.display.StageAlign;
-import flash.display.StageScaleMode;
 	
 public class Globals 
 {
@@ -14,7 +12,6 @@ public class Globals
 	public static var stageHeight		:Number;
 	public static var stageCenterX		:Number;
 	public static var stageCenterY		:Number;
-	public static var config			:XML;
 	public static var xml				:XML;
 	public static var localMode			:Boolean;
 	public static var devMode			:Boolean;
@@ -66,13 +63,10 @@ public class Globals
 			Globals.stageCenterY 	= Globals.stage.stageHeight * 0.5;
 		}
 		
-		Globals.stage.align 	= StageAlign.TOP_LEFT;
-		Globals.stage.scaleMode = StageScaleMode.NO_SCALE;
-		
 		Globals.localMode 		= new RegExp("file://").test(Globals.stage.loaderInfo.url);
 		Globals.stage.stageFocusRect = false;
 		
-		trace("[Globals] localMode:", Globals.localMode);
+		trace("Gloabls.localMode:", Globals.localMode);
 	}
 	
 /*-------------------------------------------------
